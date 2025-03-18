@@ -39,10 +39,8 @@ jest.mock('@stripe/react-stripe-js', () => ({
   }),
 }));
 
-// Mock the Feather icon from Expo
-jest.mock('@expo/vector-icons', () => ({
-  Feather: () => 'Icon',
-}));
+// Mock the expo vector icons
+jest.mock('@expo/vector-icons', () => require('../mobile/__mocks__/expo-vector-icons'));
 
 // Add any global mocks or polyfills needed for testing
 global.fetch = jest.fn(() => 

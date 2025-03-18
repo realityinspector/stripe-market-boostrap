@@ -23,6 +23,10 @@ args = "TestRunner"
 task = "workflow.run"
 args = "AutomatedTests"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "MobileTestRunner"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -65,6 +69,20 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node testing/automation/runAutomatedTests.js"
+
+[[workflows.workflow]]
+name = "MobileTestRunner"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node testing/mobile/runMobileTests.js"
 
 [deployment]
 run = ["sh", "-c", "node server/server.js"]

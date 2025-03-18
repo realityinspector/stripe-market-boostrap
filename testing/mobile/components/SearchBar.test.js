@@ -10,13 +10,13 @@ import SearchBar from '../../../mobile/components/SearchBar';
 
 describe('SearchBar', () => {
   // Mock functions
-  const mockOnChange = jest.fn();
+  const mockOnChangeText = jest.fn();
   const mockOnSubmit = jest.fn();
   const mockOnClear = jest.fn();
 
   // Reset mocks between tests
   beforeEach(() => {
-    mockOnChange.mockClear();
+    mockOnChangeText.mockClear();
     mockOnSubmit.mockClear();
     mockOnClear.mockClear();
   });
@@ -24,119 +24,139 @@ describe('SearchBar', () => {
   test('renders correctly with default props', () => {
     const { getByPlaceholderText, getByTestId } = render(
       <SearchBar 
-        onChangeText={mockOnChange}
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
-        testID="search-bar"
+        onClear={mockOnClear}
       />
     );
 
-    // Verify search bar is displayed with default placeholder
+    // Verify search input is displayed with correct placeholder
     const searchInput = getByPlaceholderText('Search products...');
     expect(searchInput).toBeDefined();
+
+    // Verify search icon is displayed
+    const searchIcon = getByTestId('search-bar-icon');
+    expect(searchIcon).toBeDefined();
   });
 
-  test('renders with custom placeholder', () => {
-    const customPlaceholder = 'Find vendors...';
+  test('renders correctly with custom placeholder', () => {
     const { getByPlaceholderText } = render(
       <SearchBar 
-        placeholder={customPlaceholder}
-        onChangeText={mockOnChange}
+        placeholder="Find vendors..."
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
-        testID="search-bar"
+        onClear={mockOnClear}
       />
     );
 
-    // Verify search bar is displayed with custom placeholder
-    const searchInput = getByPlaceholderText(customPlaceholder);
+    // Verify search input is displayed with custom placeholder
+    const searchInput = getByPlaceholderText('Find vendors...');
     expect(searchInput).toBeDefined();
   });
 
-  test('calls onChangeText when input changes', () => {
+  test('calls onChangeText when text changes', () => {
     const { getByTestId } = render(
       <SearchBar 
-        onChangeText={mockOnChange}
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
-        testID="search-bar"
+        onClear={mockOnClear}
       />
     );
 
     // Find the TextInput
-    const searchInput = getByTestId('search-bar-input');
+    const input = getByTestId('search-bar-input');
     
-    // Simulate typing text
-    fireEvent.changeText(searchInput, 'test query');
+    // Simulate text change
+    fireEvent.changeText(input, 'test search');
     
-    // Verify onChangeText was called with the input text
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
-    expect(mockOnChange).toHaveBeenCalledWith('test query');
+    // Verify onChangeText was called with the new text
+    expect(mockOnChangeText).toHaveBeenCalledTimes(1);
+    expect(mockOnChangeText).toHaveBeenCalledWith('test search');
   });
 
-  test('calls onSubmit when search is submitted', () => {
+  test('calls onSubmit when submit button is pressed', () => {
     const { getByTestId } = render(
       <SearchBar 
-        onChangeText={mockOnChange}
+        value="test search"
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
-        testID="search-bar"
+        onClear={mockOnClear}
       />
     );
 
     // Find the TextInput
-    const searchInput = getByTestId('search-bar-input');
+    const input = getByTestId('search-bar-input');
     
-    // Simulate submitting the search
-    fireEvent(searchInput, 'submitEditing');
+    // Simulate submit event
+    fireEvent(input, 'submitEditing');
     
     // Verify onSubmit was called
     expect(mockOnSubmit).toHaveBeenCalledTimes(1);
   });
 
-  test('shows clear button when text is entered and calls onClear when pressed', () => {
-    const { getByTestId, queryByTestId } = render(
+  test('shows clear button when value is provided', () => {
+    const { getByTestId } = render(
       <SearchBar 
-        onChangeText={mockOnChange}
+        value="test search"
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
         onClear={mockOnClear}
-        value="test query"
-        testID="search-bar"
       />
     );
 
-    // Verify clear button is visible when there's text
+    // Verify clear button is displayed
     const clearButton = getByTestId('search-bar-clear-button');
     expect(clearButton).toBeDefined();
     
-    // Press the clear button
+    // Verify clear icon is displayed
+    const clearIcon = getByTestId('search-bar-clear-icon');
+    expect(clearIcon).toBeDefined();
+  });
+
+  test('does not show clear button when value is empty', () => {
+    const { queryByTestId } = render(
+      <SearchBar 
+        value=""
+        onChangeText={mockOnChangeText}
+        onSubmit={mockOnSubmit}
+        onClear={mockOnClear}
+      />
+    );
+
+    // Verify clear button is not displayed
+    const clearButton = queryByTestId('search-bar-clear-button');
+    expect(clearButton).toBeNull();
+  });
+
+  test('calls onClear when clear button is pressed', () => {
+    const { getByTestId } = render(
+      <SearchBar 
+        value="test search"
+        onChangeText={mockOnChangeText}
+        onSubmit={mockOnSubmit}
+        onClear={mockOnClear}
+      />
+    );
+
+    // Find the clear button
+    const clearButton = getByTestId('search-bar-clear-button');
+    
+    // Simulate press event
     fireEvent.press(clearButton);
     
     // Verify onClear was called
     expect(mockOnClear).toHaveBeenCalledTimes(1);
   });
 
-  test('does not show clear button when input is empty', () => {
-    const { queryByTestId } = render(
-      <SearchBar 
-        onChangeText={mockOnChange}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-        value=""
-        testID="search-bar"
-      />
-    );
-
-    // Verify clear button is not visible when there's no text
-    const clearButton = queryByTestId('search-bar-clear-button');
-    expect(clearButton).toBeNull();
-  });
-
   test('applies custom styles when style prop is provided', () => {
-    const customStyle = { backgroundColor: 'red', borderRadius: 20 };
+    const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };
     
     const { getByTestId } = render(
       <SearchBar 
-        onChangeText={mockOnChange}
+        onChangeText={mockOnChangeText}
         onSubmit={mockOnSubmit}
+        onClear={mockOnClear}
         style={customStyle}
-        testID="search-bar"
       />
     );
 
@@ -144,7 +164,27 @@ describe('SearchBar', () => {
     const container = getByTestId('search-bar');
     
     // Verify custom styles are applied
-    // Note: This is simplified; in a real implementation we would need to check computed styles
     expect(container.props.style).toEqual(expect.arrayContaining([customStyle]));
+  });
+
+  test('uses custom testID when provided', () => {
+    const { getByTestId } = render(
+      <SearchBar 
+        onChangeText={mockOnChangeText}
+        onSubmit={mockOnSubmit}
+        onClear={mockOnClear}
+        testID="custom-search"
+      />
+    );
+
+    // Find elements with custom testID
+    const container = getByTestId('custom-search');
+    const searchIcon = getByTestId('custom-search-icon');
+    const input = getByTestId('custom-search-input');
+    
+    // Verify elements with custom testID exist
+    expect(container).toBeDefined();
+    expect(searchIcon).toBeDefined();
+    expect(input).toBeDefined();
   });
 });

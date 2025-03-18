@@ -31,6 +31,11 @@ module.exports = {
     '\\.(css|less|scss|sass)$': '<rootDir>/testing/mobile/__mocks__/styleMock.js'
   },
   
+  // Transform ignore patterns to exclude node_modules except certain packages
+  transformIgnorePatterns: [
+    'node_modules/(?!(@react-native|react-native|@react-navigation|expo|@expo|react-native-safe-area-context)/)'
+  ],
+  
   // Setup files to run before each test
   setupFiles: ['<rootDir>/testing/mobile/setup.js'],
   
