@@ -4,9 +4,9 @@
  * This file contains tests for the VendorCard component in the React Native mobile app.
  */
 
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import VendorCard from '../../../mobile/components/VendorCard';
+const React = require('react');
+const { render, fireEvent } = require('@testing-library/react-native');
+const VendorCard = require('../../../mobile/components/VendorCard');
 
 describe('VendorCard', () => {
   // Mock data for testing

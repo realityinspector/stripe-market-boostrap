@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-03-18T19:58:58.231Z",
+  "type": "mobile",
+  "success": false,
+  "component": "all",
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "options": {
+    "coverage": false,
+    "watch": false,
+    "verbose": false,
+    "updateSnapshots": false,
+    "ci": false
+  }
+}
