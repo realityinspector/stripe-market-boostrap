@@ -8,6 +8,22 @@ import {
 } from 'react-native';
 import Colors from '../constants/Colors';
 
+/**
+ * Button Component
+ * 
+ * A customizable button with support for loading state, icons, and different styles
+ * 
+ * @param {string} title - The button text
+ * @param {Function} onPress - Function to call when button is pressed
+ * @param {Object} style - Custom styles for the button container
+ * @param {Object} textStyle - Custom styles for the button text
+ * @param {boolean} loading - Whether to show a loading indicator
+ * @param {boolean} disabled - Whether the button is disabled
+ * @param {string} color - Button color theme ('primary', 'secondary', 'success', 'danger', 'light')
+ * @param {boolean} outline - Whether to use outline style
+ * @param {React.ReactNode} icon - Optional icon to show before text
+ * @param {string} testID - Optional testID for testing (defaults to "button")
+ */
 export default function Button({ 
   title, 
   onPress, 
@@ -17,7 +33,8 @@ export default function Button({
   disabled = false,
   color = 'primary',
   outline = false,
-  icon = null
+  icon = null,
+  testID = "button"
 }) {
   // Determine button colors based on props
   const buttonColors = {
@@ -66,13 +83,25 @@ export default function Button({
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.8}
+      testID={testID}
     >
       {loading ? (
-        <ActivityIndicator color={textColor} size="small" />
+        <ActivityIndicator 
+          color={textColor} 
+          size="small"
+          testID={`${testID}-loading-indicator`}
+        />
       ) : (
-        <View style={styles.contentContainer}>
-          {icon && <View style={styles.iconContainer}>{icon}</View>}
-          <Text style={[styles.text, { color: textColor }, textStyle]}>
+        <View style={styles.contentContainer} testID={`${testID}-content`}>
+          {icon && (
+            <View style={styles.iconContainer} testID={`${testID}-icon-container`}>
+              {React.cloneElement(icon, { testID: `${testID}-icon` })}
+            </View>
+          )}
+          <Text 
+            style={[styles.text, { color: textColor }, textStyle]}
+            testID={`${testID}-text`}
+          >
             {title}
           </Text>
         </View>

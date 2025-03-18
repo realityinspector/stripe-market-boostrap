@@ -3,38 +3,67 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
-export default function VendorCard({ vendor, onPress, style }) {
+/**
+ * VendorCard Component
+ * 
+ * Displays a vendor card with icon, name, description, and metadata
+ * 
+ * @param {Object} vendor - The vendor data to display
+ * @param {Function} onPress - Function to call when card is pressed
+ * @param {Object} style - Optional custom styles
+ * @param {string} testID - Optional testID for testing (defaults to "vendor-card")
+ */
+export default function VendorCard({ vendor, onPress, style, testID = "vendor-card" }) {
   return (
     <TouchableOpacity 
       style={[styles.container, style]} 
       onPress={() => onPress(vendor)}
       activeOpacity={0.7}
+      testID={testID}
     >
-      <View style={styles.iconContainer}>
-        <Feather name="shopping-bag" size={24} color={Colors.primary} />
+      <View style={styles.iconContainer} testID={`${testID}-image`}>
+        <Feather 
+          name="shopping-bag" 
+          size={24} 
+          color={Colors.primary} 
+          testID={`${testID}-icon`}
+        />
       </View>
-      <View style={styles.contentContainer}>
-        <Text style={styles.name}>{vendor.business_name}</Text>
-        <Text style={styles.description} numberOfLines={2}>
+      <View style={styles.contentContainer} testID={`${testID}-content`}>
+        <Text style={styles.name} testID={`${testID}-name`}>
+          {vendor.business_name}
+        </Text>
+        <Text 
+          style={styles.description} 
+          numberOfLines={2}
+          testID={`${testID}-description`}
+        >
           {vendor.business_description || 'No description available'}
         </Text>
-        <View style={styles.metadata}>
-          <View style={styles.metaItem}>
+        <View style={styles.metadata} testID={`${testID}-metadata`}>
+          <View style={styles.metaItem} testID={`${testID}-product-count`}>
             <Feather name="package" size={14} color={Colors.textLight} />
-            <Text style={styles.metaText}>{vendor.product_count || 0} products</Text>
+            <Text style={styles.metaText}>
+              {vendor.product_count || 0} products
+            </Text>
           </View>
           {vendor.stripe_onboarding_complete ? (
-            <View style={styles.badgeSuccess}>
+            <View style={styles.badgeSuccess} testID={`${testID}-verified`}>
               <Text style={styles.badgeText}>Verified</Text>
             </View>
           ) : (
-            <View style={styles.badgePending}>
+            <View style={styles.badgePending} testID={`${testID}-pending`}>
               <Text style={styles.badgeText}>Pending</Text>
             </View>
           )}
         </View>
       </View>
-      <Feather name="chevron-right" size={20} color={Colors.textLight} />
+      <Feather 
+        name="chevron-right" 
+        size={20} 
+        color={Colors.textLight} 
+        testID={`${testID}-chevron`}
+      />
     </TouchableOpacity>
   );
 }

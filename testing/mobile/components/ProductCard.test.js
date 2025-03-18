@@ -7,16 +7,15 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import ProductCard from '../../../mobile/components/ProductCard';
-import Colors from '../../../mobile/constants/Colors';
 
 describe('ProductCard', () => {
   // Mock data for testing
   const mockProduct = {
     id: '123',
     name: 'Test Product',
-    price: 19.99,
+    price: 49.99,
     vendor_name: 'Test Vendor',
-    image_url: 'https://example.com/test-image.jpg'
+    image_url: 'https://example.com/test-product.jpg'
   };
 
   // Mock functions
@@ -44,27 +43,13 @@ describe('ProductCard', () => {
     const vendorName = getByText('Test Vendor');
     expect(vendorName).toBeDefined();
 
-    // Verify price is displayed with correct formatting
-    const productPrice = getByText('$19.99');
-    expect(productPrice).toBeDefined();
-  });
+    // Verify price is displayed and correctly formatted
+    const price = getByText('$49.99');
+    expect(price).toBeDefined();
 
-  test('renders with default image when image_url is not provided', () => {
-    const productWithoutImage = {
-      ...mockProduct,
-      image_url: null
-    };
-
-    const { getByTestId } = render(
-      <ProductCard 
-        product={productWithoutImage} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
-    );
-
-    // Note: It's difficult to directly test image source in React Native Testing Library
-    // This is a placeholder for actual image source testing which would be done in a real implementation
+    // Verify image container exists
+    const imageContainer = getByTestId('product-card-image-container');
+    expect(imageContainer).toBeDefined();
   });
 
   test('calls onPress with product data when card is pressed', () => {
@@ -87,8 +72,91 @@ describe('ProductCard', () => {
     expect(mockOnPress).toHaveBeenCalledWith(mockProduct);
   });
 
+  test('uses default image when image_url is not provided', () => {
+    const productWithoutImage = {
+      ...mockProduct,
+      image_url: null
+    };
+
+    const { getByTestId } = render(
+      <ProductCard 
+        product={productWithoutImage} 
+        onPress={mockOnPress}
+        testID="product-card"
+      />
+    );
+
+    // Find the image element
+    const image = getByTestId('product-card-image');
+    
+    // This test is implementation-specific; in a real test we'd check the source,
+    // but that's challenging in a test environment, so we just check the element exists
+    expect(image).toBeDefined();
+  });
+
+  test('truncates long product names to two lines', () => {
+    const productWithLongName = {
+      ...mockProduct,
+      name: 'This is a very long product name that should be truncated when displayed in the product card component to ensure it fits properly in the UI layout without causing any overflow issues.'
+    };
+
+    const { getByTestId } = render(
+      <ProductCard 
+        product={productWithLongName} 
+        onPress={mockOnPress}
+        testID="product-card"
+      />
+    );
+
+    // Find the name element
+    const nameElement = getByTestId('product-card-name');
+    
+    // Check that it's set to display a maximum of 2 lines
+    expect(nameElement.props.numberOfLines).toBe(2);
+  });
+
+  test('truncates long vendor names to one line', () => {
+    const productWithLongVendorName = {
+      ...mockProduct,
+      vendor_name: 'This is a very long vendor name that should be truncated when displayed'
+    };
+
+    const { getByTestId } = render(
+      <ProductCard 
+        product={productWithLongVendorName} 
+        onPress={mockOnPress}
+        testID="product-card"
+      />
+    );
+
+    // Find the vendor name element
+    const vendorNameElement = getByTestId('product-card-vendor-name');
+    
+    // Check that it's set to display a maximum of 1 line
+    expect(vendorNameElement.props.numberOfLines).toBe(1);
+  });
+
+  test('formats price with two decimal places', () => {
+    const productWithIntegerPrice = {
+      ...mockProduct,
+      price: 50
+    };
+
+    const { getByText } = render(
+      <ProductCard 
+        product={productWithIntegerPrice} 
+        onPress={mockOnPress}
+        testID="product-card"
+      />
+    );
+
+    // Verify price is formatted with two decimal places
+    const price = getByText('$50.00');
+    expect(price).toBeDefined();
+  });
+
   test('applies custom styles when style prop is provided', () => {
-    const customStyle = { backgroundColor: 'red', width: 150 };
+    const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };
     
     const { getByTestId } = render(
       <ProductCard 
@@ -103,10 +171,6 @@ describe('ProductCard', () => {
     const container = getByTestId('product-card');
     
     // Verify custom styles are applied
-    // Note: This is simplified; in a real implementation we would need to check computed styles
     expect(container.props.style).toEqual(expect.arrayContaining([customStyle]));
   });
-
-  // Note: This is a placeholder for a snapshot test
-  // In a real implementation, we would include a proper snapshot test with 'toMatchSnapshot()'
 });
