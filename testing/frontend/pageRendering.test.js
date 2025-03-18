@@ -67,7 +67,7 @@ exports.testApiCorsHeaders = async () => {
   ];
   
   for (const endpoint of endpoints) {
-    const result = await simulatePageLoad(endpoint.path);
+    const result = await simulatePageLoad(endpoint.path, endpoint.method);
     
     // Required CORS headers
     const requiredHeaders = [

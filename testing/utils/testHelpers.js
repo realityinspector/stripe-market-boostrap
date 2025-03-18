@@ -184,12 +184,27 @@ async function cleanupTestData(testUsers = [], testProducts = [], testOrders = [
 /**
  * Simulate a frontend page load and check rendering
  * @param {string} url - URL to check
+ * @param {string} method - HTTP method to use (default: GET)
  * @returns {Promise<Object>} - Page load result
  */
-async function simulatePageLoad(url) {
+async function simulatePageLoad(url, method = 'GET') {
   try {
     const start = Date.now();
-    const response = await axios.get(`${BASE_URL}${url}`);
+    let response;
+    
+    if (method === 'OPTIONS') {
+      response = await axios({
+        method: 'OPTIONS',
+        url: `${BASE_URL}${url}`,
+        headers: {
+          'Access-Control-Request-Method': 'POST',
+          'Access-Control-Request-Headers': 'Content-Type, Authorization, X-Requested-With'
+        }
+      });
+    } else {
+      response = await axios.get(`${BASE_URL}${url}`);
+    }
+    
     const duration = Date.now() - start;
     
     return {
