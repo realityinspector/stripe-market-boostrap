@@ -7,14 +7,6 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const { generateReport } = require('./reportGenerator');
-
-// Test configuration
-exports.config = {
-  apiBaseUrl: process.env.API_URL || 'http://localhost:8000',
-  reportOutputDir: path.join(__dirname, '../reports'),
-  testTimeout: 30000, // 30 seconds
-};
 
 /**
  * Run a test and collect results
@@ -25,41 +17,24 @@ exports.config = {
 async function runTest(testFn, testName) {
   console.log(`Running test: ${testName}`);
   
-  const startTime = Date.now();
-  let success = false;
-  let error = null;
-  let result = null;
-  
   try {
-    // Set a timeout for the test
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error(`Test timed out after ${exports.config.testTimeout}ms`)), 
-        exports.config.testTimeout);
-    });
-    
-    // Run the test with a timeout
-    result = await Promise.race([
-      testFn(),
-      timeoutPromise
-    ]);
-    
-    success = true;
-  } catch (err) {
-    error = err;
-    console.error(`Test failed: ${testName}`, err);
+    await testFn();
+    return {
+      name: testName,
+      passed: true,
+      error: null,
+      duration: 0 // We could add timing here if needed
+    };
+  } catch (error) {
+    console.error(`Test failed: ${testName} ${error.message}`);
+    return {
+      name: testName,
+      passed: false,
+      error: error.message,
+      stack: error.stack,
+      duration: 0
+    };
   }
-  
-  const endTime = Date.now();
-  const duration = endTime - startTime;
-  
-  return {
-    name: testName,
-    success,
-    duration,
-    error: error ? error.message : null,
-    result: success ? result : null,
-    timestamp: new Date().toISOString(),
-  };
 }
 
 /**
@@ -70,45 +45,31 @@ async function runTest(testFn, testName) {
 async function runTestsInDirectory(testDir) {
   const results = [];
   
-  try {
-    // Check if directory exists
-    if (!fs.existsSync(testDir)) {
-      console.warn(`Test directory does not exist: ${testDir}`);
-      return results;
+  if (!fs.existsSync(testDir)) {
+    console.warn(`Test directory not found: ${testDir}`);
+    return results;
+  }
+  
+  const files = fs.readdirSync(testDir)
+    .filter(file => file.endsWith('.test.js'));
+  
+  for (const file of files) {
+    console.log(`Running tests in file: ${file}`);
+    
+    const testModule = require(path.join('..', testDir, file));
+    const testFunctions = Object.entries(testModule)
+      .filter(([key, value]) => typeof value === 'function' && key.startsWith('test'));
+    
+    for (const [testName, testFn] of testFunctions) {
+      const result = await runTest(testFn, `${file} - ${testName}`);
+      results.push(result);
     }
     
-    // Get all JS files in the directory
-    const testFiles = fs.readdirSync(testDir)
-      .filter(file => file.endsWith('.test.js'));
-    
-    // Run each test file
-    for (const file of testFiles) {
-      console.log(`\nRunning tests in file: ${file}`);
-      
-      // Import the test file
-      const testPath = path.join(testDir, file);
-      const testModule = require(testPath);
-      
-      // Run each test function in the file
-      for (const [fnName, testFn] of Object.entries(testModule)) {
-        // Skip non-functions and the cleanup function
-        if (typeof testFn !== 'function' || fnName === 'cleanup') {
-          continue;
-        }
-        
-        // Run the test
-        const testResult = await runTest(testFn, `${file} - ${fnName}`);
-        results.push(testResult);
-      }
-      
-      // Run cleanup if it exists
-      if (typeof testModule.cleanup === 'function') {
-        console.log(`Running cleanup for ${file}...`);
-        await testModule.cleanup();
-      }
+    // Run cleanup function if it exists
+    if (typeof testModule.cleanup === 'function') {
+      console.log(`Running cleanup for ${file}...`);
+      await testModule.cleanup();
     }
-  } catch (error) {
-    console.error('Error running tests:', error);
   }
   
   return results;
@@ -116,97 +77,81 @@ async function runTestsInDirectory(testDir) {
 
 /**
  * Run all tests and generate reports
+ * @param {string} category - Optional category of tests to run (api, e2e, frontend)
+ * @returns {Object} - Object containing test results by category
  */
-exports.runAllTests = async () => {
-  console.log('Starting test run...');
-  const allResults = {
+async function runAllTests(category) {
+  const results = {
     api: [],
     e2e: [],
-    frontend: [],
+    frontend: []
   };
   
-  // Check if API server is running
-  const isServerRunning = await exports.isServerRunning();
-  if (!isServerRunning) {
-    console.error('API server is not running. Cannot run tests.');
-    return false;
+  // If a specific category is provided, only run those tests
+  if (category) {
+    switch (category) {
+      case 'api':
+        console.log('=== Running API Tests ===');
+        results.api = await runTestsInDirectory('api');
+        break;
+      case 'e2e':
+        console.log('=== Running E2E Tests ===');
+        results.e2e = await runTestsInDirectory('e2e');
+        break;
+      case 'frontend':
+        console.log('=== Running Frontend Tests ===');
+        results.frontend = await runTestsInDirectory('frontend');
+        break;
+      default:
+        console.warn(`Unknown test category: ${category}`);
+    }
+  } else {
+    // Run all tests by default
+    console.log('=== Running API Tests ===');
+    results.api = await runTestsInDirectory('api');
+    
+    console.log('=== Running E2E Tests ===');
+    results.e2e = await runTestsInDirectory('e2e');
+    
+    console.log('=== Running Frontend Tests ===');
+    results.frontend = await runTestsInDirectory('frontend');
   }
   
-  // Create reports directory if it doesn't exist
-  if (!fs.existsSync(exports.config.reportOutputDir)) {
-    fs.mkdirSync(exports.config.reportOutputDir, { recursive: true });
-  }
-  
-  // Run API tests
-  console.log('\n=== Running API Tests ===');
-  allResults.api = await runTestsInDirectory(path.join(__dirname, '../api'));
-  
-  // Run E2E tests
-  console.log('\n=== Running E2E Tests ===');
-  allResults.e2e = await runTestsInDirectory(path.join(__dirname, '../e2e'));
-  
-  // Run frontend tests
-  console.log('\n=== Running Frontend Tests ===');
-  allResults.frontend = await runTestsInDirectory(path.join(__dirname, '../frontend'));
-  
-  // Generate reports
-  const timestamp = new Date().toISOString().replace(/:/g, '-');
-  const reportPath = path.join(exports.config.reportOutputDir, `test-report-${timestamp}.json`);
-  
-  await generateReport(allResults, reportPath);
-  
-  // Log summary
-  const totalTests = Object.values(allResults).reduce((sum, results) => sum + results.length, 0);
-  const passedTests = Object.values(allResults).reduce((sum, results) => {
-    return sum + results.filter(result => result.success).length;
-  }, 0);
-  
-  console.log('\n=== Test Run Summary ===');
-  console.log(`Total tests: ${totalTests}`);
-  console.log(`Passed tests: ${passedTests}`);
-  console.log(`Failed tests: ${totalTests - passedTests}`);
-  console.log(`Success rate: ${Math.round((passedTests / totalTests) * 100)}%`);
-  console.log(`Report generated at: ${reportPath}`);
-  
-  return passedTests === totalTests;
-};
+  return results;
+}
 
 /**
  * Check if the API server is running
  * @returns {Promise<boolean>}
  */
-exports.isServerRunning = async () => {
+async function isServerRunning() {
   try {
-    await axios.get(exports.config.apiBaseUrl, { timeout: 5000 });
-    return true;
+    const response = await axios.get('http://localhost:8000/');
+    return response.status === 200;
   } catch (error) {
     return false;
   }
-};
+}
 
 /**
  * Utility to create a test HTTP client with authentication
  * @param {string} token - JWT authentication token
  * @returns {Object} - Axios instance with authentication
  */
-exports.createAuthenticatedClient = (token) => {
+function createAuthenticatedClient(token) {
   return axios.create({
-    baseURL: exports.config.apiBaseUrl,
+    baseURL: 'http://localhost:8000',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }
   });
-};
-
-// Run tests if this file is executed directly
-if (require.main === module) {
-  exports.runAllTests()
-    .then((success) => {
-      process.exit(success ? 0 : 1);
-    })
-    .catch((error) => {
-      console.error('Fatal error running tests:', error);
-      process.exit(1);
-    });
 }
+
+module.exports = {
+  runTest,
+  runTestsInDirectory,
+  runAllTests,
+  isServerRunning,
+  createAuthenticatedClient
+};

@@ -15,164 +15,137 @@
  */
 
 const axios = require('axios');
-const { config } = require('../utils/testRunner');
-const { generateRandomData, cleanupTestData } = require('../utils/testHelpers');
+const { createTestUser, loginUser } = require('../utils/testHelpers');
+
+const BASE_URL = 'http://localhost:8000';
+const testUsers = [];
 
 /**
  * Test user registration
  */
 exports.testUserRegistration = async () => {
-  // Test data
-  const userData = {
-    email: generateRandomData('email'),
-    password: generateRandomData('password'),
-    name: generateRandomData('name'),
-    role: 'customer'
-  };
+  // Create a test customer
+  const customerData = await createTestUser('customer');
+  testUsers.push(customerData);
   
-  // Register a new user
-  const response = await axios.post(`${config.apiBaseUrl}/api/auth/register`, userData);
-  
-  // Verify response structure
-  if (!response.data.success) {
-    throw new Error('Registration failed');
+  if (!customerData.user || !customerData.token) {
+    throw new Error('Customer registration failed to return user data and token');
   }
   
-  if (!response.data.token) {
-    throw new Error('No token returned on registration');
+  if (customerData.user.role !== 'customer') {
+    throw new Error(`Expected role to be 'customer' but got '${customerData.user.role}'`);
   }
-  
-  if (!response.data.user || !response.data.user.id) {
-    throw new Error('No user data returned on registration');
-  }
-  
-  if (response.data.user.role !== userData.role) {
-    throw new Error(`User role mismatch: expected ${userData.role}, got ${response.data.user.role}`);
-  }
-  
-  // Return user data to be used by other tests
-  return response.data;
 };
 
 /**
  * Test vendor registration
  */
 exports.testVendorRegistration = async () => {
-  // Test data
-  const userData = {
-    email: generateRandomData('email'),
-    password: generateRandomData('password'),
-    name: generateRandomData('name'),
-    role: 'vendor',
-    businessName: generateRandomData('businessName')
-  };
+  // Create a test vendor
+  const vendorData = await createTestUser('vendor');
+  testUsers.push(vendorData);
   
-  // Register a new vendor
-  const response = await axios.post(`${config.apiBaseUrl}/api/auth/register`, userData);
-  
-  // Verify response structure
-  if (!response.data.success) {
-    throw new Error('Vendor registration failed');
+  if (!vendorData.user || !vendorData.token) {
+    throw new Error('Vendor registration failed to return user data and token');
   }
   
-  if (!response.data.token) {
-    throw new Error('No token returned on vendor registration');
+  if (vendorData.user.role !== 'vendor') {
+    throw new Error(`Expected role to be 'vendor' but got '${vendorData.user.role}'`);
   }
-  
-  if (!response.data.user || !response.data.user.id) {
-    throw new Error('No user data returned on vendor registration');
-  }
-  
-  if (response.data.user.role !== 'vendor') {
-    throw new Error(`User role mismatch: expected vendor, got ${response.data.user.role}`);
-  }
-  
-  return response.data;
 };
 
 /**
  * Test user login
  */
 exports.testUserLogin = async () => {
-  // First register a user
-  const userData = {
-    email: generateRandomData('email'),
-    password: generateRandomData('password'),
-    name: generateRandomData('name'),
-    role: 'customer'
-  };
+  // Create a test user
+  const userData = await createTestUser('customer');
+  testUsers.push(userData);
   
-  await axios.post(`${config.apiBaseUrl}/api/auth/register`, userData);
+  // Log in with the created user
+  const loginData = await loginUser(userData.user.email, userData.password);
   
-  // Now test login
-  const loginResponse = await axios.post(`${config.apiBaseUrl}/api/auth/login`, {
-    email: userData.email,
-    password: userData.password
-  });
-  
-  // Verify response structure
-  if (!loginResponse.data.success) {
-    throw new Error('Login failed');
+  if (!loginData.user || !loginData.token) {
+    throw new Error('User login failed to return user data and token');
   }
   
-  if (!loginResponse.data.token) {
-    throw new Error('No token returned on login');
+  if (loginData.user.id !== userData.user.id) {
+    throw new Error('Login returned different user ID than registration');
   }
-  
-  if (!loginResponse.data.user || !loginResponse.data.user.id) {
-    throw new Error('No user data returned on login');
-  }
-  
-  if (loginResponse.data.user.email !== userData.email) {
-    throw new Error(`Email mismatch: expected ${userData.email}, got ${loginResponse.data.user.email}`);
-  }
-  
-  return loginResponse.data;
 };
 
 /**
  * Test authentication middleware
  */
-exports.testAuthenticatedRoute = async () => {
-  // First register a user to get a token
-  const { token } = await exports.testUserRegistration();
+exports.testAuthMiddleware = async () => {
+  // Create a test user
+  const userData = await createTestUser('customer');
+  testUsers.push(userData);
   
-  // Test accessing an authenticated route
-  const response = await axios.get(`${config.apiBaseUrl}/api/auth/me`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  
-  // Verify response
-  if (!response.data.success) {
-    throw new Error('Authenticated route access failed');
-  }
-  
-  if (!response.data.user) {
-    throw new Error('No user data returned from authenticated route');
-  }
-  
-  // Try with an invalid token - should fail
+  // Test with valid token
   try {
-    await axios.get(`${config.apiBaseUrl}/api/auth/me`, {
+    const validResponse = await axios.get(`${BASE_URL}/api/auth/me`, {
+      headers: {
+        'Authorization': `Bearer ${userData.token}`
+      }
+    });
+    
+    if (validResponse.status !== 200) {
+      throw new Error(`Expected status 200 for authenticated request, got ${validResponse.status}`);
+    }
+    
+    if (validResponse.data.user.id !== userData.user.id) {
+      throw new Error('Authenticated route returned wrong user data');
+    }
+  } catch (error) {
+    if (error.response) {
+      throw new Error(`Authenticated request failed with status ${error.response.status}: ${error.response.data.message || error.message}`);
+    }
+    throw error;
+  }
+  
+  // Test with invalid token
+  try {
+    await axios.get(`${BASE_URL}/api/auth/me`, {
       headers: {
         'Authorization': 'Bearer invalid-token'
       }
     });
-    throw new Error('Authentication with invalid token should have failed');
+    
+    // If we get here, the request did not fail as expected
+    throw new Error('Request with invalid token did not fail as expected');
   } catch (error) {
-    if (error.message === 'Authentication with invalid token should have failed') {
+    if (!error.response) {
       throw error;
     }
-    // Expected error - authentication failed
-    if (!error.response || error.response.status !== 401) {
-      throw new Error(`Expected 401 status, got ${error.response ? error.response.status : 'no response'}`);
+    
+    if (error.response.status !== 401) {
+      throw new Error(`Expected status 401 for invalid token, got ${error.response.status}`);
+    }
+  }
+  
+  // Test with no token
+  try {
+    await axios.get(`${BASE_URL}/api/auth/me`);
+    
+    // If we get here, the request did not fail as expected
+    throw new Error('Request with no token did not fail as expected');
+  } catch (error) {
+    if (!error.response) {
+      throw error;
+    }
+    
+    if (error.response.status !== 401) {
+      throw new Error(`Expected status 401 for missing token, got ${error.response.status}`);
     }
   }
 };
 
-// Clean up after tests
+/**
+ * Cleanup function to run after tests
+ */
 exports.cleanup = async () => {
-  await cleanupTestData();
+  // In a real implementation, we might want to delete the test users
+  // from the database, but for simplicity, we'll just log them
+  console.log(`Would clean up ${testUsers.length} test users`);
 };

@@ -12,150 +12,214 @@ const path = require('path');
  * @param {Object} results - Test results organized by category
  * @param {string} outputPath - Path to write report to
  */
-exports.generateReport = async (results, outputPath) => {
-  try {
-    // Create the report object
-    const report = {
-      timestamp: new Date().toISOString(),
-      summary: {
-        totalTests: 0,
-        passedTests: 0,
-        failedTests: 0,
-        successRate: 0,
-        categories: {}
-      },
-      details: results
-    };
-
-    // Calculate summary statistics
-    let totalTests = 0;
-    let passedTests = 0;
-
-    for (const [category, categoryResults] of Object.entries(results)) {
-      const categoryTotal = categoryResults.length;
-      const categoryPassed = categoryResults.filter(result => result.success).length;
-      
-      totalTests += categoryTotal;
-      passedTests += categoryPassed;
-      
-      report.summary.categories[category] = {
-        total: categoryTotal,
-        passed: categoryPassed,
-        failed: categoryTotal - categoryPassed,
-        successRate: categoryTotal > 0 ? Math.round((categoryPassed / categoryTotal) * 100) : 0
-      };
-    }
+function generateJsonReport(results, outputPath) {
+  const report = {
+    timestamp: new Date().toISOString(),
+    summary: {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      successRate: 0
+    },
+    results: results
+  };
+  
+  // Calculate summary statistics
+  const totalTests = 
+    results.api.length + 
+    results.e2e.length + 
+    results.frontend.length;
     
-    report.summary.totalTests = totalTests;
-    report.summary.passedTests = passedTests;
-    report.summary.failedTests = totalTests - passedTests;
-    report.summary.successRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+  const passedTests = 
+    results.api.filter(t => t.passed).length + 
+    results.e2e.filter(t => t.passed).length + 
+    results.frontend.filter(t => t.passed).length;
     
-    // Create output directory if it doesn't exist
-    const outputDir = path.dirname(outputPath);
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-    
-    // Write the report to a file
-    fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
-    
-    // Generate a human-readable report as well
-    const textReportPath = outputPath.replace('.json', '.txt');
-    await exports.generateTextReport(report, textReportPath);
-    
-    return outputPath;
-  } catch (error) {
-    console.error('Error generating report:', error);
-    throw error;
+  report.summary.total = totalTests;
+  report.summary.passed = passedTests;
+  report.summary.failed = totalTests - passedTests;
+  report.summary.successRate = totalTests > 0 
+    ? Math.round((passedTests / totalTests) * 100) 
+    : 0;
+  
+  // Create directory if it doesn't exist
+  const dir = path.dirname(outputPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
-};
+  
+  // Write report to file
+  fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
+  
+  return report;
+}
 
 /**
  * Generate human-readable text report
  * @param {Object} report - JSON report data
  * @param {string} outputPath - Path to write text report to
  */
-exports.generateTextReport = async (report, outputPath) => {
-  try {
-    let textReport = '';
-    
-    // Report header
-    textReport += '===============================================\n';
-    textReport += '           TEST EXECUTION REPORT               \n';
-    textReport += '===============================================\n\n';
-    
-    textReport += `Report generated: ${new Date(report.timestamp).toLocaleString()}\n\n`;
-    
-    // Summary section
-    textReport += '=============== SUMMARY ========================\n\n';
-    textReport += `Total Tests: ${report.summary.totalTests}\n`;
-    textReport += `Passed Tests: ${report.summary.passedTests}\n`;
-    textReport += `Failed Tests: ${report.summary.failedTests}\n`;
-    textReport += `Success Rate: ${report.summary.successRate}%\n\n`;
-    
-    // Category summaries
-    textReport += 'Category Results:\n';
-    for (const [category, stats] of Object.entries(report.summary.categories)) {
-      textReport += `  ${category.toUpperCase()}: ${stats.passed}/${stats.total} passed (${stats.successRate}%)\n`;
-    }
-    
-    textReport += '\n';
-    
-    // Details for failed tests
-    textReport += '================ FAILURES =====================\n\n';
-    
-    let hasFailures = false;
-    
-    for (const [category, results] of Object.entries(report.details)) {
-      const failedTests = results.filter(result => !result.success);
-      
-      if (failedTests.length > 0) {
-        hasFailures = true;
-        textReport += `${category.toUpperCase()} Failures:\n`;
-        
-        for (const test of failedTests) {
-          textReport += `  - ${test.name}\n`;
-          textReport += `    Error: ${test.error}\n`;
-          textReport += `    Duration: ${test.duration}ms\n\n`;
-        }
+function generateTextReport(report, outputPath) {
+  const lines = [];
+  
+  // Add header
+  lines.push('====================================');
+  lines.push('  STRIPE MARKETPLACE TEST REPORT');
+  lines.push('====================================');
+  lines.push('');
+  lines.push(`Date: ${new Date(report.timestamp).toLocaleString()}`);
+  lines.push('');
+  
+  // Add summary
+  lines.push('SUMMARY');
+  lines.push('-------');
+  lines.push(`Total Tests:  ${report.summary.total}`);
+  lines.push(`Passed:       ${report.summary.passed}`);
+  lines.push(`Failed:       ${report.summary.failed}`);
+  lines.push(`Success Rate: ${report.summary.successRate}%`);
+  lines.push('');
+  
+  // Add API test results
+  lines.push('API TESTS');
+  lines.push('--------');
+  if (report.results.api.length === 0) {
+    lines.push('No API tests run');
+  } else {
+    report.results.api.forEach(test => {
+      lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
+      if (!test.passed) {
+        lines.push(`  Error: ${test.error}`);
       }
-    }
-    
-    if (!hasFailures) {
-      textReport += 'No test failures! 🎉\n\n';
-    }
-    
-    // Performance metrics
-    textReport += '============== PERFORMANCE ====================\n\n';
-    
-    for (const [category, results] of Object.entries(report.details)) {
-      if (results.length > 0) {
-        textReport += `${category.toUpperCase()} Performance:\n`;
-        
-        // Calculate average duration
-        const totalDuration = results.reduce((sum, test) => sum + test.duration, 0);
-        const avgDuration = Math.round(totalDuration / results.length);
-        
-        // Find slowest test
-        const slowestTest = results.reduce((slowest, test) => {
-          return (!slowest || test.duration > slowest.duration) ? test : slowest;
-        }, null);
-        
-        textReport += `  Average duration: ${avgDuration}ms\n`;
-        if (slowestTest) {
-          textReport += `  Slowest test: ${slowestTest.name} (${slowestTest.duration}ms)\n`;
-        }
-        textReport += '\n';
-      }
-    }
-    
-    // Write the text report to a file
-    fs.writeFileSync(outputPath, textReport);
-    
-    return outputPath;
-  } catch (error) {
-    console.error('Error generating text report:', error);
-    throw error;
+    });
   }
+  lines.push('');
+  
+  // Add E2E test results
+  lines.push('E2E TESTS');
+  lines.push('--------');
+  if (report.results.e2e.length === 0) {
+    lines.push('No E2E tests run');
+  } else {
+    report.results.e2e.forEach(test => {
+      lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
+      if (!test.passed) {
+        lines.push(`  Error: ${test.error}`);
+      }
+    });
+  }
+  lines.push('');
+  
+  // Add Frontend test results
+  lines.push('FRONTEND TESTS');
+  lines.push('--------------');
+  if (report.results.frontend.length === 0) {
+    lines.push('No Frontend tests run');
+  } else {
+    report.results.frontend.forEach(test => {
+      lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
+      if (!test.passed) {
+        lines.push(`  Error: ${test.error}`);
+      }
+    });
+  }
+  lines.push('');
+  
+  // Add conclusion
+  if (report.summary.failed > 0) {
+    lines.push('CONCLUSION: Some tests are failing. Please check the failures above.');
+    
+    // Group failures by category
+    const apiFailures = report.results.api.filter(t => !t.passed);
+    const e2eFailures = report.results.e2e.filter(t => !t.passed);
+    const frontendFailures = report.results.frontend.filter(t => !t.passed);
+    
+    lines.push('');
+    lines.push('FAILURE SUMMARY:');
+    
+    if (apiFailures.length > 0) {
+      lines.push(`- API Failures: ${apiFailures.length}`);
+      apiFailures.forEach(f => lines.push(`  - ${f.name}`));
+    }
+    
+    if (e2eFailures.length > 0) {
+      lines.push(`- E2E Failures: ${e2eFailures.length}`);
+      e2eFailures.forEach(f => lines.push(`  - ${f.name}`));
+    }
+    
+    if (frontendFailures.length > 0) {
+      lines.push(`- Frontend Failures: ${frontendFailures.length}`);
+      frontendFailures.forEach(f => lines.push(`  - ${f.name}`));
+    }
+  } else {
+    lines.push('CONCLUSION: All tests passed successfully!');
+  }
+  
+  // Write report to file
+  fs.writeFileSync(outputPath, lines.join('\n'));
+  
+  return lines.join('\n');
+}
+
+/**
+ * Generate trend analysis by comparing with previous reports
+ * @param {Object} currentReport - Current test report data
+ * @param {string} reportsDir - Directory containing previous reports
+ * @returns {Object} - Trend analysis data
+ */
+function generateTrendAnalysis(currentReport, reportsDir) {
+  // Only process if reports directory exists
+  if (!fs.existsSync(reportsDir)) {
+    return {
+      trend: 'unknown',
+      previousSuccessRate: 0,
+      change: 0
+    };
+  }
+  
+  // Get previous reports
+  const reportFiles = fs.readdirSync(reportsDir)
+    .filter(file => file.endsWith('.json'))
+    .sort()
+    .reverse();
+  
+  // If there are no previous reports, return unknown trend
+  if (reportFiles.length <= 1) {
+    return {
+      trend: 'unknown',
+      previousSuccessRate: 0,
+      change: 0
+    };
+  }
+  
+  // Get the most recent previous report
+  const previousReportFile = reportFiles[1]; // [0] would be the current report
+  const previousReport = JSON.parse(
+    fs.readFileSync(path.join(reportsDir, previousReportFile), 'utf8')
+  );
+  
+  // Calculate trend
+  const currentSuccessRate = currentReport.summary.successRate;
+  const previousSuccessRate = previousReport.summary.successRate;
+  const change = currentSuccessRate - previousSuccessRate;
+  
+  let trend;
+  if (change > 0) {
+    trend = 'improving';
+  } else if (change < 0) {
+    trend = 'declining';
+  } else {
+    trend = 'stable';
+  }
+  
+  return {
+    trend,
+    previousSuccessRate,
+    change
+  };
+}
+
+module.exports = {
+  generateJsonReport,
+  generateTextReport,
+  generateTrendAnalysis
 };
