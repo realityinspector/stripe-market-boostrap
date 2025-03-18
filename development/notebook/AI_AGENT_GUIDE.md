@@ -1,160 +1,125 @@
-# AI Agent Development Guide
+# AI Agent Guide for Stripe Connect Marketplace
 
 ## ATTENTION AI AGENTS
-This guide provides critical instructions for AI agents working on the Stripe Connect Marketplace project. Follow these guidelines for all development work to ensure consistency and compliance with project requirements.
+This guide provides AI-specific guidance for working on the Stripe Connect Marketplace project. Follow these guidelines to ensure consistent, high-quality development and maintain the project's integrity.
 
 ## Development Notebook Navigation
-- Start with README.md for an overview
-- Review this guide (AI_AGENT_GUIDE.md) for AI-specific instructions
-- Check tasks/CURRENT.md for active tasks
-- Document your work in logs/DAILY_LOG.md
-- Record failures in logs/FAILURE_LOG.md
-- Document decisions in logs/DECISION_LOG.md
+
+### Getting Started
+1. Begin by reading the README.md file for a project overview
+2. Review CURRENT.md to understand active tasks
+3. Check DAILY_LOG.md for recent development activity
+4. Review FAILURE_LOG.md to understand current issues
+5. Examine DECISION_LOG.md to understand key architectural decisions
+
+### Task Management
+- Active tasks are in CURRENT.md, prioritize those marked "Critical"
+- Future tasks are in BACKLOG.md, do not start these without permission
+- Completed tasks are in COMPLETED.md, use these as reference
+- Blocked tasks are in BLOCKED.md, work on unblocking these when possible
+
+### Documentation Updates
+- Record significant decisions in DECISION_LOG.md
+- Add daily progress to DAILY_LOG.md
+- Document failures and solutions in FAILURE_LOG.md
+- Move tasks between status files as appropriate
 
 ## AI-Specific Development Guidelines
 
-### 🚨 CRITICAL REQUIREMENTS - NEVER IGNORE 🚨
+### Code Standards
+1. **Database Safety**: Never perform destructive operations on the database
+   - Always use ORM migrations rather than direct SQL
+   - Never use DELETE or DROP operations without explicit requirements
+   - Always prefer soft deletes (status flags) over hard deletes
 
-#### Database Integrity
-- **NEVER DELETE CUSTOMER/USER DATA** during migrations or updates
-- Use safe migrations only - always preserve existing user data
-- Add safeguards in migration scripts to prevent data loss
-- Document all schema changes in DECISION_LOG.md
-- Include data protection measures in code reviews (REVIEW_CHECKLIST.md)
-- All database changes must be reversible and backward compatible
-- Add comments and docstrings emphasizing data protection requirements
-- Test migrations thoroughly before applying to production data
+2. **Error Handling**:
+   - Implement comprehensive error handling at all layers
+   - Return appropriate HTTP status codes and error messages
+   - Log errors with sufficient context for debugging
+   - Never expose sensitive information in error messages
 
-#### Platform & Framework
-- Use React Native for mobile development
-- Document any React Native version changes in DECISION_LOG.md
-- Always add docstrings to React Native components explaining their purpose
+3. **Testing**:
+   - Maintain comprehensive test coverage
+   - Fix failing tests before adding new features
+   - Follow test-driven development when appropriate
+   - Document test cases and expected outcomes
 
-#### Security
-- Implement CSRF protection for all API endpoints
-- Detail security implementations in docs/STANDARDS.md
-- Include security tests in CI/CD pipeline
-- Document security considerations in code comments and docstrings
+4. **Security Practices**:
+   - Implement proper authentication and authorization
+   - Use CSRF protection for all forms and state-changing requests
+   - Validate and sanitize all user inputs
+   - Follow secure coding practices for sensitive operations
 
-#### External API Integration
-- For Stripe: Support both LIVE and TEST modes
-- **FAIL SOFT** on all external API failures with graceful degradation
-- Add detailed logging for external API interactions
-- Document external API dependencies in code comments
-- Include retry logic and fallback mechanisms for external services
-- Never expose API keys or secrets in code or logs
+### Working with Stripe
+1. **Stripe Connect Integration**:
+   - Follow Stripe Connect best practices for marketplace integration
+   - Always use Stripe's official libraries
+   - Implement proper error handling for Stripe API calls
+   - Use webhook verification for event handling
+   - Test both connected account creation and payment flows
+   - Maintain separation between platform and connected account operations
 
-#### Internal API Integration
-- Integrate all internal APIs with CI/CD testing
-- Document API contracts in code comments and docstrings
-- Ensure test coverage for all API endpoints
+2. **Stripe Testing**:
+   - Use Stripe test mode with test API keys
+   - Test with various Stripe test cards and scenarios
+   - Verify webhook handling with Stripe CLI
+   - Confirm successful payment flows and refunds
+   - Test vendor onboarding and payout processes
 
-#### Deployment Process
-- **REMEMBER: Deployment is done by the user on Replit**
-- Do not attempt to automate deployment outside of Replit
-- Document deployment steps in workflows/RELEASE_PROCESS.md
-- Add comments referring to Replit deployment process
+### Mobile Development (React Native)
+1. **Platform Compatibility**:
+   - Ensure compatibility across iOS and Android
+   - Test responsive layouts on various device sizes
+   - Handle platform-specific edge cases appropriately
 
-#### User Experience
-- Implement administrative wizards with explainers for all admin tasks
-- Include step-by-step guides for complex processes
-- Create onboarding flows for new users and admins
-- Document UX decisions in DECISION_LOG.md
+2. **Performance**:
+   - Optimize rendering performance
+   - Minimize network requests and bundle size
+   - Use appropriate caching strategies
+   - Implement lazy loading where beneficial
 
-#### Data Management
-- Provide tools to create and remove sample data
-- Implement admin user management features
-- Create daily database backup jobs to private folder (not web-accessible)
-- Document backup and restore procedures
+### Documentation Standards
+1. **Code Documentation**:
+   - Document complex logic and business rules
+   - Use JSDoc for function and method documentation
+   - Explain non-obvious design decisions
 
-#### Media Handling
-- Gracefully handle social media content metadata
-- Implement image and media serving with thumbnail generation
-- Document media handling strategies in code comments
-- Include media tests in CI/CD pipeline
+2. **System Documentation**:
+   - Update architectural documentation as needed
+   - Document API endpoints according to standards
+   - Create or update user guides for new features
 
-#### Error Handling
-- Fail soft on external API errors with detailed logging
-- Test for and proactively handle 404 and 500 errors
-- Document error handling strategies in code comments
-- Create user-friendly error messages and recovery paths
+### Error Recovery
+1. **Graceful Failures**:
+   - Implement retry mechanisms for transient failures
+   - Gracefully handle API unavailability
+   - Provide clear user feedback for errors
+   - Maintain system state consistency during failures
 
-#### Testing & CI/CD
-- Integrate security and basic load testing in CI/CD
-- Implement analytics tracking for development metrics
-- Expose analytics history through console interfaces
-- Document testing requirements in workflows/CI_COMPLIANCE.md
-- Ensure all CI/CD tests maintain backward compatibility
+2. **Debugging**:
+   - Add appropriate logging for debugging
+   - Instrument code for performance monitoring
+   - Create reproducible test cases for bugs
 
-## Code Documentation Requirements
+## Communication Guidelines
 
-### Docstrings and Comments
-All code MUST include clear comments and docstrings that:
+### Development Logs
+- Record detailed daily development progress
+- Document challenges encountered and solutions implemented
+- Note key insights and observations
+- Reference task IDs in log entries
 
-1. Explain the purpose of files, functions, and classes
-2. Highlight critical data integrity considerations:
-   ```javascript
-   /**
-    * Updates user profile information
-    * 
-    * 🚨 ATTENTION AI AGENTS 🚨
-    * This function follows safe update principles:
-    * - NEVER deletes user data
-    * - Preserves existing fields not included in the update
-    * - Validates input before persistence
-    * - Uses parameterized queries to prevent SQL injection
-    */
-   ```
+### Decision Documentation
+- Document significant design or implementation decisions
+- Include context, alternatives considered, and rationale
+- Reference external resources or best practices
+- Document impact of decisions on other system components
 
-3. Emphasize external API handling:
-   ```javascript
-   /**
-    * Process payment via Stripe API
-    * 
-    * 🚨 ATTENTION AI AGENTS 🚨
-    * This function:
-    * - Handles both TEST and LIVE Stripe modes
-    * - Fails soft with graceful error handling
-    * - Includes detailed logging of API interactions
-    * - Never exposes API keys or secrets
-    */
-   ```
+### Task Updates
+- Update task statuses as work progresses
+- Document implementation details for completed tasks
+- Record blockers and dependencies
+- Link tasks to related documentation and code
 
-4. Highlight CI/CD integration points:
-   ```javascript
-   /**
-    * API endpoint for user registration
-    * 
-    * 🚨 ATTENTION AI AGENTS 🚨
-    * This endpoint:
-    * - Is integrated with CI/CD testing
-    * - Includes CSRF protection
-    * - Has security tests in the CI pipeline
-    * - Must maintain backward compatibility
-    */
-   ```
-
-### Code Review Process
-All code changes must:
-1. Preserve and update docstrings and comments
-2. Maintain or improve existing hints for future AI agents
-3. Follow the docs/REVIEW_CHECKLIST.md requirements
-4. Ensure CI/CD pipeline passes all tests
-
-## Practical Example for AI Agents
-When implementing a new feature:
-
-1. Start by checking tasks/CURRENT.md for detailed requirements
-2. Update logs/DAILY_LOG.md with your plan
-3. Implement the feature with proper docstrings and comments
-4. Add tests to the CI/CD pipeline
-5. Document decisions in logs/DECISION_LOG.md
-6. Update tasks/CURRENT.md with progress
-7. Move completed task to tasks/COMPLETED.md
-
-## Remember
-- All comments and docstrings must stay with revisions
-- Update comments and hints to be accurate as code evolves
-- Document all significant decisions and changes
-- Never compromise on data integrity or security
-- Maintain backward compatibility for all changes
+## Conclusion
+Following these guidelines will ensure consistent development practices across all AI agents working on the Stripe Connect Marketplace project. If you encounter a situation not covered by these guidelines, document your decision-making process in the appropriate logs.

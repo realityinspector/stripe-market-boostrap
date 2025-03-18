@@ -1,49 +1,80 @@
-# Development Notebook for Stripe Connect Marketplace
+# Stripe Connect Marketplace Development Notebook
 
 ## ATTENTION AI AGENTS
-This development notebook is designed to help you manage the development of the Stripe Connect Marketplace application. It provides structured documentation, task tracking, and guidelines to ensure consistent development across AI collaborators.
+This development notebook contains all documentation, tasks, decisions, and standards for the Stripe Connect Marketplace project. Use this notebook as your primary guide for development.
+
+## Project Overview
+
+The Stripe Connect Marketplace is a mobile platform for connecting vendors and customers, with a robust payment processing system powered by Stripe Connect. The platform supports:
+
+- Vendor onboarding with Stripe Connect
+- Product listing and management
+- Customer shopping and checkout
+- Payment processing and vendor payouts
+- Administrative oversight and platform management
+
+The system follows a Bootstrap Flywheel Pattern with admin-first development, emphasizing data integrity, security, and comprehensive testing.
 
 ## Notebook Structure
-The notebook is organized as follows:
 
-- **README.md** - This file, providing an overview of the notebook structure
-- **AI_AGENT_GUIDE.md** - Specific instructions for AI agents working on this project
-- **tasks/** - Task tracking and management
-  - CURRENT.md - Currently active tasks
-  - BACKLOG.md - Tasks planned for future implementation
-  - COMPLETED.md - Tasks that have been completed
-  - BLOCKED.md - Tasks that are blocked and reasons
-- **logs/** - Development logs
-  - DAILY_LOG.md - Daily development activities and progress
-  - FAILURE_LOG.md - Documentation of failures and resolution steps
-  - DECISION_LOG.md - Record of important architectural and implementation decisions
-- **workflows/** - CI/CD and deployment workflows
-  - CI_COMPLIANCE.md - Compliance requirements for CI/CD pipeline
-  - RELEASE_PROCESS.md - Steps for releasing new versions
-- **docs/** - Documentation
-  - STANDARDS.md - Coding standards and guidelines
-  - REVIEW_CHECKLIST.md - Checklist for code reviews
+This development notebook is organized into several sections:
+
+- **Tasks**: Current, backlog, completed, and blocked tasks
+  - `/tasks/CURRENT.md` - Active tasks being worked on
+  - `/tasks/BACKLOG.md` - Future tasks not yet started
+  - `/tasks/COMPLETED.md` - Tasks that have been completed
+  - `/tasks/BLOCKED.md` - Tasks that are blocked by dependencies
+
+- **Logs**: Development logs, failure records, and decisions
+  - `/logs/DAILY_LOG.md` - Daily development activities and progress
+  - `/logs/FAILURE_LOG.md` - Record of failures and their resolutions
+  - `/logs/DECISION_LOG.md` - Documentation of key decisions made
+
+- **Workflows**: CI/CD and release processes
+  - `/workflows/CI_COMPLIANCE.md` - CI/CD compliance requirements
+  - `/workflows/RELEASE_PROCESS.md` - Release process documentation
+
+- **Docs**: Standards and review guidelines
+  - `/docs/STANDARDS.md` - Development standards for the project
+  - `/docs/REVIEW_CHECKLIST.md` - Checklist for code reviews
 
 ## Workflow for AI Agents
-1. **Orientation**: Read through this README.md and AI_AGENT_GUIDE.md to understand the project structure and guidelines.
-2. **Task Review**: Check the tasks/CURRENT.md file to understand the currently active tasks.
-3. **Implementation**: Implement the required changes, following the coding standards in docs/STANDARDS.md.
-4. **Documentation**: Update the logs/DAILY_LOG.md with your progress and any decisions made.
-5. **Testing**: Ensure all tests pass before submitting changes.
-6. **Handoff**: Update task status and provide detailed notes for the next AI agent.
+
+When working on this project, follow this workflow:
+
+1. **Read the AI_AGENT_GUIDE.md** for AI-specific guidance
+2. **Check CURRENT.md** for active tasks and priority
+3. **Focus on blocked tasks first** if you can unblock them
+4. **Document your work** in DAILY_LOG.md
+5. **Follow the standards** in STANDARDS.md
+6. **Record significant decisions** in DECISION_LOG.md
+7. **Log failures** in FAILURE_LOG.md
+8. **Update task statuses** as you make progress
 
 ## Critical Rules
-1. **Test Coverage**: All changes must have associated tests.
-2. **Documentation**: Document all significant changes and decisions.
-3. **Error Handling**: Implement robust error handling for all user-facing features.
-4. **Security**: Follow security best practices, especially for payment processing.
-5. **Compliance**: Ensure all code follows Stripe Connect compliance requirements.
 
-## Current Status
-The Stripe Connect Marketplace is under active development, with a focus on addressing test failures in the Stripe integration, authentication flow, and payment processing. The current priority is to fix these issues to establish a stable testing infrastructure.
+1. **Safe Database Operations**: Never perform destructive database operations. Use ORMs for safe migrations.
+2. **Security First**: Implement proper authentication, authorization, and CSRF protection.
+3. **Data Integrity**: Ensure data integrity at all layers of the application.
+4. **Comprehensive Testing**: Maintain high test coverage across all components.
+5. **Documentation**: Document all significant changes, decisions, and features.
+6. **Error Handling**: Implement robust error handling for all operations.
+7. **API Design**: Follow RESTful API design principles with consistent error responses.
+8. **Responsive Design**: Ensure all interfaces work on various device sizes.
+9. **Performance**: Monitor and optimize performance of key operations.
+10. **Stripe Integration**: Follow Stripe's best practices for Connect marketplace integration.
 
-Priority areas:
-1. Fixing Stripe Connect vendor onboarding
-2. Resolving payment intent creation failures
-3. Addressing authentication route issues
-4. Fixing UI test failures for registration and login
+## Key Technologies
+
+- **Frontend**: React Native for mobile applications
+- **Backend**: Express.js REST API
+- **Database**: PostgreSQL for data storage
+- **Payment Processing**: Stripe Connect
+- **Testing**: Comprehensive automated testing suite
+- **CI/CD**: Automated deployment pipeline with quality checks
+
+## Project Status
+
+- Current test success rate: 27/33 (82%)
+- Critical issues: Authentication, Stripe Connect onboarding
+- In progress: Fixing failed tests, implementing CSRF protection

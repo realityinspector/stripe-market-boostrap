@@ -121,7 +121,7 @@ function validateTaskTracking() {
   }
   
   // Check for task completion dates in completed tasks
-  const hasDates = completedTasks.includes('**Completed:**');
+  const hasDates = completedTasks.includes('**Completed**:') || completedTasks.includes('**Completed:**');
   if (!hasDates && completedTaskCount > 0) {
     console.log('❌ Completed tasks missing completion dates');
     return { success: false, message: 'Completed tasks missing dates' };
