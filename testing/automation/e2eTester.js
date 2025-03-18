@@ -152,12 +152,16 @@ async function performE2eTests(config) {
     
     const createResponse = await authApi.post('/api/products', productData);
     
-    if (createResponse.status !== 201 || !createResponse.data.id) {
+    if (createResponse.status !== 201) {
       throw new Error(`Failed to create product: ${createResponse.status}`);
     }
     
+    if (!createResponse.data.success || !createResponse.data.product) {
+      throw new Error(`Invalid product response format: ${JSON.stringify(createResponse.data)}`);
+    }
+    
     return {
-      id: createResponse.data.id,
+      id: createResponse.data.product.id,
       ...productData
     };
   }
@@ -198,7 +202,10 @@ async function performE2eTests(config) {
       
       const updateResponse = await authApi.put(`/api/products/${product.id}`, updateData);
       
-      const updateSuccess = updateResponse.status === 200 && updateResponse.data.id === product.id;
+      const updateSuccess = updateResponse.status === 200 && 
+                           updateResponse.data.success && 
+                           updateResponse.data.product && 
+                           updateResponse.data.product.id === product.id;
       recordTest('Vendor Product Update', updateSuccess,
                 updateSuccess ? null : `Failed to update product: ${updateResponse.status}`,
                 { productId: product.id });
@@ -206,12 +213,15 @@ async function performE2eTests(config) {
       // Get vendor's product list
       const listResponse = await authApi.get('/api/products/vendor');
       
-      const listSuccess = listResponse.status === 200 && Array.isArray(listResponse.data) && 
-                         listResponse.data.some(p => p.id === product.id);
+      const listSuccess = listResponse.status === 200 && 
+                         listResponse.data && 
+                         listResponse.data.success && 
+                         Array.isArray(listResponse.data.products) && 
+                         listResponse.data.products.some(p => p.id === product.id);
                          
       recordTest('Vendor Products Listing', listSuccess,
                 listSuccess ? null : `Failed to list vendor products: ${listResponse.status}`,
-                { productCount: listResponse.data?.length || 0 });
+                { productCount: listResponse.data?.products?.length || 0 });
       
       // Deactivate product if endpoint exists
       try {
@@ -265,18 +275,23 @@ async function performE2eTests(config) {
       const productsResponse = await customerApi.get('/api/products');
       
       const productsSuccess = productsResponse.status === 200 && 
-                             Array.isArray(productsResponse.data) &&
-                             productsResponse.data.length > 0;
+                             productsResponse.data && 
+                             productsResponse.data.success && 
+                             Array.isArray(productsResponse.data.products) &&
+                             productsResponse.data.products.length > 0;
                              
       recordTest('Customer Product Browsing', productsSuccess,
                 productsSuccess ? null : `Failed to browse products: ${productsResponse.status}`,
-                { productCount: productsResponse.data?.length || 0 });
+                { productCount: productsResponse.data?.products?.length || 0 });
       
       // View product details
       const productDetailsResponse = await customerApi.get(`/api/products/${product.id}`);
       
       const detailsSuccess = productDetailsResponse.status === 200 && 
-                            productDetailsResponse.data.id === product.id;
+                            productDetailsResponse.data && 
+                            productDetailsResponse.data.success && 
+                            productDetailsResponse.data.product && 
+                            productDetailsResponse.data.product.id === product.id;
                             
       recordTest('Product Details View', detailsSuccess,
                 detailsSuccess ? null : `Failed to view product details: ${productDetailsResponse.status}`,
