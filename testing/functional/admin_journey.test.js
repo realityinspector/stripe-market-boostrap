@@ -88,6 +88,31 @@ async function testAdminJourney() {
 async function testAdminLogin(page, admin) {
   console.log('Testing admin login...');
   
+  // Try to create admin user first if it doesn't exist
+  try {
+    // Make API call to create admin user
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: admin.email,
+        password: admin.password,
+        name: 'Admin User',
+        role: 'admin'
+      })
+    });
+    
+    if (response.ok) {
+      console.log('Admin user created successfully');
+    } else {
+      // Admin might already exist, which is fine
+      console.log('Admin user might already exist, proceeding to login');
+    }
+  } catch (error) {
+    // Ignore errors here - we'll proceed to login
+    console.warn('Error creating admin user (might already exist):', error.message);
+  }
+  
   // Navigate to login page
   await navigateTo(page, `${BASE_URL}/login`);
   
