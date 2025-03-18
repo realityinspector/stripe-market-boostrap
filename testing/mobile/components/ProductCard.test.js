@@ -28,11 +28,11 @@ describe('ProductCard', () => {
 
   test('renders correctly with all product data', () => {
     const { getByText, getByTestId } = render(
-      <ProductCard 
-        product={mockProduct} 
-        onPress={mockOnPress} 
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: mockProduct,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Verify product name is displayed
@@ -54,11 +54,11 @@ describe('ProductCard', () => {
 
   test('calls onPress with product data when card is pressed', () => {
     const { getByTestId } = render(
-      <ProductCard 
-        product={mockProduct} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: mockProduct,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Find the TouchableOpacity container
@@ -79,11 +79,11 @@ describe('ProductCard', () => {
     };
 
     const { getByTestId } = render(
-      <ProductCard 
-        product={productWithoutImage} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: productWithoutImage,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Find the image element
@@ -101,11 +101,11 @@ describe('ProductCard', () => {
     };
 
     const { getByTestId } = render(
-      <ProductCard 
-        product={productWithLongName} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: productWithLongName,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Find the name element

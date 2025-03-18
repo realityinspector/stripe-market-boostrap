@@ -20,11 +20,11 @@ describe('Button', () => {
 
   test('renders correctly with default props', () => {
     const { getByText, getByTestId } = render(
-      <Button 
-        title="Test Button"
-        onPress={mockOnPress}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Test Button",
+        onPress: mockOnPress,
+        testID: "test-button"
+      })
     );
 
     // Verify button title is displayed
@@ -38,12 +38,12 @@ describe('Button', () => {
 
   test('renders disabled button correctly', () => {
     const { getByTestId } = render(
-      <Button 
-        title="Disabled Button"
-        onPress={mockOnPress}
-        disabled={true}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Disabled Button",
+        onPress: mockOnPress,
+        disabled: true,
+        testID: "test-button"
+      })
     );
 
     // Get button container
@@ -62,12 +62,12 @@ describe('Button', () => {
     const customStyle = { backgroundColor: 'red', borderRadius: 30 };
     
     const { getByTestId } = render(
-      <Button 
-        title="Custom Button"
-        onPress={mockOnPress}
-        style={customStyle}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Custom Button",
+        onPress: mockOnPress,
+        style: customStyle,
+        testID: "test-button"
+      })
     );
 
     // Get button container
@@ -86,11 +86,11 @@ describe('Button', () => {
 
   test('calls onPress when button is pressed', () => {
     const { getByTestId } = render(
-      <Button 
-        title="Press Me"
-        onPress={mockOnPress}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Press Me",
+        onPress: mockOnPress,
+        testID: "test-button"
+      })
     );
 
     // Get button container
@@ -105,12 +105,12 @@ describe('Button', () => {
 
   test('does not call onPress when disabled button is pressed', () => {
     const { getByTestId } = render(
-      <Button 
-        title="Disabled Button"
-        onPress={mockOnPress}
-        disabled={true}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Disabled Button",
+        onPress: mockOnPress,
+        disabled: true,
+        testID: "test-button"
+      })
     );
 
     // Get button container
@@ -125,15 +125,15 @@ describe('Button', () => {
 
   test('renders button with icon correctly', () => {
     // Mock icon component
-    const MockIcon = () => <></>;
+    const MockIcon = () => React.createElement('View');
     
     const { getByTestId } = render(
-      <Button 
-        title="Icon Button"
-        onPress={mockOnPress}
-        icon={<MockIcon testID="test-button-icon" />}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Icon Button",
+        onPress: mockOnPress,
+        icon: React.createElement(MockIcon, { testID: "test-button-icon" }),
+        testID: "test-button"
+      })
     );
 
     // Get button container and verify icon is present
@@ -146,12 +146,12 @@ describe('Button', () => {
 
   test('renders loading state correctly', () => {
     const { getByTestId, queryByText } = render(
-      <Button 
-        title="Loading Button"
-        onPress={mockOnPress}
-        loading={true}
-        testID="test-button"
-      />
+      React.createElement(Button, {
+        title: "Loading Button",
+        onPress: mockOnPress,
+        loading: true,
+        testID: "test-button"
+      })
     );
 
     // Get button container
