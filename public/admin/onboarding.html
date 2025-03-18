@@ -3,416 +3,600 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Onboarding - Stripe Connect Marketplace</title>
+  <title>Admin Onboarding | Stripe Connect Marketplace</title>
   <link rel="stylesheet" href="/css/styles.css">
   <style>
+    body {
+      background-color: #f7fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #32325d;
+      line-height: 1.5;
+    }
+    
     .onboarding-container {
       max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 20px;
+      margin: 50px auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
     
     .onboarding-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    
-    .step-indicator {
+      background-color: #32325d;
+      color: white;
+      padding: 20px;
       display: flex;
-      justify-content: center;
-      margin-bottom: 40px;
+      align-items: center;
+      justify-content: space-between;
     }
     
-    .step {
-      width: 40px;
-      height: 40px;
+    .onboarding-logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .onboarding-logo img {
+      height: 32px;
+      margin-right: 10px;
+    }
+    
+    .onboarding-logo span {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .onboarding-progress {
+      display: flex;
+      align-items: center;
+    }
+    
+    .progress-step {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+      opacity: 0.6;
+    }
+    
+    .progress-step.active {
+      opacity: 1;
+    }
+    
+    .step-number {
+      width: 24px;
+      height: 24px;
+      background-color: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
-      background-color: var(--gray-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      margin: 0 10px;
-      position: relative;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 6px;
     }
     
-    .step.active {
-      background-color: var(--primary-color);
-      color: white;
+    .progress-step.active .step-number {
+      background-color: #6772e5;
     }
     
-    .step.completed {
-      background-color: var(--accent-color);
-      color: white;
+    .progress-step.completed .step-number {
+      background-color: #24b47e;
     }
     
-    .step::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background-color: var(--gray-light);
-      top: 50%;
-      left: 100%;
-      transform: translateY(-50%);
+    .step-name {
+      font-size: 14px;
     }
     
-    .step:last-child::after {
+    .onboarding-content {
+      padding: 30px;
+    }
+    
+    .onboarding-step {
       display: none;
     }
     
-    .step.completed::after {
-      background-color: var(--accent-color);
+    .onboarding-step.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
     }
     
-    .step-content {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 30px;
-      margin-bottom: 30px;
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     
     .step-title {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      color: var(--dark-color);
+      margin: 0 0 5px 0;
+      font-size: 24px;
+      font-weight: 600;
     }
     
     .step-description {
-      margin-bottom: 30px;
-      color: var(--gray-dark);
+      margin: 0 0 20px 0;
+      color: #8898aa;
+      font-size: 16px;
     }
     
-    .step-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30px;
-    }
-    
-    .welcome-image {
-      max-width: 100%;
-      height: auto;
-      margin: 20px 0;
-      border-radius: var(--border-radius);
-    }
-    
-    .setting-card {
-      border: 1px solid var(--gray-light);
-      border-radius: var(--border-radius);
-      padding: 15px;
+    .form-group {
       margin-bottom: 20px;
     }
     
-    .setting-card h3 {
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e6ebf1;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #6772e5;
+      box-shadow: 0 0 0 2px rgba(103, 114, 229, 0.2);
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
       margin-bottom: 10px;
     }
     
-    .onboarding-complete {
-      text-align: center;
-      padding: 40px 0;
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 10px;
     }
     
-    .onboarding-complete img {
-      width: 120px;
-      height: 120px;
+    .help-text {
+      display: block;
+      margin-top: 5px;
+      font-size: 14px;
+      color: #8898aa;
+    }
+    
+    .onboarding-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e6ebf1;
+    }
+    
+    button {
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-back {
+      background-color: transparent;
+      border: 1px solid #6772e5;
+      color: #6772e5;
+    }
+    
+    .btn-back:hover {
+      background-color: rgba(103, 114, 229, 0.05);
+    }
+    
+    .btn-next {
+      background-color: #6772e5;
+      border: none;
+      color: white;
+    }
+    
+    .btn-next:hover {
+      background-color: #5363e0;
+    }
+    
+    .btn-skip {
+      background-color: transparent;
+      border: none;
+      color: #8898aa;
+      text-decoration: underline;
+    }
+    
+    .step-welcome-image,
+    .step-complete-image {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .step-welcome-image img,
+    .step-complete-image img {
+      max-width: 200px;
+    }
+    
+    .connect-config {
+      border: 1px solid #e6ebf1;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #f6f9fc;
+    }
+    
+    .account-type {
+      margin-bottom: 15px;
+    }
+    
+    .account-type h4 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+    
+    .account-type p {
+      margin: 0;
+      font-size: 14px;
+      color: #8898aa;
+    }
+    
+    .stripe-notice {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #8898aa;
+    }
+    
+    .stripe-notice img {
+      height: 20px;
+      margin-right: 10px;
+    }
+    
+    .commission-slider {
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .commission-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #6772e5;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .min-max {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #8898aa;
+    }
+    
+    /* Final completion message */
+    .completion-message {
+      text-align: center;
       margin-bottom: 30px;
+    }
+    
+    .completion-message h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #24b47e;
+    }
+    
+    .completion-message p {
+      color: #8898aa;
+      margin-bottom: 20px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .setup-complete-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="app">
-    <header class="app-header">
-      <div class="container">
-        <h1>Stripe Connect Marketplace</h1>
-        <nav>
+  <div class="onboarding-container">
+    <div class="onboarding-header">
+      <div class="onboarding-logo">
+        <img src="/img/admin/logo.svg" alt="Marketplace Logo">
+        <span>Admin Onboarding</span>
+      </div>
+      <div class="onboarding-progress">
+        <div class="progress-step active" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-name">Welcome</div>
+        </div>
+        <div class="progress-step" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-name">Platform</div>
+        </div>
+        <div class="progress-step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-name">Connect</div>
+        </div>
+        <div class="progress-step" data-step="4">
+          <div class="step-number">4</div>
+          <div class="step-name">Complete</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="onboarding-content">
+      <!-- Step 1: Welcome -->
+      <div class="onboarding-step active" id="step-1">
+        <div class="step-welcome-image">
+          <div style="font-size: 80px; text-align: center;">🚀</div>
+        </div>
+        <h2 class="step-title">Welcome to Your Marketplace!</h2>
+        <p class="step-description">Let's set up your Stripe Connect marketplace platform in just a few steps.</p>
+        
+        <div class="form-group">
+          <p>This wizard will help you configure the essential settings for your marketplace:</p>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/admin" class="active">Admin</a></li>
-            <li><a id="logout-btn" href="#">Logout</a></li>
+            <li>Platform name and branding settings</li>
+            <li>Stripe Connect configuration for vendor payments</li>
+            <li>Commission rates and payment settings</li>
           </ul>
-        </nav>
+          <p>Once completed, your marketplace will be ready to onboard vendors and process payments.</p>
+        </div>
+        
+        <div class="onboarding-actions">
+          <button class="btn-skip" id="skip-onboarding">Skip Onboarding</button>
+          <button class="btn-next" id="next-1">Get Started</button>
+        </div>
       </div>
-    </header>
-
-    <main>
-      <div class="onboarding-container">
-        <div class="onboarding-header">
-          <h1>Welcome to Admin Onboarding</h1>
-          <p>Let's set up your Stripe Connect Marketplace and get everything ready.</p>
+      
+      <!-- Step 2: Platform Settings -->
+      <div class="onboarding-step" id="step-2">
+        <h2 class="step-title">Platform Settings</h2>
+        <p class="step-description">Configure your marketplace platform details.</p>
+        
+        <div class="form-group">
+          <label for="platform-name">Platform Name</label>
+          <input type="text" id="platform-name" placeholder="e.g., Artisan Marketplace">
+          <span class="help-text">This will appear in receipts and communications to customers.</span>
         </div>
         
-        <div class="step-indicator">
-          <div class="step active" data-step="1">1</div>
-          <div class="step" data-step="2">2</div>
-          <div class="step" data-step="3">3</div>
-          <div class="step" data-step="4">4</div>
+        <div class="form-group">
+          <label for="platform-description">Platform Description</label>
+          <textarea id="platform-description" rows="3" placeholder="e.g., A marketplace connecting artisans with customers worldwide."></textarea>
         </div>
         
-        <div class="step-content">
-          <div id="step1" class="step-panel">
-            <h2 class="step-title">Welcome to Your Marketplace</h2>
-            <p class="step-description">This wizard will guide you through setting up your Stripe Connect Marketplace. As an admin, you'll be able to:</p>
-            <ul>
-              <li>Manage vendors and approve their applications</li>
-              <li>Oversee products and feature top products</li>
-              <li>Monitor transactions and platform revenue</li>
-              <li>Configure platform settings like commission rates</li>
-            </ul>
-            <img src="/img/admin-dashboard.svg" alt="Admin Dashboard" class="welcome-image">
-            <div class="step-actions">
-              <div></div>
-              <button class="btn primary next-step" data-next="2">Get Started</button>
-            </div>
+        <div class="form-group">
+          <label>Platform Features</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="feature-products" checked>
+            <label for="feature-products">Product Listings</label>
           </div>
-          
-          <div id="step2" class="step-panel" style="display: none;">
-            <h2 class="step-title">Platform Settings</h2>
-            <p class="step-description">Configure the basic settings for your marketplace:</p>
+          <div class="checkbox-group">
+            <input type="checkbox" id="feature-services">
+            <label for="feature-services">Service Bookings</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="feature-subscriptions">
+            <label for="feature-subscriptions">Subscription Products</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="feature-digital">
+            <label for="feature-digital">Digital Products</label>
+          </div>
+        </div>
+        
+        <div class="onboarding-actions">
+          <button class="btn-back" id="back-2">Back</button>
+          <button class="btn-next" id="next-2">Continue</button>
+        </div>
+      </div>
+      
+      <!-- Step 3: Stripe Connect Configuration -->
+      <div class="onboarding-step" id="step-3">
+        <h2 class="step-title">Stripe Connect Configuration</h2>
+        <p class="step-description">Configure how vendors receive payments through Stripe Connect.</p>
+        
+        <div class="connect-config">
+          <div class="account-type">
+            <h4>Connect Account Type</h4>
+            <p>Choose how vendors will connect their Stripe accounts to your platform.</p>
             
             <div class="form-group">
-              <label for="platform-name">Platform Name</label>
-              <input type="text" id="platform-name" name="platform-name" value="Stripe Connect Marketplace" required>
-            </div>
-            
-            <div class="form-group">
-              <label for="commission-rate">Default Commission Rate (%)</label>
-              <input type="number" id="commission-rate" name="commission-rate" min="0" max="100" step="0.5" value="10" required>
-              <p class="help-text">This is the percentage your platform will retain from each transaction.</p>
-            </div>
-            
-            <div class="form-group">
-              <label for="automatic-payouts">Automatic Vendor Payouts</label>
-              <select id="automatic-payouts" name="automatic-payouts">
-                <option value="instant">Instant (after order completion)</option>
-                <option value="daily" selected>Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
+              <select id="connect-type">
+                <option value="standard">Standard (vendors manage their own Stripe accounts)</option>
+                <option value="express">Express (simplified onboarding for vendors)</option>
+                <option value="custom">Custom (full white-labeled experience)</option>
               </select>
-            </div>
-            
-            <div class="step-actions">
-              <button class="btn secondary prev-step" data-prev="1">Previous</button>
-              <button class="btn primary next-step" data-next="3">Continue</button>
+              <span class="help-text">Learn more about <a href="https://stripe.com/connect/account-types" target="_blank">Stripe Connect account types</a></span>
             </div>
           </div>
           
-          <div id="step3" class="step-panel" style="display: none;">
-            <h2 class="step-title">Stripe Connect Configuration</h2>
-            <p class="step-description">Configure your Stripe Connect integration for processing payments and managing vendors. This is how vendors will receive payments and how your platform will collect commissions.</p>
-            
-            <div class="setting-card">
-              <h3>Connect Account Types</h3>
-              <div class="form-group">
-                <label>
-                  <input type="radio" name="account-type" value="standard" checked>
-                  Standard (simplest)
-                </label>
-                <p class="help-text">Stripe handles user verification and compliance. Limited customization.</p>
-              </div>
-              <div class="form-group">
-                <label>
-                  <input type="radio" name="account-type" value="express">
-                  Express (balanced)
-                </label>
-                <p class="help-text">Stripe-hosted onboarding with your branding. Good balance of simplicity and customization.</p>
-              </div>
-              <div class="form-group">
-                <label>
-                  <input type="radio" name="account-type" value="custom">
-                  Custom (advanced)
-                </label>
-                <p class="help-text">Fully white-labeled experience. Most complex to implement but highest flexibility.</p>
-              </div>
+          <div class="form-group">
+            <label for="commission-rate">Platform Commission Rate</label>
+            <div class="commission-value"><span id="commission-value">10</span>%</div>
+            <input type="range" id="commission-rate" class="commission-slider" min="0" max="30" step="0.5" value="10">
+            <div class="min-max">
+              <span>0%</span>
+              <span>30%</span>
             </div>
-            
-            <div class="step-actions">
-              <button class="btn secondary prev-step" data-prev="2">Previous</button>
-              <button class="btn primary next-step" data-next="4">Continue</button>
-            </div>
+            <span class="help-text">This is the percentage your platform takes from each transaction.</span>
           </div>
           
-          <div id="step4" class="step-panel" style="display: none;">
-            <h2 class="step-title">Complete Setup</h2>
-            <p class="step-description">Your Stripe Connect Marketplace is almost ready! Here's a summary of your settings:</p>
-            
-            <div class="setting-card">
-              <h3>Platform Settings</h3>
-              <p><strong>Platform Name:</strong> <span id="summary-platform-name">Stripe Connect Marketplace</span></p>
-              <p><strong>Commission Rate:</strong> <span id="summary-commission-rate">10%</span></p>
-              <p><strong>Automatic Payouts:</strong> <span id="summary-automatic-payouts">Daily</span></p>
-            </div>
-            
-            <div class="setting-card">
-              <h3>Connect Account Type</h3>
-              <p><strong>Selected Type:</strong> <span id="summary-account-type">Standard</span></p>
-            </div>
-            
-            <div class="step-actions">
-              <button class="btn secondary prev-step" data-prev="3">Previous</button>
-              <button class="btn primary complete-onboarding">Complete Setup</button>
-            </div>
-          </div>
-          
-          <div id="onboarding-complete" class="step-panel" style="display: none;">
-            <div class="onboarding-complete">
-              <img src="/img/check-circle.svg" alt="Complete">
-              <h2>Setup Complete!</h2>
-              <p>Your Stripe Connect Marketplace is now ready.</p>
-              <a href="/admin/dashboard" class="btn primary">Go to Admin Dashboard</a>
-            </div>
+          <div class="form-group">
+            <label for="payout-schedule">Vendor Payout Schedule</label>
+            <select id="payout-schedule">
+              <option value="instant">Instant (immediate payouts)</option>
+              <option value="daily" selected>Daily (standard for most marketplaces)</option>
+              <option value="weekly">Weekly (every Monday)</option>
+              <option value="monthly">Monthly (first of each month)</option>
+            </select>
           </div>
         </div>
-      </div>
-    </main>
-
-    <footer>
-      <div class="container">
-        <p>&copy; 2025 Stripe Connect Marketplace. All rights reserved.</p>
-        <div class="footer-links">
-          <a href="/about">About</a>
-          <a href="/terms">Terms</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/contact">Contact</a>
+        
+        <div class="stripe-notice">
+          <span>Powered by</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe Logo">
+        </div>
+        
+        <div class="onboarding-actions">
+          <button class="btn-back" id="back-3">Back</button>
+          <button class="btn-next" id="next-3">Continue</button>
         </div>
       </div>
-    </footer>
+      
+      <!-- Step 4: Completion -->
+      <div class="onboarding-step" id="step-4">
+        <div class="step-complete-image">
+          <div class="setup-complete-icon">✅</div>
+        </div>
+        
+        <div class="completion-message">
+          <h3>Setup Complete!</h3>
+          <p>Your Stripe Connect marketplace platform is now configured and ready to go.</p>
+        </div>
+        
+        <div class="form-group">
+          <p>What's next:</p>
+          <ul>
+            <li>Start adding products to your marketplace</li>
+            <li>Invite vendors to create accounts and list their products</li>
+            <li>Customize your storefront appearance</li>
+            <li>Configure additional payment settings in the admin dashboard</li>
+          </ul>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="/admin/dashboard" class="btn-next">Go to Dashboard</a>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <script src="/js/app.js"></script>
+  
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Check if user is authenticated and is admin
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if user is authenticated and is an admin
       const token = localStorage.getItem('authToken');
+      
       if (!token) {
         window.location.href = '/login?redirect=/admin/onboarding';
         return;
       }
       
-      // Onboarding step navigation
-      const stepPanels = document.querySelectorAll('.step-panel');
-      const stepIndicators = document.querySelectorAll('.step');
+      // Verify admin role
+      fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success || data.user.role !== 'admin') {
+          window.location.href = '/login?redirect=/admin/onboarding';
+        }
+      })
+      .catch(error => {
+        console.error('Authentication error:', error);
+        window.location.href = '/login?redirect=/admin/onboarding';
+      });
       
-      function showStep(stepNumber) {
-        // Hide all panels
-        stepPanels.forEach(panel => {
-          panel.style.display = 'none';
+      // Current step tracker
+      let currentStep = 1;
+      
+      // Step navigation buttons
+      document.getElementById('next-1').addEventListener('click', () => goToStep(2));
+      document.getElementById('back-2').addEventListener('click', () => goToStep(1));
+      document.getElementById('next-2').addEventListener('click', () => goToStep(3));
+      document.getElementById('back-3').addEventListener('click', () => goToStep(2));
+      document.getElementById('next-3').addEventListener('click', () => goToStep(4));
+      document.getElementById('skip-onboarding').addEventListener('click', () => {
+        window.location.href = '/admin/dashboard';
+      });
+      
+      // Commission slider
+      const commissionSlider = document.getElementById('commission-rate');
+      const commissionValue = document.getElementById('commission-value');
+      
+      commissionSlider.addEventListener('input', function() {
+        commissionValue.textContent = this.value;
+      });
+      
+      // Handle step navigation
+      function goToStep(step) {
+        // Hide all steps
+        document.querySelectorAll('.onboarding-step').forEach(stepEl => {
+          stepEl.classList.remove('active');
         });
         
-        // Show target panel
-        const targetPanel = document.getElementById(`step${stepNumber}`);
-        if (targetPanel) {
-          targetPanel.style.display = 'block';
-        }
+        // Show the target step
+        document.getElementById(`step-${step}`).classList.add('active');
         
-        // Update step indicators
-        stepIndicators.forEach(indicator => {
-          const step = parseInt(indicator.getAttribute('data-step'));
+        // Update progress indicators
+        document.querySelectorAll('.progress-step').forEach(progressStep => {
+          const stepNumber = parseInt(progressStep.getAttribute('data-step'));
+          progressStep.classList.remove('active', 'completed');
           
-          if (step < stepNumber) {
-            indicator.classList.remove('active');
-            indicator.classList.add('completed');
-          } else if (step === stepNumber) {
-            indicator.classList.remove('completed');
-            indicator.classList.add('active');
-          } else {
-            indicator.classList.remove('active', 'completed');
+          if (stepNumber === step) {
+            progressStep.classList.add('active');
+          } else if (stepNumber < step) {
+            progressStep.classList.add('completed');
           }
         });
-      }
-      
-      // Next button click handlers
-      document.querySelectorAll('.next-step').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const nextStep = parseInt(e.target.getAttribute('data-next'));
-          if (nextStep === 4) {
-            // Update summary for step 4
-            updateSummary();
-          }
-          showStep(nextStep);
-        });
-      });
-      
-      // Previous button click handlers
-      document.querySelectorAll('.prev-step').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const prevStep = parseInt(e.target.getAttribute('data-prev'));
-          showStep(prevStep);
-        });
-      });
-      
-      // Complete onboarding handler
-      document.querySelector('.complete-onboarding').addEventListener('click', async () => {
-        try {
-          // Get settings values
-          const platformName = document.getElementById('platform-name').value;
-          const commissionRate = document.getElementById('commission-rate').value;
-          const payoutSchedule = document.getElementById('automatic-payouts').value;
-          const accountType = document.querySelector('input[name="account-type"]:checked').value;
-          
-          // Save platform settings via API
-          await saveSettings({
-            platformName,
-            commissionRate: parseFloat(commissionRate),
-            payoutSchedule,
-            accountType
-          });
-          
-          // Show completion screen
-          stepPanels.forEach(panel => {
-            panel.style.display = 'none';
-          });
-          document.getElementById('onboarding-complete').style.display = 'block';
-          
-          // Update step indicators
-          stepIndicators.forEach(indicator => {
-            indicator.classList.remove('active');
-            indicator.classList.add('completed');
-          });
-        } catch (error) {
-          console.error('Error saving settings:', error);
-          alert('There was an error saving your settings. Please try again.');
+        
+        // Update current step tracker
+        currentStep = step;
+        
+        // If we reached the final step, save all settings
+        if (step === 4) {
+          saveSettings();
         }
-      });
-      
-      // Update summary based on form values
-      function updateSummary() {
-        document.getElementById('summary-platform-name').textContent = document.getElementById('platform-name').value;
-        document.getElementById('summary-commission-rate').textContent = document.getElementById('commission-rate').value + '%';
-        
-        const payoutSelect = document.getElementById('automatic-payouts');
-        document.getElementById('summary-automatic-payouts').textContent = payoutSelect.options[payoutSelect.selectedIndex].text;
-        
-        const accountType = document.querySelector('input[name="account-type"]:checked').value;
-        document.getElementById('summary-account-type').textContent = accountType.charAt(0).toUpperCase() + accountType.slice(1);
       }
       
-      // Save settings to API
-      async function saveSettings(settings) {
-        // First update commission rate
-        await fetch('/api/admin/commission', {
+      // Save settings to the server (this would be implemented in a real app)
+      function saveSettings() {
+        const settings = {
+          platformName: document.getElementById('platform-name').value || 'Stripe Connect Marketplace',
+          platformDescription: document.getElementById('platform-description').value || 'A marketplace powered by Stripe Connect',
+          features: {
+            products: document.getElementById('feature-products').checked,
+            services: document.getElementById('feature-services').checked,
+            subscriptions: document.getElementById('feature-subscriptions').checked,
+            digital: document.getElementById('feature-digital').checked
+          },
+          connect: {
+            accountType: document.getElementById('connect-type').value,
+            commissionRate: document.getElementById('commission-rate').value,
+            payoutSchedule: document.getElementById('payout-schedule').value
+          }
+        };
+        
+        // Save commission rate to the server
+        fetch('/api/admin/commission', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ rate: settings.commissionRate })
+          body: JSON.stringify({ rate: parseFloat(settings.connect.commissionRate) })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Commission rate saved:', data);
+        })
+        .catch(error => {
+          console.error('Error saving commission rate:', error);
         });
         
-        // Store other settings in local storage for now
-        // In a real implementation, these would be saved to the database
-        localStorage.setItem('platformSettings', JSON.stringify(settings));
-        
-        // Simulated API delay for demonstration
-        return new Promise(resolve => setTimeout(resolve, 1000));
+        // In a real application, more settings would be saved to the server
+        console.log('Settings saved:', settings);
       }
-      
-      // Logout button handler
-      document.getElementById('logout-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('authToken');
-        window.location.href = '/login';
-      });
     });
   </script>
 </body>
