@@ -8,11 +8,71 @@
 // Set up global variables needed by React Native
 global.__DEV__ = true;
 
-// Set up common mocks for React Native environment
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
-
-// Set up any additional React Native mocks as needed
-jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
+// Mock critical React Native modules without using specific paths
+jest.mock('react-native', () => {
+  const reactNative = {
+    // Core components
+    View: 'View',
+    Text: 'Text',
+    TextInput: 'TextInput',
+    Image: 'Image',
+    TouchableOpacity: 'TouchableOpacity',
+    Pressable: 'Pressable',
+    ScrollView: 'ScrollView',
+    FlatList: 'FlatList',
+    SafeAreaView: 'SafeAreaView',
+    ActivityIndicator: 'ActivityIndicator',
+    
+    // APIs
+    StyleSheet: {
+      create: (styles) => styles,
+      flatten: jest.fn((style) => style),
+    },
+    Platform: {
+      OS: 'ios',
+      select: jest.fn(obj => obj.ios || obj.default),
+    },
+    Dimensions: {
+      get: jest.fn().mockReturnValue({width: 375, height: 667}),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    },
+    Animated: {
+      Value: jest.fn(() => ({
+        interpolate: jest.fn(),
+        setValue: jest.fn(),
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      })),
+      timing: jest.fn(() => ({
+        start: jest.fn(cb => cb && cb({ finished: true })),
+      })),
+      spring: jest.fn(() => ({
+        start: jest.fn(cb => cb && cb({ finished: true })),
+      })),
+      sequence: jest.fn(() => ({
+        start: jest.fn(),
+      })),
+      parallel: jest.fn(() => ({
+        start: jest.fn(),
+      })),
+      View: 'Animated.View',
+      Text: 'Animated.Text',
+      createAnimatedComponent: jest.fn(component => component),
+    },
+    
+    // Native modules and UI
+    UIManager: {
+      measureInWindow: jest.fn(),
+      measure: jest.fn(),
+      measureLayout: jest.fn(),
+    },
+    NativeModules: {},
+    requireNativeComponent: jest.fn(() => 'NativeComponent'),
+  };
+  
+  return reactNative;
+});
 
 // Set up ResizeObserver mock (required for some React Native components)
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
