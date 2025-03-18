@@ -5,15 +5,12 @@
  */
 
 const axios = require('axios');
-const crypto = require('crypto');
 const { config, createAuthenticatedClient } = require('./testRunner');
 
-// Cache for test users, tokens, etc.
-const testCache = {
-  users: {},
-  tokens: {},
+// Store test data for cleanup
+const testData = {
+  users: [],
   products: [],
-  vendors: [],
   orders: []
 };
 
@@ -22,23 +19,23 @@ const testCache = {
  * @param {string} type - Type of data to generate (email, name, etc.)
  * @returns {string} - Random data
  */
-const generateRandomData = (type) => {
+exports.generateRandomData = (type) => {
   const timestamp = Date.now();
-  const randomString = crypto.randomBytes(8).toString('hex');
+  const random = Math.floor(Math.random() * 10000);
   
   switch (type) {
     case 'email':
-      return `test-${randomString}@test.com`;
-    case 'name':
-      return `Test User ${randomString.substring(0, 6)}`;
-    case 'businessName':
-      return `Test Business ${randomString.substring(0, 6)}`;
-    case 'productName':
-      return `Test Product ${randomString.substring(0, 6)}`;
+      return `test_${timestamp}_${random}@example.com`;
     case 'password':
-      return `Password${randomString.substring(0, 8)}!`;
+      return `Password${random}!`;
+    case 'name':
+      return `Test User ${timestamp}`;
+    case 'productName':
+      return `Test Product ${timestamp}`;
+    case 'businessName':
+      return `Test Business ${timestamp}`;
     default:
-      return randomString;
+      return `test_${timestamp}_${random}`;
   }
 };
 
@@ -47,32 +44,30 @@ const generateRandomData = (type) => {
  * @param {string} role - User role (admin, vendor, customer)
  * @returns {Object} - Created user and token
  */
-const createTestUser = async (role = 'customer') => {
+exports.createTestUser = async (role) => {
+  // Test data
   const userData = {
-    email: generateRandomData('email'),
-    password: generateRandomData('password'),
-    name: generateRandomData('name'),
+    email: exports.generateRandomData('email'),
+    password: exports.generateRandomData('password'),
+    name: exports.generateRandomData('name'),
     role: role
   };
   
+  // Add business name for vendors
   if (role === 'vendor') {
-    userData.businessName = generateRandomData('businessName');
+    userData.businessName = exports.generateRandomData('businessName');
   }
   
-  try {
-    const response = await axios.post(`${config.apiBaseUrl}/api/auth/register`, userData);
-    
-    const { user, token } = response.data;
-    
-    // Cache the user and token
-    testCache.users[user.id] = user;
-    testCache.tokens[user.id] = token;
-    
-    return { user, token };
-  } catch (error) {
-    console.error('Failed to create test user:', error.message);
-    throw error;
-  }
+  // Register a new user
+  const response = await axios.post(`${config.apiBaseUrl}/api/auth/register`, userData);
+  
+  // Save for cleanup
+  testData.users.push(response.data.user);
+  
+  return {
+    user: response.data.user,
+    token: response.data.token
+  };
 };
 
 /**
@@ -81,24 +76,16 @@ const createTestUser = async (role = 'customer') => {
  * @param {string} password - User password
  * @returns {Object} - User and token
  */
-const loginUser = async (email, password) => {
-  try {
-    const response = await axios.post(`${config.apiBaseUrl}/api/auth/login`, {
-      email,
-      password
-    });
-    
-    const { user, token } = response.data;
-    
-    // Cache the user and token
-    testCache.users[user.id] = user;
-    testCache.tokens[user.id] = token;
-    
-    return { user, token };
-  } catch (error) {
-    console.error('Failed to login user:', error.message);
-    throw error;
-  }
+exports.loginUser = async (email, password) => {
+  const response = await axios.post(`${config.apiBaseUrl}/api/auth/login`, {
+    email,
+    password
+  });
+  
+  return {
+    user: response.data.user,
+    token: response.data.token
+  };
 };
 
 /**
@@ -107,26 +94,21 @@ const loginUser = async (email, password) => {
  * @param {string} token - Vendor authentication token
  * @returns {Object} - Created product
  */
-const createTestProduct = async (vendorId, token) => {
+exports.createTestProduct = async (vendorId, token) => {
   const productData = {
-    name: generateRandomData('productName'),
-    description: 'This is a test product description',
+    name: exports.generateRandomData('productName'),
+    description: 'Test product description',
     price: (Math.random() * 100 + 5).toFixed(2),
     image_url: 'https://via.placeholder.com/300'
   };
   
-  try {
-    const client = createAuthenticatedClient(token);
-    const response = await client.post('/api/products', productData);
-    
-    const product = response.data.product;
-    testCache.products.push(product);
-    
-    return product;
-  } catch (error) {
-    console.error('Failed to create test product:', error.message);
-    throw error;
-  }
+  const client = createAuthenticatedClient(token);
+  const response = await client.post('/api/products', productData);
+  
+  // Save for cleanup
+  testData.products.push(response.data.product);
+  
+  return response.data.product;
 };
 
 /**
@@ -136,45 +118,43 @@ const createTestProduct = async (vendorId, token) => {
  * @param {Object} product - Product object
  * @returns {Object} - Created order
  */
-const createTestOrder = async (customer, customerToken, product) => {
-  try {
-    const client = createAuthenticatedClient(customerToken);
-    
-    // Create payment intent
-    const paymentResponse = await client.post('/api/payments/create-payment-intent', {
-      productId: product.id,
-      quantity: 1
-    });
-    
-    const { orderId, clientSecret } = paymentResponse.data;
-    
-    // In a real test, we'd simulate confirming the payment with Stripe
-    // For testing, we'll just get the order details
-    const orderResponse = await client.get(`/api/payments/orders/${orderId}`);
-    
-    const order = orderResponse.data.order;
-    testCache.orders.push(order);
-    
-    return { order, clientSecret };
-  } catch (error) {
-    console.error('Failed to create test order:', error.message);
-    throw error;
-  }
+exports.createTestOrder = async (customer, customerToken, product) => {
+  const client = createAuthenticatedClient(customerToken);
+  
+  // Create payment intent
+  const paymentResponse = await client.post('/api/payments/create-payment-intent', {
+    productId: product.id,
+    quantity: 1
+  });
+  
+  const { orderId } = paymentResponse.data;
+  
+  // Get order details
+  const orderResponse = await client.get(`/api/payments/orders/${orderId}`);
+  const order = orderResponse.data.order;
+  
+  // Save for cleanup
+  testData.orders.push(order);
+  
+  return order;
 };
 
 /**
  * Clean up test data after tests
  */
-const cleanupTestData = async () => {
-  // In a real implementation, you would delete test data from the database
-  // For now, we'll just clear the cache
-  Object.keys(testCache).forEach(key => {
-    if (Array.isArray(testCache[key])) {
-      testCache[key] = [];
-    } else {
-      testCache[key] = {};
-    }
-  });
+exports.cleanupTestData = async () => {
+  // In a real test environment with a real database, 
+  // you would clean up test data here.
+  // For now, we just log what would be cleaned up.
+  
+  console.log(`Would clean up ${testData.users.length} test users`);
+  console.log(`Would clean up ${testData.products.length} test products`);
+  console.log(`Would clean up ${testData.orders.length} test orders`);
+  
+  // Reset test data
+  testData.users = [];
+  testData.products = [];
+  testData.orders = [];
 };
 
 /**
@@ -182,26 +162,23 @@ const cleanupTestData = async () => {
  * @param {string} url - URL to check
  * @returns {Promise<Object>} - Page load result
  */
-const checkPageRendering = async (url) => {
+exports.checkPageRendering = async (url) => {
   try {
+    const startTime = Date.now();
     const response = await axios.get(url);
+    const loadTime = Date.now() - startTime;
+    
     return {
-      statusCode: response.status,
-      contentType: response.headers['content-type'],
-      hasContent: response.data && response.data.length > 0
+      success: true,
+      status: response.status,
+      loadTime,
+      contentType: response.headers['content-type']
     };
   } catch (error) {
-    throw new Error(`Failed to load page ${url}: ${error.message}`);
+    return {
+      success: false,
+      error: error.message,
+      status: error.response ? error.response.status : 'unknown'
+    };
   }
-};
-
-module.exports = {
-  generateRandomData,
-  createTestUser,
-  loginUser,
-  createTestProduct,
-  createTestOrder,
-  cleanupTestData,
-  checkPageRendering,
-  testCache
 };

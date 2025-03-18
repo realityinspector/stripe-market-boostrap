@@ -1,0 +1,65 @@
+===============================================
+           TEST EXECUTION REPORT               
+===============================================
+
+Report generated: 3/18/2025, 9:17:44 AM
+
+=============== SUMMARY ========================
+
+Total Tests: 18
+Passed Tests: 11
+Failed Tests: 7
+Success Rate: 61%
+
+Category Results:
+  API: 7/10 passed (70%)
+  E2E: 0/3 passed (0%)
+  FRONTEND: 4/5 passed (80%)
+
+================ FAILURES =====================
+
+API Failures:
+  - authEndpoints.test.js - testAuthenticatedRoute
+    Error: Expected 401 status, got 403
+    Duration: 180ms
+
+  - productEndpoints.test.js - testProductDeactivation
+    Error: Request failed with status code 404
+    Duration: 11ms
+
+  - productEndpoints.test.js - testVendorProductListing
+    Error: Request failed with status code 500
+    Duration: 38ms
+
+E2E Failures:
+  - paymentFlow.test.js - testPaymentFlow
+    Error: Request failed with status code 400
+    Duration: 661ms
+
+  - paymentFlow.test.js - testCustomerOrderHistory
+    Error: Request failed with status code 400
+    Duration: 469ms
+
+  - paymentFlow.test.js - testVendorOrderManagement
+    Error: Request failed with status code 400
+    Duration: 462ms
+
+FRONTEND Failures:
+  - pageRendering.test.js - testApiCorsHeaders
+    Error: CORS test failed for Login API Endpoint: CORS header "access-control-allow-headers" missing for Login API Endpoint
+    Duration: 1ms
+
+============== PERFORMANCE ====================
+
+API Performance:
+  Average duration: 128ms
+  Slowest test: authEndpoints.test.js - testUserLogin (277ms)
+
+E2E Performance:
+  Average duration: 531ms
+  Slowest test: paymentFlow.test.js - testPaymentFlow (661ms)
+
+FRONTEND Performance:
+  Average duration: 2ms
+  Slowest test: pageRendering.test.js - testApiResponseTimes (5ms)
+

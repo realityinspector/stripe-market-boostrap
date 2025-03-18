@@ -1,0 +1,283 @@
+{
+  "timestamp": "2025-03-18T09:17:19.627Z",
+  "summary": {
+    "totalTests": 18,
+    "passedTests": 11,
+    "failedTests": 7,
+    "successRate": 61,
+    "categories": {
+      "api": {
+        "total": 10,
+        "passed": 7,
+        "failed": 3,
+        "successRate": 70
+      },
+      "e2e": {
+        "total": 3,
+        "passed": 0,
+        "failed": 3,
+        "successRate": 0
+      },
+      "frontend": {
+        "total": 5,
+        "passed": 4,
+        "failed": 1,
+        "successRate": 80
+      }
+    }
+  },
+  "details": {
+    "api": [
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "success": true,
+        "duration": 948,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "User registered successfully",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0XzE3NDIyODk0MzM5MjdfODM2N0BleGFtcGxlLmNvbSIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc0MjI4OTQzNCwiZXhwIjoxNzQyMzc1ODM0fQ.qJrRfUUjlQvW279cyxsK3PeOgPysOyqaJyWfO40M85k",
+          "user": {
+            "id": 1,
+            "email": "test_1742289433927_8367@example.com",
+            "name": "Test User 1742289433927",
+            "role": "customer"
+          }
+        },
+        "timestamp": "2025-03-18T09:17:14.875Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "success": true,
+        "duration": 204,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "User registered successfully",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0XzE3NDIyODk0MzQ4NzVfODU3OUBleGFtcGxlLmNvbSIsInJvbGUiOiJ2ZW5kb3IiLCJpYXQiOjE3NDIyODk0MzUsImV4cCI6MTc0MjM3NTgzNX0.fw20MKbGqkWyNTS032j0ENCvlqnOk0uvL0mKVbRjZ8k",
+          "user": {
+            "id": 2,
+            "email": "test_1742289434875_8579@example.com",
+            "name": "Test User 1742289434875",
+            "role": "vendor"
+          }
+        },
+        "timestamp": "2025-03-18T09:17:15.079Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "success": true,
+        "duration": 297,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "Login successful",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0XzE3NDIyODk0MzUwNzlfMTE1MEBleGFtcGxlLmNvbSIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc0MjI4OTQzNSwiZXhwIjoxNzQyMzc1ODM1fQ.SWzVrvuFlJBR0GhbxHGbrswGRrIjAEywFGpnzf3R5WA",
+          "user": {
+            "id": 3,
+            "email": "test_1742289435079_1150@example.com",
+            "name": "Test User 1742289435079",
+            "role": "customer",
+            "vendor": null
+          }
+        },
+        "timestamp": "2025-03-18T09:17:15.376Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthenticatedRoute",
+        "success": false,
+        "duration": 192,
+        "error": "Expected 401 status, got 403",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:15.568Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "success": true,
+        "duration": 263,
+        "error": null,
+        "result": {
+          "id": 1,
+          "vendor_id": 2,
+          "name": "Test Product 1742289435766",
+          "description": "Test product description",
+          "price": "47.74",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:17:15.812Z"
+        },
+        "timestamp": "2025-03-18T09:17:15.833Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "success": true,
+        "duration": 35,
+        "error": null,
+        "result": [
+          {
+            "id": 1,
+            "vendor_id": 2,
+            "name": "Test Product 1742289435766",
+            "description": "Test product description",
+            "price": "47.74",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:15.812Z",
+            "vendor_name": "Test Business 1742289435570"
+          }
+        ],
+        "timestamp": "2025-03-18T09:17:15.868Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "success": true,
+        "duration": 31,
+        "error": null,
+        "result": {
+          "id": 1,
+          "vendor_id": 2,
+          "name": "Test Product 1742289435766",
+          "description": "Test product description",
+          "price": "47.74",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:17:15.812Z",
+          "vendor_name": "Test Business 1742289435570"
+        },
+        "timestamp": "2025-03-18T09:17:15.900Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "success": true,
+        "duration": 99,
+        "error": null,
+        "result": {
+          "id": 1,
+          "vendor_id": 2,
+          "name": "Updated Test Product 1742289435900",
+          "description": "Updated test product description",
+          "price": "31.28",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:17:15.812Z"
+        },
+        "timestamp": "2025-03-18T09:17:15.999Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "success": false,
+        "duration": 7,
+        "error": "Request failed with status code 404",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:16.006Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "success": false,
+        "duration": 37,
+        "error": "Request failed with status code 500",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:16.043Z"
+      }
+    ],
+    "e2e": [
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "success": false,
+        "duration": 2649,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:18.694Z"
+      },
+      {
+        "name": "paymentFlow.test.js - testCustomerOrderHistory",
+        "success": false,
+        "duration": 454,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:19.148Z"
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrderManagement",
+        "success": false,
+        "duration": 462,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:19.610Z"
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "success": true,
+        "duration": 2,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:17:19.613Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "success": true,
+        "duration": 9,
+        "error": null,
+        "result": [
+          {
+            "page": "Home Page",
+            "path": "/",
+            "status": 200,
+            "responseTime": 3.414338999999927
+          },
+          {
+            "page": "Login API Endpoint",
+            "path": "/api/auth/login",
+            "status": 204,
+            "responseTime": 2.454189999999471
+          },
+          {
+            "page": "Register API Endpoint",
+            "path": "/api/auth/register",
+            "status": 204,
+            "responseTime": 1.0983289999994668
+          },
+          {
+            "page": "Vendors API Endpoint",
+            "path": "/api/vendors",
+            "status": 204,
+            "responseTime": 0.9866790000005494
+          },
+          {
+            "page": "Products API Endpoint",
+            "path": "/api/products",
+            "status": 204,
+            "responseTime": 0.8374099999991813
+          }
+        ],
+        "timestamp": "2025-03-18T09:17:19.622Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "success": false,
+        "duration": 2,
+        "error": "CORS test failed for Login API Endpoint: CORS header \"access-control-allow-headers\" missing for Login API Endpoint",
+        "result": null,
+        "timestamp": "2025-03-18T09:17:19.624Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "success": true,
+        "duration": 1,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:17:19.625Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "success": true,
+        "duration": 2,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:17:19.627Z"
+      }
+    ]
+  }
+}

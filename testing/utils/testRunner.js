@@ -7,21 +7,14 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const { performance } = require('perf_hooks');
 const { generateReport } = require('./reportGenerator');
 
-// Configuration
-const config = {
-  apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8000',
-  mobileBaseUrl: process.env.MOBILE_BASE_URL || 'http://localhost:19006',
+// Test configuration
+exports.config = {
+  apiBaseUrl: process.env.API_URL || 'http://localhost:8000',
+  reportOutputDir: path.join(__dirname, '../reports'),
   testTimeout: 30000, // 30 seconds
-  reportDir: path.join(__dirname, '../reports')
 };
-
-// Ensure report directory exists
-if (!fs.existsSync(config.reportDir)) {
-  fs.mkdirSync(config.reportDir, { recursive: true });
-}
 
 /**
  * Run a test and collect results
@@ -29,107 +22,163 @@ if (!fs.existsSync(config.reportDir)) {
  * @param {string} testName - Name of the test
  * @returns {Object} - Test result details
  */
-const runTest = async (testFn, testName) => {
+async function runTest(testFn, testName) {
   console.log(`Running test: ${testName}`);
   
-  const startTime = performance.now();
-  const result = {
-    name: testName,
-    success: false,
-    error: null,
-    duration: 0,
-    timestamp: new Date().toISOString()
-  };
-
+  const startTime = Date.now();
+  let success = false;
+  let error = null;
+  let result = null;
+  
   try {
-    await Promise.race([
+    // Set a timeout for the test
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`Test timed out after ${exports.config.testTimeout}ms`)), 
+        exports.config.testTimeout);
+    });
+    
+    // Run the test with a timeout
+    result = await Promise.race([
       testFn(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Test timeout')), config.testTimeout)
-      )
+      timeoutPromise
     ]);
     
-    result.success = true;
-  } catch (error) {
-    result.success = false;
-    result.error = {
-      message: error.message,
-      stack: error.stack
-    };
-    console.error(`Test failed: ${testName}`, error.message);
+    success = true;
+  } catch (err) {
+    error = err;
+    console.error(`Test failed: ${testName}`, err);
   }
-
-  result.duration = (performance.now() - startTime).toFixed(2);
-  return result;
-};
+  
+  const endTime = Date.now();
+  const duration = endTime - startTime;
+  
+  return {
+    name: testName,
+    success,
+    duration,
+    error: error ? error.message : null,
+    result: success ? result : null,
+    timestamp: new Date().toISOString(),
+  };
+}
 
 /**
  * Run all tests in a directory
  * @param {string} testDir - Path to directory containing test files
  * @returns {Array} - Array of test results
  */
-const runTestsInDirectory = async (testDir) => {
+async function runTestsInDirectory(testDir) {
   const results = [];
-  const fullPath = path.join(__dirname, '..', testDir);
   
   try {
-    const files = fs.readdirSync(fullPath)
-      .filter(file => file.endsWith('.js') || file.endsWith('.mjs'));
+    // Check if directory exists
+    if (!fs.existsSync(testDir)) {
+      console.warn(`Test directory does not exist: ${testDir}`);
+      return results;
+    }
     
-    for (const file of files) {
-      const testModule = require(path.join(fullPath, file));
-      const testFunctions = Object.entries(testModule)
-        .filter(([key, value]) => key.startsWith('test') && typeof value === 'function');
+    // Get all JS files in the directory
+    const testFiles = fs.readdirSync(testDir)
+      .filter(file => file.endsWith('.test.js'));
+    
+    // Run each test file
+    for (const file of testFiles) {
+      console.log(`\nRunning tests in file: ${file}`);
       
-      for (const [testName, testFn] of testFunctions) {
-        const result = await runTest(testFn, `${file}:${testName}`);
-        results.push(result);
+      // Import the test file
+      const testPath = path.join(testDir, file);
+      const testModule = require(testPath);
+      
+      // Run each test function in the file
+      for (const [fnName, testFn] of Object.entries(testModule)) {
+        // Skip non-functions and the cleanup function
+        if (typeof testFn !== 'function' || fnName === 'cleanup') {
+          continue;
+        }
+        
+        // Run the test
+        const testResult = await runTest(testFn, `${file} - ${fnName}`);
+        results.push(testResult);
+      }
+      
+      // Run cleanup if it exists
+      if (typeof testModule.cleanup === 'function') {
+        console.log(`Running cleanup for ${file}...`);
+        await testModule.cleanup();
       }
     }
   } catch (error) {
-    console.error(`Error running tests in ${testDir}:`, error);
+    console.error('Error running tests:', error);
   }
   
   return results;
-};
+}
 
 /**
  * Run all tests and generate reports
  */
-const runAllTests = async () => {
+exports.runAllTests = async () => {
   console.log('Starting test run...');
-  const testCategories = ['api', 'e2e', 'frontend'];
-  const allResults = {};
+  const allResults = {
+    api: [],
+    e2e: [],
+    frontend: [],
+  };
   
-  for (const category of testCategories) {
-    console.log(`\n==== Running ${category} tests ====`);
-    allResults[category] = await runTestsInDirectory(category);
+  // Check if API server is running
+  const isServerRunning = await exports.isServerRunning();
+  if (!isServerRunning) {
+    console.error('API server is not running. Cannot run tests.');
+    return false;
   }
   
-  // Generate consolidated report
-  const reportPath = path.join(config.reportDir, `test-report-${Date.now()}.json`);
-  generateReport(allResults, reportPath);
+  // Create reports directory if it doesn't exist
+  if (!fs.existsSync(exports.config.reportOutputDir)) {
+    fs.mkdirSync(exports.config.reportOutputDir, { recursive: true });
+  }
   
-  // Print summary
-  const totalTests = Object.values(allResults).flat().length;
-  const passedTests = Object.values(allResults).flat().filter(r => r.success).length;
+  // Run API tests
+  console.log('\n=== Running API Tests ===');
+  allResults.api = await runTestsInDirectory(path.join(__dirname, '../api'));
   
-  console.log('\n==== Test Run Summary ====');
+  // Run E2E tests
+  console.log('\n=== Running E2E Tests ===');
+  allResults.e2e = await runTestsInDirectory(path.join(__dirname, '../e2e'));
+  
+  // Run frontend tests
+  console.log('\n=== Running Frontend Tests ===');
+  allResults.frontend = await runTestsInDirectory(path.join(__dirname, '../frontend'));
+  
+  // Generate reports
+  const timestamp = new Date().toISOString().replace(/:/g, '-');
+  const reportPath = path.join(exports.config.reportOutputDir, `test-report-${timestamp}.json`);
+  
+  await generateReport(allResults, reportPath);
+  
+  // Log summary
+  const totalTests = Object.values(allResults).reduce((sum, results) => sum + results.length, 0);
+  const passedTests = Object.values(allResults).reduce((sum, results) => {
+    return sum + results.filter(result => result.success).length;
+  }, 0);
+  
+  console.log('\n=== Test Run Summary ===');
   console.log(`Total tests: ${totalTests}`);
   console.log(`Passed tests: ${passedTests}`);
   console.log(`Failed tests: ${totalTests - passedTests}`);
-  console.log(`Success rate: ${((passedTests / totalTests) * 100).toFixed(2)}%`);
-  console.log(`Report generated: ${reportPath}`);
+  console.log(`Success rate: ${Math.round((passedTests / totalTests) * 100)}%`);
+  console.log(`Report generated at: ${reportPath}`);
+  
+  return passedTests === totalTests;
 };
 
 /**
  * Check if the API server is running
  * @returns {Promise<boolean>}
  */
-const isApiServerRunning = async () => {
+exports.isServerRunning = async () => {
   try {
-    const response = await axios.get(`${config.apiBaseUrl}/`);
-    return response.status === 200;
+    await axios.get(exports.config.apiBaseUrl, { timeout: 5000 });
+    return true;
   } catch (error) {
     return false;
   }
@@ -140,9 +189,9 @@ const isApiServerRunning = async () => {
  * @param {string} token - JWT authentication token
  * @returns {Object} - Axios instance with authentication
  */
-const createAuthenticatedClient = (token) => {
+exports.createAuthenticatedClient = (token) => {
   return axios.create({
-    baseURL: config.apiBaseUrl,
+    baseURL: exports.config.apiBaseUrl,
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -150,11 +199,14 @@ const createAuthenticatedClient = (token) => {
   });
 };
 
-module.exports = {
-  runAllTests,
-  runTestsInDirectory,
-  runTest,
-  isApiServerRunning,
-  createAuthenticatedClient,
-  config
-};
+// Run tests if this file is executed directly
+if (require.main === module) {
+  exports.runAllTests()
+    .then((success) => {
+      process.exit(success ? 0 : 1);
+    })
+    .catch((error) => {
+      console.error('Fatal error running tests:', error);
+      process.exit(1);
+    });
+}
