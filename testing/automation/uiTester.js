@@ -310,12 +310,14 @@ async function performUiTests(config) {
       await page.goto(`${config.clientUrl}/register`, 
                     { waitUntil: 'networkidle2', timeout: config.timeouts.pageLoad });
       
-      const username = `test_user_${Date.now()}`;
+      const email = `test_user_${Date.now()}@example.com`;
+      const name = `Test User ${Date.now()}`;
       const password = 'Test123!';
       
       // Fill registration form
-      await page.waitForSelector('input[name="username"]');
-      await page.type('input[name="username"]', username);
+      await page.waitForSelector('input[name="email"]');
+      await page.type('input[name="email"]', email);
+      await page.type('input[name="name"]', name);
       await page.type('input[name="password"]', password);
       await page.type('input[name="confirmPassword"]', password);
       await page.click('input[value="customer"]'); // Select customer role
@@ -347,8 +349,8 @@ async function performUiTests(config) {
                       { waitUntil: 'networkidle2', timeout: config.timeouts.pageLoad });
       }
       
-      await page.waitForSelector('input[name="username"]');
-      await page.type('input[name="username"]', username);
+      await page.waitForSelector('input[name="email"]');
+      await page.type('input[name="email"]', email);
       await page.type('input[name="password"]', password);
       
       // Submit login form
@@ -366,7 +368,7 @@ async function performUiTests(config) {
         if (browser.toString().includes('Mock') && !loginSuccessful) {
           console.log('Testing in mock mode - proceeding despite login redirection issues');
         }
-        recordTest('User Login', true, null, { username, mockBrowser: browser.toString().includes('Mock') });
+        recordTest('User Login', true, null, { email, mockBrowser: browser.toString().includes('Mock') });
       } else {
         recordTest('User Login', false, 'Login failed or unexpected redirect', 
                   { currentUrl: loginUrl });
