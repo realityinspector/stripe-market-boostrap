@@ -99,6 +99,14 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Stripe Connect Marketplace API' });
 });
 
+// Catch all non-existent API routes and return 404
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'API endpoint not found'
+  });
+});
+
 // Handle all other routes by sending the frontend app
 app.get('*', (req, res) => {
   // Handle specific routes by sending the appropriate HTML file
