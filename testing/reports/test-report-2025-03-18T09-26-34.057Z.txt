@@ -1,0 +1,98 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/18/2025, 9:26:34 AM
+
+SUMMARY
+-------
+Total Tests:  22
+Passed:       8
+Failed:       14
+Success Rate: 36%
+
+API TESTS
+--------
+✓ authEndpoints.test.js - testUserRegistration
+✓ authEndpoints.test.js - testVendorRegistration
+✓ authEndpoints.test.js - testUserLogin
+✗ authEndpoints.test.js - testAuthMiddleware
+  Error: Expected status 401 for invalid token, got 403
+✗ productEndpoints.test.js - testProductCreation
+  Error: Product vendorId (undefined) does not match vendor ID (54)
+✓ productEndpoints.test.js - testProductListing
+✓ productEndpoints.test.js - testProductRetrieval
+✗ productEndpoints.test.js - testProductUpdate
+  Error: Updated product price does not match
+✗ productEndpoints.test.js - testProductDeactivation
+  Error: Product deactivation endpoint not found (404)
+✗ productEndpoints.test.js - testVendorProductListing
+  Error: Vendor product listing endpoint returned server error (500)
+
+E2E TESTS
+--------
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Payment flow failed: Vendor has not completed Stripe onboarding
+✗ paymentFlow.test.js - testOrderHistory
+  Error: Order history test failed: Vendor has not completed Stripe onboarding
+✗ paymentFlow.test.js - testVendorOrders
+  Error: Vendor orders test failed: Vendor has not completed Stripe onboarding
+✗ uiTesting.test.js - testHomePageRendering
+  Error: Failed to launch the browser process!
+/home/runner/.cache/puppeteer/chrome/linux-134.0.6998.35/chrome-linux64/chrome: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
+
+
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+
+✗ uiTesting.test.js - testLoginFlow
+  Error: Failed to launch the browser process!
+/home/runner/.cache/puppeteer/chrome/linux-134.0.6998.35/chrome-linux64/chrome: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
+
+
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+
+✗ uiTesting.test.js - testProductDetailsPage
+  Error: Failed to launch the browser process!
+/home/runner/.cache/puppeteer/chrome/linux-134.0.6998.35/chrome-linux64/chrome: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
+
+
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+
+✗ uiTesting.test.js - testCheckoutProcess
+  Error: Failed to launch the browser process!
+/home/runner/.cache/puppeteer/chrome/linux-134.0.6998.35/chrome-linux64/chrome: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
+
+
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+
+
+FRONTEND TESTS
+--------------
+✓ pageRendering.test.js - testApiRootEndpoint
+✗ pageRendering.test.js - testApiResponseTimes
+  Error: Cannot read properties of undefined (reading 'toFixed')
+✗ pageRendering.test.js - testApiCorsHeaders
+  Error: CORS test failed for Login API Endpoint: CORS header "access-control-allow-methods" missing for Login API Endpoint
+✓ pageRendering.test.js - testApiContentTypes
+✓ pageRendering.test.js - testApiErrorHandling
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- API Failures: 5
+  - authEndpoints.test.js - testAuthMiddleware
+  - productEndpoints.test.js - testProductCreation
+  - productEndpoints.test.js - testProductUpdate
+  - productEndpoints.test.js - testProductDeactivation
+  - productEndpoints.test.js - testVendorProductListing
+- E2E Failures: 7
+  - paymentFlow.test.js - testPaymentFlow
+  - paymentFlow.test.js - testOrderHistory
+  - paymentFlow.test.js - testVendorOrders
+  - uiTesting.test.js - testHomePageRendering
+  - uiTesting.test.js - testLoginFlow
+  - uiTesting.test.js - testProductDetailsPage
+  - uiTesting.test.js - testCheckoutProcess
+- Frontend Failures: 2
+  - pageRendering.test.js - testApiResponseTimes
+  - pageRendering.test.js - testApiCorsHeaders

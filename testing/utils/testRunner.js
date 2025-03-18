@@ -45,20 +45,28 @@ async function runTest(testFn, testName) {
 async function runTestsInDirectory(testDir) {
   const results = [];
   
-  if (!fs.existsSync(testDir)) {
-    console.warn(`Test directory not found: ${testDir}`);
+  // Get the absolute path of the test directory
+  const fullTestDir = path.join(__dirname, '..', testDir);
+  
+  if (!fs.existsSync(fullTestDir)) {
+    console.warn(`Test directory not found: ${fullTestDir}`);
     return results;
   }
   
-  const files = fs.readdirSync(testDir)
+  const files = fs.readdirSync(fullTestDir)
     .filter(file => file.endsWith('.test.js'));
   
   for (const file of files) {
     console.log(`Running tests in file: ${file}`);
     
-    const testModule = require(path.join('..', testDir, file));
+    const testModulePath = path.join(fullTestDir, file);
+    console.log(`Loading test module from: ${testModulePath}`);
+    
+    const testModule = require(testModulePath);
     const testFunctions = Object.entries(testModule)
       .filter(([key, value]) => typeof value === 'function' && key.startsWith('test'));
+    
+    console.log(`Found ${testFunctions.length} test functions in ${file}`);
     
     for (const [testName, testFn] of testFunctions) {
       const result = await runTest(testFn, `${file} - ${testName}`);

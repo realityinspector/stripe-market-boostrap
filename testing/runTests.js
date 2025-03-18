@@ -19,6 +19,7 @@
 const fs = require('fs');
 const path = require('path');
 const { runAllTests } = require('./utils/testRunner');
+const { generateTextReport } = require('./utils/reportGenerator');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -39,6 +40,15 @@ async function runTests() {
     const testResults = await runAllTests(category);
     
     // Generate test report
+    // Calculate test statistics
+    const totalTests = testResults.api.length + testResults.e2e.length + testResults.frontend.length;
+    const passedTests = testResults.api.filter(t => t.passed).length + 
+                        testResults.e2e.filter(t => t.passed).length + 
+                        testResults.frontend.filter(t => t.passed).length;
+    const failedTests = totalTests - passedTests;
+    const successRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+
+    // Set up report directory
     const reportDir = path.join(__dirname, 'reports');
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
@@ -47,21 +57,24 @@ async function runTests() {
     const timestamp = new Date().toISOString().replace(/:/g, '-');
     const reportFile = path.join(reportDir, `test-report-${timestamp}.json`);
     
-    fs.writeFileSync(reportFile, JSON.stringify(testResults, null, 2));
+    // Generate JSON report
+    const reportObj = {
+      timestamp: new Date().toISOString(),
+      summary: {
+        total: totalTests,
+        passed: passedTests,
+        failed: failedTests,
+        successRate: successRate
+      },
+      results: testResults
+    };
+    
+    fs.writeFileSync(reportFile, JSON.stringify(reportObj, null, 2));
     console.log(`Report generated at: ${reportFile}`);
 
     // Generate human-readable report
     const textReportFile = reportFile.replace('.json', '.txt');
-    const textReport = generateTextReport(testResults);
-    fs.writeFileSync(textReportFile, textReport);
-    
-    // Output summary
-    const totalTests = testResults.api.length + testResults.e2e.length + testResults.frontend.length;
-    const passedTests = testResults.api.filter(t => t.passed).length + 
-                        testResults.e2e.filter(t => t.passed).length + 
-                        testResults.frontend.filter(t => t.passed).length;
-    const failedTests = totalTests - passedTests;
-    const successRate = Math.round((passedTests / totalTests) * 100);
+    const textReport = generateTextReport(reportObj, textReportFile);
     
     console.log('=== Test Run Summary ===');
     console.log(`Total tests: ${totalTests}`);
@@ -94,55 +107,7 @@ async function checkServerStatus() {
   }
 }
 
-function generateTextReport(results) {
-  const lines = ['=== TEST REPORT ===', '', `Date: ${new Date().toISOString()}`, ''];
-  
-  // Add API test results
-  lines.push('=== API Tests ===');
-  results.api.forEach(test => {
-    lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
-    if (!test.passed) {
-      lines.push(`  Error: ${test.error}`);
-    }
-  });
-  lines.push('');
-  
-  // Add E2E test results
-  lines.push('=== E2E Tests ===');
-  results.e2e.forEach(test => {
-    lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
-    if (!test.passed) {
-      lines.push(`  Error: ${test.error}`);
-    }
-  });
-  lines.push('');
-  
-  // Add Frontend test results
-  lines.push('=== Frontend Tests ===');
-  results.frontend.forEach(test => {
-    lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
-    if (!test.passed) {
-      lines.push(`  Error: ${test.error}`);
-    }
-  });
-  lines.push('');
-  
-  // Add summary
-  const totalTests = results.api.length + results.e2e.length + results.frontend.length;
-  const passedTests = results.api.filter(t => t.passed).length + 
-                    results.e2e.filter(t => t.passed).length + 
-                    results.frontend.filter(t => t.passed).length;
-  const failedTests = totalTests - passedTests;
-  const successRate = Math.round((passedTests / totalTests) * 100);
-  
-  lines.push('=== Summary ===');
-  lines.push(`Total tests: ${totalTests}`);
-  lines.push(`Passed tests: ${passedTests}`);
-  lines.push(`Failed tests: ${failedTests}`);
-  lines.push(`Success rate: ${successRate}%`);
-  
-  return lines.join('\n');
-}
+// We're now using the imported generateTextReport function from utils/reportGenerator.js
 
 // Run the tests
 runTests();
