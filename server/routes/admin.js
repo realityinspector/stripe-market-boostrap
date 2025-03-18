@@ -26,7 +26,7 @@ router.get('/analytics', async (req, res) => {
     
     // Get total orders
     const ordersResult = await db.query(
-      'SELECT COUNT(*), SUM(amount) FROM orders'
+      'SELECT COUNT(*), SUM(total_amount) as total FROM orders'
     );
     
     // Format the analytics data
@@ -78,7 +78,7 @@ router.get('/vendors', async (req, res) => {
       SELECT v.*, u.email, u.name, u.created_at,
              COUNT(DISTINCT p.id) as product_count,
              COUNT(DISTINCT o.id) as order_count,
-             SUM(o.amount) as total_sales
+             SUM(o.total_amount) as total_sales
       FROM vendors v
       JOIN users u ON v.user_id = u.id
       LEFT JOIN products p ON p.vendor_id = v.id

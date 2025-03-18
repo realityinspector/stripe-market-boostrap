@@ -123,6 +123,15 @@ app.get('*', (req, res) => {
   } else if (req.path.startsWith('/products/')) {
     // Product detail pages
     res.sendFile(path.join(__dirname, '../public/products/detail.html'));
+  } else if (req.path === '/admin') {
+    // Admin portal index page
+    res.sendFile(path.join(__dirname, '../public/admin/index.html'));
+  } else if (req.path === '/admin/dashboard') {
+    // Admin dashboard page
+    res.sendFile(path.join(__dirname, '../public/admin/dashboard.html'));
+  } else if (req.path === '/admin/onboarding') {
+    // Admin onboarding page
+    res.sendFile(path.join(__dirname, '../public/admin/onboarding.html'));
   } else {
     // Default to the main index.html
     res.sendFile(path.join(__dirname, '../public/index.html'));
