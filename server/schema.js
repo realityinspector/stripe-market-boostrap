@@ -26,6 +26,7 @@ const createTables = async () => {
         stripe_account_id VARCHAR(255) UNIQUE,
         stripe_onboarding_complete BOOLEAN DEFAULT FALSE,
         commission_rate DECIMAL(5,2) DEFAULT 10.00,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'suspended')),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -40,6 +41,7 @@ const createTables = async () => {
         price DECIMAL(10,2) NOT NULL,
         image_url TEXT,
         active BOOLEAN DEFAULT TRUE,
+        featured BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
