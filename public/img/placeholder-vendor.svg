@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#e3e8ee" />
+  <circle cx="200" cy="130" r="40" fill="#8898aa" />
+  <path d="M170,180 L230,180 C240,180 250,190 250,200 L250,220 L150,220 L150,200 C150,190 160,180 170,180 Z" fill="#8898aa" />
+  <path d="M180,165 L220,165 L220,170 L180,170 Z" fill="#8898aa" />
+  <path d="M180,240 L240,240 L240,245 L180,245 Z" fill="#8898aa" />
+  <path d="M180,255 L260,255 L260,260 L180,260 Z" fill="#8898aa" />
+  <text x="200" y="90" font-family="Arial" font-size="14" fill="#32325d" text-anchor="middle">Vendor Logo</text>
+</svg>

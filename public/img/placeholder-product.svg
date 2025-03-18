@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#e3e8ee" />
+  <path d="M180,115 L220,115 L220,155 L180,155 Z" fill="#8898aa" />
+  <path d="M185,120 L215,120 L215,150 L185,150 Z" fill="#b2bac2" />
+  <path d="M190,125 L210,125 L210,145 L190,145 Z" fill="#e3e8ee" />
+  <path d="M180,165 L220,165 L220,170 L180,170 Z" fill="#8898aa" />
+  <path d="M180,180 L240,180 L240,185 L180,185 Z" fill="#8898aa" />
+  <path d="M180,195 L260,195 L260,200 L180,200 Z" fill="#8898aa" />
+  <text x="200" y="90" font-family="Arial" font-size="14" fill="#32325d" text-anchor="middle">Product Image</text>
+</svg>
