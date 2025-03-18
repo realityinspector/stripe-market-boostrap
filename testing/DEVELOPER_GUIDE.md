@@ -16,7 +16,25 @@ This project follows a comprehensive testing approach with several layers:
 
 ## Adding Tests for New Features
 
-### Step 1: Understand the Feature Context
+### Step 1: Use the Appropriate Test Template
+
+The project includes standardized test templates to ensure consistency. Start by copying the appropriate template:
+
+```bash
+# For API tests
+cp testing/templates/api_test_template.js testing/api/your_new_test.js
+
+# For UI tests
+cp testing/templates/ui_test_template.js testing/frontend/your_new_test.js
+
+# For E2E tests
+cp testing/templates/e2e_test_template.js testing/e2e/your_new_test.js
+
+# For general tests
+cp testing/templates/test_template.js testing/your_new_test.js
+```
+
+### Step 2: Understand the Feature Context
 
 Before implementing a feature, review existing tests to understand:
 - How related components are currently tested
@@ -28,7 +46,7 @@ Before implementing a feature, review existing tests to understand:
 // in testing/api/productEndpoints.test.js
 ```
 
-### Step 2: Write Tests BEFORE Implementation
+### Step 3: Write Tests BEFORE Implementation
 
 Follow Test-Driven Development (TDD) principles by writing tests first:
 
@@ -43,7 +61,7 @@ async function testProductPriceFilter() {
 }
 ```
 
-### Step 3: Ensure Tests are Self-Documenting
+### Step 4: Ensure Tests are Self-Documenting
 
 All tests should clearly document what they test and expected behavior:
 
@@ -59,7 +77,7 @@ All tests should clearly document what they test and expected behavior:
  */
 ```
 
-### Step 4: Integrate with Existing Tests
+### Step 5: Integrate with Existing Tests
 
 Add your test to the appropriate test file:
 
@@ -73,7 +91,7 @@ module.exports = {
 };
 ```
 
-### Step 5: Run the Test Suite
+### Step 6: Run the Test Suite
 
 Always run the full test suite to ensure your changes don't break existing functionality:
 
@@ -182,6 +200,41 @@ If tests are failing:
 2. Look for screenshots in `testing/screenshots/`
 3. Review recent changes to related code
 4. Ensure Stripe mock integrations are properly configured
+
+## Test Templates
+
+The project provides standardized test templates to ensure consistency across the testing infrastructure. These templates are located in the `/testing/templates/` directory:
+
+### Available Templates
+
+1. **General Test Template**: `/testing/templates/test_template.js`
+   - Base template for general-purpose tests
+   - Includes structure for happy path, alternative paths, and error handling
+
+2. **API Test Template**: `/testing/templates/api_test_template.js`
+   - Specialized for testing API endpoints
+   - Includes authentication handling and HTTP status verification
+
+3. **UI Test Template**: `/testing/templates/ui_test_template.js`
+   - Specialized for testing UI components with Puppeteer
+   - Includes responsive design testing structure
+
+4. **E2E Test Template**: `/testing/templates/e2e_test_template.js`
+   - Specialized for end-to-end user journey testing
+   - Includes test data management and cleanup
+
+### Using Templates
+
+1. Copy the appropriate template to the correct directory
+2. Replace placeholder names and descriptions with actual feature details
+3. Implement the test logic within the provided function structures
+4. Ensure all tests follow the established patterns
+
+Templates provide consistent structure for:
+- Test documentation
+- Error handling
+- Result reporting
+- Resource cleanup
 
 ## CI/CD Integration
 
