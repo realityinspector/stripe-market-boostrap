@@ -309,15 +309,27 @@ function updateDevNotes(results) {
     // Add latest test results to notes
     const timestamp = new Date().toISOString();
     const summary = `\n## Test Run: ${timestamp}\n`;
-    const details = `- Total: ${results.stats.totalTests}\n` +
-                    `- Passed: ${results.stats.passedTests}\n` +
-                    `- Failed: ${results.stats.failedTests}\n` +
-                    `- Success Rate: ${results.stats.successRate.toFixed(2)}%\n`;
     
-    // Update notes with latest run
-    fs.writeFileSync(NOTES_PATH, `${notes}\n${summary}${details}`);
-    
-    console.log(colors.green('\n✅ Development notes updated with test results'));
+    // Check if stats exist before trying to access them
+    if (results && results.stats) {
+      const details = `- Total: ${results.stats.totalTests}\n` +
+                      `- Passed: ${results.stats.passedTests}\n` +
+                      `- Failed: ${results.stats.failedTests}\n` +
+                      `- Success Rate: ${results.stats.successRate.toFixed(2)}%\n`;
+      
+      // Update notes with latest run
+      fs.writeFileSync(NOTES_PATH, `${notes}\n${summary}${details}`);
+      
+      console.log(colors.green('\n✅ Development notes updated with test results'));
+    } else {
+      // If no stats are available, just record that tests were run
+      const details = `- No test results available\n- Check logs for details\n`;
+      
+      // Update notes with latest run
+      fs.writeFileSync(NOTES_PATH, `${notes}\n${summary}${details}`);
+      
+      console.log(colors.yellow('\n⚠️ Development notes updated (no test results available)'));
+    }
   } catch (error) {
     console.error(colors.yellow('⚠️ Could not update development notes:'), error.message);
   }

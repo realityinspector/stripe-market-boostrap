@@ -107,19 +107,26 @@ function outputCISummary(results) {
   console.log(colors.bold.blue('  CI/CD Pipeline Summary'));
   console.log(colors.bold.blue('==============================================='));
   
-  console.log(colors.blue(`Test Run: ${new Date(results.timestamp).toLocaleString()}`));
-  console.log(colors.blue(`Success Rate: ${results.stats.successRate.toFixed(2)}%`));
+  console.log(colors.blue(`Test Run: ${new Date(results.timestamp || Date.now()).toLocaleString()}`));
   
-  // Output pass/fail status
-  if (results.passedCI) {
-    console.log(colors.bold.green('\n✅ CI PASSED - Ready for deployment'));
+  // Check if stats exist before trying to access them
+  if (results.stats && typeof results.stats.successRate !== 'undefined') {
+    console.log(colors.blue(`Success Rate: ${results.stats.successRate.toFixed(2)}%`));
+    
+    // Output pass/fail status
+    if (results.passedCI) {
+      console.log(colors.bold.green('\n✅ CI PASSED - Ready for deployment'));
+    } else {
+      console.log(colors.bold.red('\n❌ CI FAILED - Fix issues before deployment'));
+    }
+    
+    console.log(colors.bold.blue('\nTest Reports:'));
+    console.log(colors.blue(`JSON Report: ${results.reportPaths?.json || 'Not generated'}`));
+    console.log(colors.blue(`Text Report: ${results.reportPaths?.text || 'Not generated'}`));
   } else {
-    console.log(colors.bold.red('\n❌ CI FAILED - Fix issues before deployment'));
+    console.log(colors.bold.red('\n❌ No test results available'));
+    console.log(colors.red('Run tests with: node testing/runTests.js [category]'));
   }
-  
-  console.log(colors.bold.blue('\nTest Reports:'));
-  console.log(colors.blue(`JSON Report: ${results.reportPaths?.json || 'Not generated'}`));
-  console.log(colors.blue(`Text Report: ${results.reportPaths?.text || 'Not generated'}`));
   
   console.log(colors.bold.blue('\n==============================================='));
 }

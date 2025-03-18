@@ -139,11 +139,22 @@ async function runAllTests(category) {
         console.log('=== Running Frontend Tests ===');
         results.frontend = await runTestsInDirectory('frontend');
         break;
+      case 'all':
+        // Run all tests for 'all' category
+        console.log('=== Running API Tests ===');
+        results.api = await runTestsInDirectory('api');
+        
+        console.log('=== Running E2E Tests ===');
+        results.e2e = await runTestsInDirectory('e2e');
+        
+        console.log('=== Running Frontend Tests ===');
+        results.frontend = await runTestsInDirectory('frontend');
+        break;
       default:
         console.warn(`Unknown test category: ${category}`);
     }
   } else if (!category) {
-    // Run all tests by default
+    // Run all tests by default if no category specified
     console.log('=== Running API Tests ===');
     results.api = await runTestsInDirectory('api');
     
