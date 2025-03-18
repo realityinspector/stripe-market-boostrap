@@ -61,24 +61,27 @@ async function runCIPipeline() {
     // Update development notes with test results
     updateDevNotes(testResults);
     
-    // If tests passed, check deployment readiness
-    if (testResults.passedCI) {
-      console.log(colors.bold.green('\n✅ CI tests passed, checking deployment readiness...\n'));
-      
-      const readiness = checkDeploymentReadiness();
-      
-      if (readiness.ready) {
-        console.log(colors.bold.green('\n✅ Codebase ready for deployment'));
-        console.log(colors.green('\nTo deploy your application, use Replit\'s deployment feature.'));
-      } else {
-        console.log(colors.bold.yellow('\n⚠️ Codebase not ready for deployment'));
-        console.log(colors.yellow('Issues:'));
-        readiness.issues.forEach(issue => {
-          console.log(colors.yellow(`- ${issue}`));
-        });
-      }
+    // Check deployment readiness with our test results
+    console.log(colors.bold.blue('\nChecking deployment readiness based on quality gates...\n'));
+    
+    const readiness = checkDeploymentReadiness(testResults);
+    
+    if (readiness.ready) {
+      console.log(colors.bold.green('✅ Codebase PASSED all quality gates and is ready for deployment'));
+      console.log(colors.green('\nDeployment next steps:'));
+      console.log(colors.green('1. Use Replit\'s deployment feature to deploy your application'));
+      console.log(colors.green('2. Verify the deployment in the production environment'));
+      console.log(colors.green('3. Monitor for any post-deployment issues'));
     } else {
-      console.log(colors.bold.red('\n❌ CI tests failed, fix issues before deployment'));
+      console.log(colors.bold.yellow('⚠️ Codebase failed one or more deployment quality gates'));
+      console.log(colors.yellow('\nDeployment blockers:'));
+      readiness.issues.forEach(issue => {
+        console.log(colors.yellow(`- ${issue}`));
+      });
+      console.log(colors.yellow('\nActions required before deployment:'));
+      console.log(colors.yellow('1. Fix the issues listed above'));
+      console.log(colors.yellow('2. Re-run the CI pipeline to verify fixes'));
+      console.log(colors.yellow('3. Ensure all quality gates pass before deployment'));
     }
     
     // Final summary

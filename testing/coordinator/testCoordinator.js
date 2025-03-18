@@ -58,9 +58,9 @@ async function runTestSuite(options = {}) {
     ci = false
   } = options;
   
-  console.log(chalk.blue.bold('===================================='));
-  console.log(chalk.blue.bold('  Stripe Connect Marketplace Tests  '));
-  console.log(chalk.blue.bold('===================================='));
+  console.log(colors.bold.blue('===================================='));
+  console.log(colors.bold.blue('  Stripe Connect Marketplace Tests  '));
+  console.log(colors.bold.blue('===================================='));
   
   // Ensure reports directory exists
   if (!fs.existsSync(REPORTS_DIR)) {
@@ -75,7 +75,7 @@ async function runTestSuite(options = {}) {
   
   try {
     // Log test execution start
-    console.log(chalk.cyan(`\n[${new Date().toISOString()}] Running ${category === 'all' ? 'all' : category} tests...\n`));
+    console.log(colors.cyan(`\n[${new Date().toISOString()}] Running ${category === 'all' ? 'all' : category} tests...\n`));
     
     // Execute tests based on category
     const testResults = await runAllTests(category);
@@ -101,7 +101,7 @@ async function runTestSuite(options = {}) {
     const passedCI = stats.successRate >= 80; // 80% success threshold
     
     if (ci && !passedCI) {
-      console.log(chalk.red.bold('\n❌ CI tests did not meet required threshold of 80% success rate'));
+      console.log(colors.bold.red('\n❌ CI tests did not meet required threshold of 80% success rate'));
     }
     
     // Return comprehensive result object
@@ -116,8 +116,8 @@ async function runTestSuite(options = {}) {
       passedCI,
     };
   } catch (error) {
-    console.error(chalk.red.bold('\n❌ Error running test suite:'));
-    console.error(chalk.red(error.message));
+    console.error(colors.bold.red('\n❌ Error running test suite:'));
+    console.error(colors.red(error.message));
     console.error(error.stack);
     
     // Return error result
@@ -210,18 +210,73 @@ function validateTestCoverage(path) {
 /**
  * Check if the codebase is ready for deployment
  * 
+ * @param {Object} testResults - Most recent test results
  * @returns {Object} Readiness assessment
  */
-function checkDeploymentReadiness() {
-  // In a real implementation, this would check:
-  // 1. Test pass rate
-  // 2. Code coverage
-  // 3. Linting issues
-  // 4. Critical path functionality
+function checkDeploymentReadiness(testResults = null) {
+  const issues = [];
+  const criticalFlows = [
+    'Customer Registration & Login',
+    'Vendor Registration & Login',
+    'Payment Initiation',
+    'Full Purchase Flow'
+  ];
+  
+  // Initialize readiness as true, will set to false if any issues found
+  let ready = true;
+  
+  // If we have test results, check for specific criteria
+  if (testResults && testResults.results) {
+    const stats = testResults.stats || {};
+    const e2eResults = testResults.results.e2e || [];
+    
+    // Check 1: Minimum 90% overall success rate required for deployment
+    if (stats.successRate < 90) {
+      ready = false;
+      issues.push(`Overall test success rate ${stats.successRate.toFixed(1)}% below required 90%`);
+    }
+    
+    // Check 2: All API tests must pass (they're our core functionality)
+    const apiResults = testResults.results.api || [];
+    const apiFailures = apiResults.filter(test => !test.passed);
+    if (apiFailures.length > 0) {
+      ready = false;
+      issues.push(`${apiFailures.length} failed API tests, all API tests must pass for deployment`);
+    }
+    
+    // Check 3: Critical user flows must pass
+    const failedCriticalFlows = e2eResults
+      .filter(test => criticalFlows.includes(test.name) && !test.passed)
+      .map(test => test.name);
+    
+    if (failedCriticalFlows.length > 0) {
+      ready = false;
+      issues.push(`Critical flows failed: ${failedCriticalFlows.join(', ')}`);
+    }
+    
+    // Check 4: Category-specific minimum success rates
+    const categoryMinimums = {
+      api: 100, // All API tests must pass
+      e2e: 85,  // 85% of E2E tests must pass
+      ui: 90    // 90% of UI tests must pass
+    };
+    
+    Object.entries(stats.categories || {}).forEach(([category, categoryStats]) => {
+      const minimum = categoryMinimums[category];
+      if (minimum && categoryStats.successRate < minimum) {
+        ready = false;
+        issues.push(`${category.toUpperCase()} tests below minimum threshold: ${categoryStats.successRate.toFixed(1)}% (required: ${minimum}%)`);
+      }
+    });
+  } else {
+    // No test results provided, can't verify
+    ready = false;
+    issues.push('No test results available to verify deployment readiness');
+  }
   
   return {
-    ready: true,
-    issues: []
+    ready,
+    issues
   };
 }
 
