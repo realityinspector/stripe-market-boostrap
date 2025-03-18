@@ -148,6 +148,11 @@ function setupTestEnvironment() {
   process.env.NODE_ENV = 'test';
   process.env.JEST_WORKER_ID = 1;
   
+  // Special environment variables to handle React Native TypeScript issues
+  process.env.BABEL_ENV = 'test';
+  process.env.RN_DISABLE_FLOW_STRIPS = '1';
+  process.env.SKIP_PREFLIGHT_CHECK = 'true';
+  
   // For CI environment
   if (options.ci) {
     process.env.CI = 'true';
@@ -171,6 +176,9 @@ function buildJestCommand() {
     // If no custom config, use sensible defaults
     command += ' --preset=react-native';
   }
+  
+  // Add special options to handle Flow/TypeScript issues
+  command += ' --no-cache --transformIgnorePatterns "node_modules/(?!(jest-)?react-native|@react-native(-community)?|@react-navigation|expo|@expo)"';
   
   // Add test pattern if a specific component was specified
   if (componentName) {

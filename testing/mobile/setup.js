@@ -94,13 +94,8 @@ jest.mock('react-native', () => {
   });
 });
 
-// Mock React Native's flow types
-jest.mock('@react-native/js-polyfills/error-guard', () => ({
-  ErrorUtils: {
-    setGlobalHandler: jest.fn(),
-    reportError: jest.fn(),
-  },
-}));
+// Configure Jest for React Native
+require('@react-native/js-polyfills/error-guard');
 
 // Suppress React Native warnings during tests
 console.error = jest.fn();

@@ -6,7 +6,8 @@
  */
 
 module.exports = {
-  preset: 'react-native',
+  // Using our own configuration instead of react-native preset to avoid Flow type issues
+  // preset: 'react-native',
   
   // The root directory that Jest should scan for tests and modules
   rootDir: '../../',
@@ -28,7 +29,8 @@ module.exports = {
   // A map from regular expressions to module names that allow to stub out resources
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/testing/mobile/__mocks__/fileMock.js',
-    '\\.(css|less|scss|sass)$': '<rootDir>/testing/mobile/__mocks__/styleMock.js'
+    '\\.(css|less|scss|sass)$': '<rootDir>/testing/mobile/__mocks__/styleMock.js',
+    '@react-native/js-polyfills/error-guard': '<rootDir>/testing/mobile/__mocks__/@react-native/js-polyfills/error-guard.js'
   },
   
   // Transform ignore patterns to exclude node_modules except certain packages
