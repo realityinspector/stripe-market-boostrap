@@ -33,7 +33,7 @@ module.exports = {
   
   // Transform ignore patterns to exclude node_modules except certain packages
   transformIgnorePatterns: [
-    'node_modules/(?!(@react-native|react-native|@react-navigation|expo|@expo|react-native-safe-area-context)/)'
+    'node_modules/(?!(jest-)?react-native|@react-native(-community)?|@react-navigation|expo|@expo|@react-native-async-storage|react-native-safe-area-context|@stripe|react-native-webview)/'
   ],
   
   // Setup files to run before each test
@@ -53,7 +53,8 @@ module.exports = {
   
   // Transform files with babel-jest
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest'
+    '^.+\\.(js|jsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}],
+    '^.+\\.(ts|tsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}]
   },
   
   // Automatically clear mock calls and instances between every test
