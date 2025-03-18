@@ -18,7 +18,8 @@ const {
   fillInput,
   getElementText,
   evaluate,
-  takeScreenshot
+  takeScreenshot,
+  mockSafeWait
 } = require('../utils/puppeteerHelper');
 const { createTestUser } = require('../utils/testHelpers');
 
@@ -183,8 +184,8 @@ async function testProductBrowsing(page) {
       await page.keyboard.press('Enter');
     }
     
-    // Wait for search results
-    await page.waitForTimeout(1000);
+    // Wait briefly for search results (using mock compatibility)
+    await mockSafeWait(page, 1000);
   }
   
   // Test category filtering if available
@@ -193,8 +194,8 @@ async function testProductBrowsing(page) {
   if (hasCategories) {
     await clickElement(page, '.category-option, .category-button');
     
-    // Wait for filtered results
-    await page.waitForTimeout(1000);
+    // Wait briefly for filtered results (using mock compatibility)
+    await mockSafeWait(page, 1000);
   }
   
   console.log('Product browsing test passed');

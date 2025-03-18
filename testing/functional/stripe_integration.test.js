@@ -20,7 +20,8 @@ const {
   fillInput,
   getElementText,
   evaluate,
-  takeScreenshot
+  takeScreenshot,
+  mockSafeWait
 } = require('../utils/puppeteerHelper');
 const { createTestUser } = require('../utils/testHelpers');
 

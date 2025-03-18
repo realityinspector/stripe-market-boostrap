@@ -18,7 +18,8 @@ const {
   fillInput,
   getElementText,
   evaluate,
-  takeScreenshot
+  takeScreenshot,
+  mockSafeWait
 } = require('../utils/puppeteerHelper');
 const { createTestUser } = require('../utils/testHelpers');
 
@@ -324,8 +325,8 @@ async function testProductManagement(page) {
       await page.keyboard.press('Enter');
     }
     
-    // Wait for search results
-    await page.waitForTimeout(1000);
+    // Wait briefly for search results (using mock compatibility)
+    await mockSafeWait(page, 1000);
   }
   
   console.log('Product management test passed');

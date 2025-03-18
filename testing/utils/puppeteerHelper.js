@@ -407,6 +407,28 @@ async function testPaymentFlow(baseUrl, paymentDetails, authToken, options = {})
   return result;
 }
 
+/**
+ * Wait for a brief period - safe for mock browser environments
+ * @param {Object} page - Puppeteer page instance
+ * @param {number} ms - Milliseconds to wait (approximated in mock mode)
+ * @returns {Promise<void>}
+ */
+async function mockSafeWait(page, ms = 1000) {
+  try {
+    // For real browser
+    if (page && typeof page.waitForTimeout === 'function') {
+      await page.waitForTimeout(ms);
+    } else {
+      // For mock browser - just log and continue
+      console.log(`Mock waiting for ${ms}ms...`);
+      // Minimal delay to allow other processes to run
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  } catch (error) {
+    console.log(`Wait operation skipped: ${error.message}`);
+  }
+}
+
 module.exports = {
   initBrowser,
   closeBrowser,
@@ -421,5 +443,6 @@ module.exports = {
   evaluate,
   testPageRendering,
   testAuthFlow,
-  testPaymentFlow
+  testPaymentFlow,
+  mockSafeWait
 };
