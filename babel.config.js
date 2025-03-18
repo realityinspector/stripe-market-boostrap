@@ -1,0 +1,16 @@
+/**
+ * Babel configuration for the project
+ * Supports both CommonJS and ES modules
+ */
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {targets: {node: 'current'}}],
+    '@babel/preset-react',
+    'module:metro-react-native-babel-preset',
+  ],
+  plugins: [
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-transform-flow-strip-types',
+    '@babel/plugin-transform-react-jsx'
+  ]
+};

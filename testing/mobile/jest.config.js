@@ -15,9 +15,9 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
   
-  // Make Jest use Babel to transform files
+  // Make Jest use Babel to transform files with ES module support
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './testing/mobile/.babelrc' }]
   },
   
   // A list of paths to directories that Jest should use to search for files in
@@ -45,6 +45,7 @@ module.exports = {
   
   // Setup files to run before each test
   setupFiles: ['<rootDir>/testing/mobile/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/testing/mobile/jest.setup.js'],
   
   // The directory where Jest should output its coverage files
   coverageDirectory: '<rootDir>/testing/coverage',
