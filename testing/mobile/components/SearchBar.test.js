@@ -4,12 +4,12 @@
  * This file contains tests for the SearchBar component in the React Native mobile app.
  */
 
-// Import React
-const React = require('react');
-// Import testing utilities
-const { render, fireEvent } = require('@testing-library/react-native');
-// Import the component - handle default export properly
-const SearchBar = require('../../../mobile/components/SearchBar').default;
+// Import dependencies
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+
+// Import the SearchBar component directly
+import SearchBar from '../../../mobile/components/SearchBar';
 
 describe('SearchBar', () => {
   // Mock functions
