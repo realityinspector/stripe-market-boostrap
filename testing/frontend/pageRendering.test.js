@@ -45,10 +45,12 @@ exports.testApiResponseTimes = async () => {
   
   for (const endpoint of endpoints) {
     const result = await simulatePageLoad(endpoint.path);
-    console.log(`${endpoint.name}: ${result.status}, ${result.duration.toFixed(2)}ms`);
+    // Ensure the duration property exists before attempting to format it
+    const duration = result.duration || 0;
+    console.log(`${endpoint.name}: ${result.status}, ${duration.toFixed(2)}ms`);
     
-    if (result.duration > 1000) {
-      throw new Error(`${endpoint.name} response time (${result.duration}ms) exceeds 1000ms threshold`);
+    if (duration > 1000) {
+      throw new Error(`${endpoint.name} response time (${duration}ms) exceeds 1000ms threshold`);
     }
   }
 };
