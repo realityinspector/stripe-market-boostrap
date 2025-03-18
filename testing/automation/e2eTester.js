@@ -54,6 +54,12 @@ async function performE2eTests(config) {
     // Test full purchase flow from vendor to customer
     await testPurchaseFlow();
     
+    // Test admin management capabilities
+    await testAdminFlow();
+    
+    // Test customer edge cases and error handling
+    await testCustomerEdgeCases();
+    
   } catch (error) {
     console.error('Error in E2E testing:', error);
     recordTest('E2E Testing Suite', false, error);
@@ -398,6 +404,152 @@ async function performE2eTests(config) {
       
     } catch (error) {
       recordTest('Full Purchase Flow', false, error);
+    }
+  }
+  
+  /**
+   * Test admin management capabilities
+   */
+  async function testAdminFlow() {
+    console.log('Testing admin management capabilities...');
+    
+    try {
+      // Create an admin user
+      const admin = {
+        email: 'admin@marketplace.com',
+        password: 'Admin123!',
+        role: 'admin'
+      };
+      
+      // Login as admin
+      const loginResponse = await api.post('/api/auth/login', {
+        email: admin.email,
+        password: admin.password
+      });
+      
+      // Check if we got a successful login
+      if (loginResponse.status !== 200 || !loginResponse.data.token) {
+        throw new Error(`Admin login failed: ${loginResponse.status}`);
+      }
+      
+      // Store admin token
+      const adminToken = loginResponse.data.token;
+      
+      // Create admin API client
+      const adminApi = axios.create({
+        baseURL: config.baseUrl,
+        timeout: config.timeouts.apiResponse,
+        validateStatus: () => true,
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      });
+      
+      // Test platform analytics access
+      const analyticsResponse = await adminApi.get('/api/admin/analytics');
+      const analyticsSuccess = analyticsResponse.status === 200;
+      
+      recordTest('Admin Analytics Access', analyticsSuccess,
+        analyticsSuccess ? null : `Failed to access admin analytics: ${analyticsResponse.status}`);
+      
+      // Test vendor management
+      const vendorsResponse = await adminApi.get('/api/admin/vendors');
+      const vendorsSuccess = vendorsResponse.status === 200;
+      
+      recordTest('Admin Vendor Management', vendorsSuccess,
+        vendorsSuccess ? null : `Failed to access vendor management: ${vendorsResponse.status}`);
+      
+      // Test product management
+      const productsResponse = await adminApi.get('/api/admin/products');
+      const productsSuccess = productsResponse.status === 200;
+      
+      recordTest('Admin Product Management', productsSuccess,
+        productsSuccess ? null : `Failed to access product management: ${productsResponse.status}`);
+      
+      // Test transaction oversight
+      const transactionsResponse = await adminApi.get('/api/admin/transactions');
+      const transactionsSuccess = transactionsResponse.status === 200;
+      
+      recordTest('Admin Transaction Oversight', transactionsSuccess,
+        transactionsSuccess ? null : `Failed to access transactions: ${transactionsResponse.status}`);
+      
+      // Test commission management
+      const commissionResponse = await adminApi.get('/api/admin/commission');
+      const commissionSuccess = commissionResponse.status === 200;
+      
+      recordTest('Admin Commission Management', commissionSuccess,
+        commissionSuccess ? null : `Failed to access commission settings: ${commissionResponse.status}`);
+      
+    } catch (error) {
+      recordTest('Admin Flow', false, error);
+    }
+  }
+  
+  /**
+   * Test customer edge cases and error handling
+   */
+  async function testCustomerEdgeCases() {
+    console.log('Testing customer edge cases...');
+    
+    try {
+      // Test invalid login
+      const invalidLoginResponse = await api.post('/api/auth/login', {
+        email: 'nonexistent@example.com',
+        password: 'InvalidPassword123!'
+      });
+      
+      const invalidLoginSuccess = invalidLoginResponse.status === 401;
+      recordTest('Invalid Login Handling', invalidLoginSuccess,
+        invalidLoginSuccess ? null : `Unexpected status for invalid login: ${invalidLoginResponse.status}`);
+      
+      // Test registration validation (invalid email)
+      const invalidEmailResponse = await api.post('/api/auth/register', {
+        email: 'not-an-email',
+        name: 'Test User',
+        password: 'Password123!',
+        role: 'customer'
+      });
+      
+      const invalidEmailSuccess = invalidEmailResponse.status === 400;
+      recordTest('Registration Email Validation', invalidEmailSuccess,
+        invalidEmailSuccess ? null : `Unexpected status for invalid email: ${invalidEmailResponse.status}`);
+      
+      // Test registration validation (password too short)
+      const shortPasswordResponse = await api.post('/api/auth/register', {
+        email: 'valid@example.com',
+        name: 'Test User',
+        password: 'short',
+        role: 'customer'
+      });
+      
+      const shortPasswordSuccess = shortPasswordResponse.status === 400;
+      recordTest('Registration Password Validation', shortPasswordSuccess,
+        shortPasswordSuccess ? null : `Unexpected status for short password: ${shortPasswordResponse.status}`);
+      
+      // Test payment with invalid product ID
+      const customer = await createTestUser('customer');
+      const customerApi = axios.create({
+        baseURL: config.baseUrl,
+        timeout: config.timeouts.apiResponse,
+        validateStatus: () => true,
+        headers: {
+          'Authorization': `Bearer ${customer.token}`
+        }
+      });
+      
+      const invalidPaymentResponse = await customerApi.post('/api/payments/create-payment-intent', {
+        amount: 1000,  // $10.00
+        items: [{ id: 9999, quantity: 1 }]  // Non-existent product ID
+      });
+      
+      // We're testing that the system gracefully handles an invalid product
+      // Success is determined by whether we get an appropriate error status
+      const invalidPaymentSuccess = invalidPaymentResponse.status >= 400;
+      recordTest('Payment With Invalid Product', invalidPaymentSuccess,
+        invalidPaymentSuccess ? null : `Expected error status for invalid product payment: ${invalidPaymentResponse.status}`);
+      
+    } catch (error) {
+      recordTest('Customer Edge Cases', false, error);
     }
   }
 }

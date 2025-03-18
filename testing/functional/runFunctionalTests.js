@@ -113,6 +113,20 @@ async function runAllTests(specificTest = null) {
     });
   }
   
+  if (!specificTest || specificTest === 'admin') {
+    testsToRun.push({
+      name: 'Admin Journey',
+      fn: testAdminJourney
+    });
+  }
+  
+  if (!specificTest || specificTest === 'edge-cases') {
+    testsToRun.push({
+      name: 'Customer Edge Cases',
+      fn: testCustomerEdgeCases
+    });
+  }
+  
   for (const test of testsToRun) {
     const result = await runTest(test.name, test.fn);
     results.push(result);
