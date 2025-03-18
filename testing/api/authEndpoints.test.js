@@ -124,6 +124,8 @@ exports.testAuthMiddleware = async () => {
       throw new Error(`Expected status 401 or 403 for invalid token, got ${error.response.status}`);
     }
     console.log(`Received ${error.response.status} status for invalid token - this is acceptable`);
+    
+    // Test passes as long as we got either 401 or 403
   }
   
   // Test with no token
