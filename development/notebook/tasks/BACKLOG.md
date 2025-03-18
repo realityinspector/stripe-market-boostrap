@@ -1,222 +1,184 @@
-# 📋 Task Backlog
-
-This document contains future tasks that have been identified but are not yet prioritized for immediate implementation. Tasks here are waiting to be moved to CURRENT.md when resources become available.
-
-## 🔍 Feature Enhancements
-
-### FE-001: Implement product review and rating system
-
-**Description:** Create a system for customers to leave reviews and ratings for products they've purchased.
-
-**Success Criteria:**
-- Customers can leave star ratings (1-5)
-- Customers can write text reviews
-- Vendors can respond to reviews
-- Product pages display average ratings and reviews
-- Sorting/filtering of products by rating
-
-**Technical Notes:**
-- Will require database schema updates
-- New API endpoints needed
-- UI components for rating display and input
-- Consider pagination for reviews
-
-**Dependencies:**
-- Core marketplace functionality
-- User authentication
-
-**Estimated Effort:** Medium
-
----
-
-### FE-002: Implement real-time notifications
-
-**Description:** Add real-time notifications for important events such as order status changes, new messages, etc.
-
-**Success Criteria:**
-- Users receive notifications in real-time
-- Notification center to view all notifications
-- Ability to mark notifications as read
-- Email notifications for important events
-- Push notifications for mobile app
-
-**Technical Notes:**
-- Consider using WebSockets or Server-Sent Events
-- Implement notification database table
-- Create notification service
-- Build UI components for notifications
-
-**Dependencies:**
-- Core user system
-
-**Estimated Effort:** Medium
-
----
-
-### FE-003: Add multi-language support
-
-**Description:** Implement internationalization (i18n) to support multiple languages.
-
-**Success Criteria:**
-- UI elements can be translated
-- User can select preferred language
-- Product information available in multiple languages
-- Currency conversion based on locale
-
-**Technical Notes:**
-- Use standard i18n libraries
-- Create translation files
-- Consider right-to-left language support
-- Update database schema for multi-language content
-
-**Dependencies:**
-- Core UI components
-
-**Estimated Effort:** Large
-
----
-
-## 🛠️ Technical Improvements
-
-### TI-001: Implement comprehensive API documentation
-
-**Description:** Create detailed API documentation with interactive examples.
-
-**Success Criteria:**
-- All API endpoints documented
-- Request/response formats specified
-- Authentication requirements clear
-- Interactive testing capability
-- Usage examples provided
-
-**Technical Notes:**
-- Consider using OpenAPI/Swagger
-- Document error responses
-- Include rate limiting information
-- Version the API documentation
-
-**Dependencies:**
-- Stable API endpoints
-
-**Estimated Effort:** Medium
-
----
-
-### TI-002: Improve application performance
-
-**Description:** Identify and resolve performance bottlenecks in the application.
-
-**Success Criteria:**
-- Page load times under 2 seconds
-- API response times under 500ms
-- Reduced database query times
-- Optimized front-end asset loading
-- Improved mobile performance
-
-**Technical Notes:**
-- Perform comprehensive performance audit
-- Implement caching where appropriate
-- Optimize database queries
-- Reduce bundle sizes
-- Implement code splitting
-
-**Dependencies:**
-- Core functionality complete
-
-**Estimated Effort:** Large
-
----
-
-### TI-003: Enhance security measures
-
-**Description:** Implement additional security features to protect user data and prevent attacks.
-
-**Success Criteria:**
-- Comprehensive input validation
-- Protection against common vulnerabilities (XSS, CSRF, SQL Injection)
-- Rate limiting for sensitive endpoints
-- Security headers properly configured
-- Regular security scanning process
-
-**Technical Notes:**
-- Follow OWASP guidelines
-- Implement Content Security Policy
-- Use parameterized queries
-- Add rate limiting middleware
-- Configure security headers
-
-**Dependencies:**
-- Core API functionality
-
-**Estimated Effort:** Medium
-
----
-
-## 📱 Mobile Enhancements
-
-### ME-001: Implement offline mode for mobile app
-
-**Description:** Allow basic app functionality when users have no internet connection.
-
-**Success Criteria:**
-- View previously loaded products offline
-- Cache important user data
-- Queue actions to perform when back online
-- Clear visual indicators of offline status
-- Smooth transition between online and offline modes
-
-**Technical Notes:**
-- Implement local storage solution
-- Create synchronization logic
-- Handle conflict resolution
-- Build offline UI indicators
-
-**Dependencies:**
-- Core mobile functionality
-
-**Estimated Effort:** Large
-
----
-
-### ME-002: Add biometric authentication
-
-**Description:** Implement fingerprint/face recognition for faster login on mobile devices.
-
-**Success Criteria:**
-- Support fingerprint authentication
-- Support facial recognition where available
-- Fallback to password authentication
-- Secure storage of authentication tokens
-- Clear user messaging about biometric security
-
-**Technical Notes:**
-- Use React Native biometric libraries
-- Ensure secure storage of tokens
-- Handle device compatibility issues
-- Follow platform guidelines for biometric UX
-
-**Dependencies:**
-- Core authentication system
-
-**Estimated Effort:** Small
-
----
-
-## 🔍 Instructions for AI Agents
-
-When a task from this backlog is ready to be implemented:
-
-1. Move it from this file to CURRENT.md
-2. Assign an appropriate priority level
-3. Set expected completion criteria
-4. Add any additional technical notes based on the current state of the codebase
-
-New backlog items should be added to this file when identified during development, bug fixing, or feature requests.
-
-Each backlog item should include:
-- Unique identifier
-- Clear description
-- Success criteria
-- Technical notes
-- Dependencies
-- Estimated effort
+# Task Backlog
+
+## ATTENTION AI AGENTS
+This document tracks future tasks for the Stripe Connect Marketplace project. Use this as a reference for upcoming work.
+
+## High Priority
+
+### SEC-001: Implement CSRF Protection
+**Priority**: High  
+**Status**: Backlog  
+**Description**: Implement CSRF protection for all form submissions in the application.
+
+**Steps**:
+1. Add CSRF token generation on the server
+2. Implement token validation middleware
+3. Update frontend forms to include CSRF tokens
+4. Add tests to verify CSRF protection
+5. Document CSRF implementation
+
+**Acceptance Criteria**:
+- CSRF tokens are generated and validated
+- All forms include CSRF protection
+- Attempts to submit forms without valid tokens are rejected
+- Tests verify CSRF protection
+- Documentation is updated
+
+### ADMIN-001: Create Admin Dashboard
+**Priority**: High  
+**Status**: Backlog  
+**Description**: Implement an administrative dashboard for platform management.
+
+**Steps**:
+1. Design admin dashboard layout
+2. Implement user management features
+3. Create vendor approval workflow
+4. Add transaction monitoring
+5. Implement platform statistics
+6. Create system notification center
+
+**Acceptance Criteria**:
+- Admin can manage users and vendors
+- Admin can view and monitor transactions
+- Admin can see platform statistics
+- Admin can approve/deny vendor applications
+- Admin receives system notifications
+
+### BACKUP-001: Implement Daily Database Backup
+**Priority**: High  
+**Status**: Backlog  
+**Description**: Create a daily database backup system that stores backups in a private folder.
+
+**Steps**:
+1. Implement backup script
+2. Create private storage location
+3. Set up daily cron job
+4. Implement backup rotation (keep last 7 days)
+5. Add backup verification
+6. Create restoration procedure
+
+**Acceptance Criteria**:
+- Daily backups are created automatically
+- Backups are stored in a non-web-accessible location
+- Backup rotation keeps storage requirements reasonable
+- Backup integrity is verified
+- Restoration procedure is documented and tested
+
+## Medium Priority
+
+### UI-003: Implement Responsive Mobile Design
+**Priority**: Medium  
+**Status**: Backlog  
+**Description**: Improve mobile responsiveness of all user interfaces.
+
+**Steps**:
+1. Audit current responsive implementation
+2. Implement mobile-first design principles
+3. Test on various device sizes
+4. Fix layout issues on small screens
+5. Optimize touch targets for mobile
+
+**Acceptance Criteria**:
+- All UI components work well on mobile devices
+- Layouts adapt appropriately to screen size
+- Touch targets are appropriately sized
+- No horizontal scrolling on mobile devices
+- Tests verify responsive behavior
+
+### MEDIA-001: Implement Image Upload and Processing
+**Priority**: Medium  
+**Status**: Backlog  
+**Description**: Implement a system for image uploads with automatic processing and thumbnail generation.
+
+**Steps**:
+1. Create file upload system
+2. Implement image validation
+3. Add image processing pipeline
+4. Create thumbnail generation
+5. Implement storage optimization
+6. Add social media metadata extraction
+
+**Acceptance Criteria**:
+- Users can upload images
+- Images are validated for security
+- Thumbnails are automatically generated
+- Images are optimized for storage and delivery
+- Social media metadata is extracted and stored
+
+### ANALYTICS-001: Implement Analytics Tracking
+**Priority**: Medium  
+**Status**: Backlog  
+**Description**: Implement analytics tracking for key user actions and business metrics.
+
+**Steps**:
+1. Define key events to track
+2. Implement event tracking in frontend
+3. Create analytics database schema
+4. Implement analytics API
+5. Create analytics dashboard
+6. Set up scheduled reports
+
+**Acceptance Criteria**:
+- Key user actions are tracked
+- Business metrics are calculated
+- Analytics data is stored securely
+- Admin can view analytics dashboard
+- Scheduled reports are generated
+
+## Low Priority
+
+### DOCS-001: Create API Documentation
+**Priority**: Low  
+**Status**: Backlog  
+**Description**: Create comprehensive API documentation for developers.
+
+**Steps**:
+1. Document all API endpoints
+2. Create interactive API explorer
+3. Add code examples
+4. Document authentication requirements
+5. Create getting started guide
+
+**Acceptance Criteria**:
+- All API endpoints are documented
+- Documentation includes request/response examples
+- Authentication is clearly explained
+- Error responses are documented
+- Getting started guide is comprehensive
+
+### PERF-001: Performance Optimization
+**Priority**: Low  
+**Status**: Backlog  
+**Description**: Optimize application performance for faster load times and better user experience.
+
+**Steps**:
+1. Conduct performance audit
+2. Optimize database queries
+3. Implement caching strategy
+4. Optimize frontend assets
+5. Implement lazy loading
+6. Add performance monitoring
+
+**Acceptance Criteria**:
+- Page load times are under 2 seconds
+- API response times are under 200ms
+- Frontend optimizations implemented
+- Caching strategy in place
+- Performance monitoring in place
+
+## Template for New Backlog Items
+
+### ID-XXX: [Task Title]
+**Priority**: [High/Medium/Low]  
+**Status**: Backlog  
+**Description**: [Brief description of the task]
+
+**Steps**:
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Acceptance Criteria**:
+- [Criteria 1]
+- [Criteria 2]
+- [Criteria 3]

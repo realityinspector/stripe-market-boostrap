@@ -1,172 +1,147 @@
-# 🧠 Decision Log
+# Decision Log
 
-This document records significant engineering and architectural decisions made during the development process. It serves as a reference for why certain approaches were chosen and provides context for future development.
+## ATTENTION AI AGENTS
+This log tracks significant architectural and implementation decisions for the Stripe Connect Marketplace project. Use this log to understand why certain approaches were chosen and to maintain consistent decision-making across AI agents.
 
-## DEC-001: Stripe Connect Integration Approach
+## March 18, 2025
 
-**Date:** March 13, 2025
-**Decision Maker:** Engineering Team
-**Type:** Architectural
+### DECISION-001: Development Notebook Structure
+**Decision**: Implement a comprehensive development notebook structure to facilitate AI agent collaboration.
 
-**Context:**
-The marketplace requires a way to process payments and distribute funds between customers, vendors, and the platform. We needed to determine the best approach for implementing this payment flow.
+**Context**:
+- The project involves multiple AI agents working at different times
+- Without structured documentation, knowledge transfer between agents is challenging
+- Consistency in development practices is essential for maintainability
+- Test failures need to be tracked and resolved systematically
 
-**Options Considered:**
-1. **Custom Payment Processing**: Implement our own payment processing system with direct integration to payment gateways.
-2. **Stripe Standard**: Use Stripe's standard payment processing and manually handle transfers to vendors.
-3. **Stripe Connect**: Use Stripe Connect to enable vendors to receive payments directly through their own Stripe accounts with automatic platform fees.
+**Alternatives Considered**:
+1. **Basic documentation only**: Simple README files for high-level guidance
+   - Pros: Minimal overhead, flexible
+   - Cons: Insufficient structure for complex project, harder to maintain consistency
+   
+2. **External documentation platform**: Use a separate documentation system
+   - Pros: Could offer more features
+   - Cons: Adds dependency, separates docs from code
 
-**Decision:**
-Implement Stripe Connect (Option 3) using the Express onboarding flow.
+3. **Comprehensive in-repo notebook structure** (chosen)
+   - Pros: Keeps documentation with code, structured approach, facilitates knowledge transfer
+   - Cons: Requires initial setup, needs maintenance
 
-**Rationale:**
-- Stripe Connect handles the complexities of disbursing funds to vendors
-- Automatic platform fee calculation and transfer
-- Simplified compliance with financial regulations
-- Vendors maintain their own Stripe accounts
-- Express onboarding provides a balance of simplicity and customization
+**Decision Reasoning**:
+- In-repo documentation ensures accessibility and version control
+- Structured approach improves consistency between AI agents
+- Task tracking system helps prioritize and track progress
+- Failure logging ensures issues are systematically addressed
+- CI/CD integration validates documentation compliance
 
-**Consequences:**
-- Vendors will need to complete Stripe onboarding
-- Platform will need to implement webhook handling for account updates
-- Testing will require mock Stripe accounts
-- Integration complexity is higher than standard payments
+**Implementation Details**:
+- Created directory structure for notebook
+- Implemented README with overview
+- Added AI agent guidance documentation
+- Created task tracking system
+- Set up logging system
+- Established CI/CD compliance requirements
+- Created validation tools for notebook structure
 
-**Implementation Notes:**
-- Use Stripe Connect Express for streamlined vendor onboarding
-- Implement webhook endpoints for account status updates
-- Store Stripe account IDs in vendor profiles
-- Create testing utilities for payment flows
+### DECISION-002: Stripe Connect Integration Strategy
+**Decision**: Implement a robust Stripe Connect integration with graceful degradation and explicit vendor onboarding flow.
 
----
+**Context**:
+- The marketplace needs to facilitate payments between customers and vendors
+- Stripe Connect allows platforms to facilitate payments to connected accounts
+- Vendors need to complete Stripe Connect onboarding before receiving payments
+- Tests are currently failing due to incomplete Stripe Connect integration
 
-## DEC-002: Test Infrastructure Approach
+**Alternatives Considered**:
+1. **Direct payment processing only**: Skip Connect, platform handles all payments
+   - Pros: Simpler implementation
+   - Cons: Doesn't meet marketplace requirements, scalability issues
+   
+2. **Simplified mock Connect accounts**: Use basic Connect accounts without onboarding
+   - Pros: Easier to implement, faster development
+   - Cons: Doesn't meet compliance requirements, limited functionality
 
-**Date:** March 15, 2025
-**Decision Maker:** Engineering Team
-**Type:** Development Process
+3. **Full Stripe Connect implementation with onboarding flow** (chosen)
+   - Pros: Meets marketplace requirements, compliant with regulations, scalable
+   - Cons: More complex implementation, requires vendor onboarding steps
 
-**Context:**
-Building a robust testing infrastructure is critical for the marketplace, especially with complex payment flows and multiple user roles. We needed to determine the best approach for organizing and implementing tests.
+**Decision Reasoning**:
+- Stripe Connect is essential for a proper marketplace implementation
+- Vendor onboarding is a regulatory requirement for financial compliance
+- Proper error handling and graceful degradation improve user experience
+- Supporting both TEST and LIVE modes is necessary for development and production
 
-**Options Considered:**
-1. **Minimal Testing**: Focus only on critical paths with minimal test coverage.
-2. **Framework-Specific Testing**: Use separate testing approaches for each part of the application.
-3. **Comprehensive Testing Infrastructure**: Build a custom testing infrastructure that supports all parts of the application.
+**Implementation Details**:
+- Vendors must complete Stripe Connect onboarding before receiving payments
+- Implementation will support both TEST and LIVE modes
+- Graceful degradation will be implemented for API failures
+- Comprehensive error logging will be added
+- Tests will be updated to properly validate Connect integration
 
-**Decision:**
-Implement a comprehensive testing infrastructure (Option 3) with specialized support for AI agent collaboration.
+### DECISION-003: Testing Infrastructure Enhancement
+**Decision**: Enhance the testing infrastructure with development notebook validation.
 
-**Rationale:**
-- Complex marketplace requires thorough testing
-- Multiple user roles need comprehensive test coverage
-- Payment processing demands rigorous verification
-- AI agents benefit from structured testing patterns
-- Self-documenting tests improve maintainability
+**Context**:
+- The project has a comprehensive testing infrastructure
+- Multiple test failures need to be tracked and resolved
+- Consistency in development practices is essential
 
-**Consequences:**
-- Higher initial investment in testing infrastructure
-- Need for standardized test templates and examples
-- Additional documentation requirements
-- More complex test execution and reporting
+**Alternatives Considered**:
+1. **Fix tests only**: Focus only on fixing failing tests without additional infrastructure
+   - Pros: Direct focus on immediate issues
+   - Cons: Doesn't address root causes of consistency issues
+   
+2. **Rewrite test suite**: Completely revamp the testing approach
+   - Pros: Could address fundamental testing issues
+   - Cons: Time-consuming, risks regressions
 
-**Implementation Notes:**
-- Create test templates for different test types
-- Provide extensive documentation for AI agents
-- Implement test utilities for common operations
-- Build reporting mechanisms for test results
+3. **Enhance existing infrastructure with development notebook integration** (chosen)
+   - Pros: Builds on existing strength, improves consistency, addresses root issues
+   - Cons: Requires initial setup
 
----
+**Decision Reasoning**:
+- Leverages the existing strong testing infrastructure
+- Adds structure to track and resolve test failures
+- Improves consistency between AI agents
+- Prevents recurring issues through systematic documentation
+- CI/CD integration ensures compliance
 
-## DEC-003: Database Schema Approach
+**Implementation Details**:
+- Added pre-test hook to validate notebook structure
+- Created integration script for the test runner
+- Implemented test scripts for notebook validation
+- Documented test failures in a structured format
+- Created task tracking for test issues
 
-**Date:** March 10, 2025
-**Decision Maker:** Engineering Team
-**Type:** Architectural
+## Template for Future Entries
 
-**Context:**
-The marketplace requires a database schema that supports vendors, customers, products, orders, and payments. We needed to determine the best approach for organizing this data.
+### DECISION-XXX: [Decision Title]
+**Decision**: [Brief statement of the decision made]
 
-**Options Considered:**
-1. **Denormalized Schema**: Optimize for read performance with redundant data.
-2. **Fully Normalized Schema**: Optimize for data integrity with normalized relations.
-3. **Hybrid Approach**: Balance normalization with performance considerations.
+**Context**:
+- [Background information]
+- [Problem being addressed]
+- [Constraints and requirements]
 
-**Decision:**
-Implement a hybrid approach (Option 3) with strategic denormalization for frequently accessed data.
+**Alternatives Considered**:
+1. **[Alternative 1]**:
+   - Pros: [Advantages]
+   - Cons: [Disadvantages]
+   
+2. **[Alternative 2]**:
+   - Pros: [Advantages]
+   - Cons: [Disadvantages]
 
-**Rationale:**
-- Marketplace requires both fast reads and data integrity
-- Product data is read frequently but updated less often
-- Order data must maintain strict integrity
-- User profiles need quick access but consistent updates
+3. **[Chosen Alternative]** (chosen):
+   - Pros: [Advantages]
+   - Cons: [Disadvantages]
 
-**Consequences:**
-- Need for careful management of denormalized data
-- More complex update operations for some entities
-- Better read performance for product listing and search
-- Additional indexes required for performance
+**Decision Reasoning**:
+- [Key factors that influenced the decision]
+- [How the decision aligns with project goals]
+- [Trade-offs accepted]
 
-**Implementation Notes:**
-- Normalize user, vendor, and order data
-- Denormalize product data for search and listing
-- Implement database triggers for consistency where needed
-- Create indexes for common query patterns
-
----
-
-## DEC-004: Mobile App Architecture
-
-**Date:** March 8, 2025
-**Decision Maker:** Engineering Team
-**Type:** Architectural
-
-**Context:**
-The marketplace needs to support both web and mobile access. We needed to determine the best approach for implementing the mobile experience.
-
-**Options Considered:**
-1. **Progressive Web App (PWA)**: Use web technologies for a mobile-friendly experience.
-2. **Native Mobile Apps**: Build separate native apps for iOS and Android.
-3. **React Native**: Use React Native for cross-platform mobile development.
-
-**Decision:**
-Implement React Native (Option 3) for the mobile app.
-
-**Rationale:**
-- Leverages existing React skills in the team
-- Provides near-native performance
-- Allows code sharing between iOS and Android
-- Faster development compared to separate native apps
-- Better user experience than a PWA for complex interactions
-
-**Consequences:**
-- Need for platform-specific code in some cases
-- Additional testing requirements for each platform
-- More complex build and deployment process
-- Some native features may require additional work
-
-**Implementation Notes:**
-- Use React Native for core functionality
-- Implement platform-specific modules where needed
-- Share business logic between web and mobile
-- Create specialized testing for mobile components
-
----
-
-## 🔍 Instructions for AI Agents
-
-When making significant architectural or implementation decisions:
-
-1. Document the decision in this log
-2. Assign a unique decision ID (DEC-XXX)
-3. Include context, options considered, rationale, and consequences
-4. Link to related tasks or technical documents
-5. Update implementation notes as the decision is realized in code
-
-This decision log serves as:
-- A record of why certain approaches were chosen
-- Documentation of the thought process behind architecture
-- A resource for understanding implementation constraints
-- Context for future changes or optimizations
-
-New decisions should be added to the top of this file to maintain a chronological record.
+**Implementation Details**:
+- [Specific implementation notes]
+- [Components affected]
+- [Migration strategy if applicable]

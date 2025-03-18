@@ -1,187 +1,185 @@
-# 🔍 Pre-Commit Review Checklist
+# Code Review Checklist
 
-This document provides a comprehensive checklist for reviewing code changes before submitting them. Following this checklist ensures that changes meet quality standards and minimize the risk of introducing bugs or security vulnerabilities.
+## ATTENTION AI AGENTS
+This checklist outlines the requirements for code reviews in the Stripe Connect Marketplace project. All code changes must be reviewed against these criteria before being considered complete.
 
-## 🚨 CRITICAL NOTICE FOR AI AGENTS 🚨
+## General Code Quality
 
-As an AI agent working on this codebase, you **must** review your code changes against this checklist before considering them complete. This self-review process is essential for maintaining code quality and preventing common issues.
-
-## ✅ Functionality Checklist
-
-### Core Functionality
-- [ ] Changes fulfill the requirements of the task
-- [ ] All user flows work as expected
+### Functionality
+- [ ] Code works as intended and meets requirements
 - [ ] Edge cases are handled appropriately
-- [ ] Changes are resilient to invalid inputs
-- [ ] Performance implications have been considered
+- [ ] No regression in existing functionality
+- [ ] Performance considerations addressed
+- [ ] Idiomatic use of language and framework
 
-### Error Handling
-- [ ] All potential errors are caught and handled
-- [ ] Error messages are clear and actionable
-- [ ] Error states are properly displayed to users
-- [ ] System recovery from errors works as expected
-- [ ] Error logs provide sufficient context for debugging
+### Readability
+- [ ] Code is self-explanatory and easy to understand
+- [ ] Naming conventions followed (variables, functions, classes)
+- [ ] Complex logic includes explanatory comments
+- [ ] Consistent formatting and style
+- [ ] No commented-out code or debug statements
 
-### Mobile Specific
-- [ ] UI renders correctly on different screen sizes
-- [ ] Touch interactions work as expected
-- [ ] Keyboard handling works correctly
-- [ ] Offline behavior is graceful (if applicable)
-- [ ] Proper navigation patterns are followed
+### Structure
+- [ ] Proper separation of concerns
+- [ ] No code duplication (DRY principle)
+- [ ] Functions/methods have single responsibility
+- [ ] Proper error handling
+- [ ] No unnecessarily complex code
 
-## 🔒 Security Checklist
-
-### General Security
-- [ ] Input validation is implemented for all user inputs
-- [ ] SQL injection vectors are prevented
-- [ ] Cross-site scripting (XSS) protections are in place
-- [ ] Authentication checks are present where needed
-- [ ] Authorization checks validate user permissions
-
-### Data Protection
-- [ ] Sensitive data is not logged
-- [ ] Personal information is handled according to privacy policies
-- [ ] API keys and secrets are not hardcoded
-- [ ] Data is validated before storage or processing
-- [ ] HTTPS is used for all external communications
-
-### Payment Security
-- [ ] Stripe integration follows security best practices
-- [ ] Payment data is handled securely
-- [ ] Proper encryption and tokenization is used
-- [ ] Transaction amounts are validated
-- [ ] Duplicate payment prevention measures exist
-
-## 🧪 Testing Checklist
-
-### Test Coverage
-- [ ] New functionality has corresponding tests
-- [ ] Tests cover both success and error scenarios
-- [ ] Edge cases are included in test cases
-- [ ] UI component tests are included if applicable
-- [ ] Integration tests verify component interactions
-
-### Test Quality
-- [ ] Tests are independent and don't rely on each other
-- [ ] Tests use proper assertions
-- [ ] Tests follow the project's testing patterns
-- [ ] Tests are readable and well-documented
-- [ ] Mock data and dependencies are used appropriately
-
-### Test Execution
-- [ ] All tests pass locally
-- [ ] No flaky tests were introduced
-- [ ] Performance tests pass (if applicable)
-- [ ] Security tests pass (if applicable)
-- [ ] End-to-end tests verify the complete flow
-
-## 📦 Code Quality Checklist
-
-### General Quality
-- [ ] Code follows the project's style guide
-- [ ] No unused code or commented-out code
-- [ ] Complex logic is properly documented
-- [ ] Functions and components have a single responsibility
-- [ ] Naming is clear and consistent
-
-### JavaScript/TypeScript Quality
-- [ ] No TypeScript 'any' types used without justification
-- [ ] Proper type annotations are used
-- [ ] Modern JavaScript features are used appropriately
-- [ ] No memory leaks in event listeners or subscriptions
-- [ ] Asynchronous code uses async/await pattern
-
-### React/React Native Quality
-- [ ] Components are properly structured
-- [ ] State is managed efficiently
-- [ ] Effects have appropriate dependencies
-- [ ] Memoization is used where beneficial
-- [ ] React-specific anti-patterns are avoided
-
-## 📄 Documentation Checklist
+## Documentation
 
 ### Code Documentation
-- [ ] Complex logic has explanatory comments
-- [ ] Functions have JSDoc comments
-- [ ] Non-obvious decisions are explained
-- [ ] APIs have clear documentation
-- [ ] TODO comments include ticket references
+- [ ] All public functions/methods have JSDoc or equivalent comments
+- [ ] Complex algorithms are explained
+- [ ] Important decisions are documented
+- [ ] AI agent guidance is included in critical components
+- [ ] Comments are accurate and up-to-date
 
-### Project Documentation
-- [ ] README.md is updated if necessary
-- [ ] New features are documented for users
-- [ ] API changes are reflected in API documentation
-- [ ] Environment variables are documented
-- [ ] Deployment changes are documented
+### External Documentation
+- [ ] README updated if necessary
+- [ ] API documentation updated for endpoint changes
+- [ ] Development notebook entries created:
+  - [ ] DAILY_LOG.md updated with implementation details
+  - [ ] DECISION_LOG.md updated for significant decisions
+  - [ ] FAILURE_LOG.md updated if resolving failures
 
-### Development Notebook
-- [ ] DAILY_LOG.md is updated with implementation details
-- [ ] DECISION_LOG.md includes any architectural decisions
-- [ ] FAILURE_LOG.md documents any encountered issues
-- [ ] Tasks are moved to appropriate status in task tracking
+## Data Integrity (CRITICAL)
 
-## 🚀 Performance Checklist
+### Database Operations
+- [ ] 🚨 No deletion of customer/user data in migrations
+- [ ] Database migrations preserve existing data
+- [ ] Schema changes are backward compatible
+- [ ] Transactions used where appropriate
+- [ ] Parameterized queries for all database access
 
-### General Performance
-- [ ] Changes don't introduce unnecessary network requests
-- [ ] Appropriate data caching is implemented
-- [ ] Large data sets are handled efficiently
-- [ ] Computationally expensive operations are optimized
-- [ ] Resources are properly released when no longer needed
+### State Management
+- [ ] State transitions are handled safely
+- [ ] No unintended side effects
+- [ ] Data validation before storage
+- [ ] Proper error handling for data operations
+- [ ] Race conditions considered and mitigated
 
-### React Performance
-- [ ] Unnecessary re-renders are avoided
-- [ ] Lists use virtualization for large data sets
-- [ ] Heavy calculations are memoized
-- [ ] Dependencies for hooks are properly specified
-- [ ] Event handlers are properly memoized
+## Security
 
-### API Performance
-- [ ] Database queries are optimized
-- [ ] API responses are appropriately sized
-- [ ] Pagination is used for large data sets
-- [ ] Response times are within acceptable limits
-- [ ] Rate limiting is considered for heavy operations
+### Authentication & Authorization
+- [ ] Authentication implemented for protected routes
+- [ ] Proper authorization checks for sensitive operations
+- [ ] CSRF protection implemented for forms
+- [ ] Token handling follows best practices
+- [ ] Role-based access control properly enforced
 
-## 🛠️ Deployment Readiness Checklist
+### Input Validation
+- [ ] All user input is validated
+- [ ] Input sanitization implemented
+- [ ] SQL injection protection in place
+- [ ] XSS protection measures
+- [ ] File uploads properly validated and restricted
 
-### Configuration
-- [ ] Environment variables are documented
-- [ ] Default values are sensible
-- [ ] Configuration is appropriate for different environments
-- [ ] Feature flags are used for incomplete features
-- [ ] Backward compatibility is maintained where needed
+### Output Handling
+- [ ] Sensitive data not exposed in responses or logs
+- [ ] Error messages don't reveal system details
+- [ ] Proper response status codes
+- [ ] Content security headers implemented
+- [ ] Structured error responses
 
-### Migration
-- [ ] Database migrations are included if schema changed
-- [ ] Migrations are reversible if possible
-- [ ] Data migration plans are documented
-- [ ] Existing data is compatible with changes
-- [ ] Deployment order is specified for dependent changes
+## API Integration
 
-### Monitoring
-- [ ] Appropriate logging is added for new features
-- [ ] Error tracking will capture potential issues
-- [ ] Performance monitoring is considered
-- [ ] Important business events are tracked
-- [ ] Health checks include new functionality
+### Stripe Integration
+- [ ] Supports both TEST and LIVE modes
+- [ ] Proper error handling for API failures
+- [ ] Implements graceful degradation
+- [ ] No hardcoded API keys or secrets
+- [ ] Connect account handling for vendors
+- [ ] Webhooks properly validated
 
-## 📝 Special Instructions for AI Agents
+### External API Calls
+- [ ] Proper error handling and fallbacks
+- [ ] Rate limiting considerations
+- [ ] Caching where appropriate
+- [ ] Logging of API interactions (without sensitive data)
+- [ ] Retry mechanism for transient failures
 
-When reviewing your code changes:
+## Testing
 
-1. **Go through the entire checklist** systematically
-2. **Be especially thorough** in areas related to your changes
-3. **Document any items** that aren't applicable to your changes
-4. **Fix issues** discovered during the review process
-5. **Update the development notebook** with review findings
+### Test Coverage
+- [ ] New code has appropriate test coverage
+- [ ] Edge cases are tested
+- [ ] UI components have visual tests
+- [ ] API endpoints have integration tests
+- [ ] User flows have E2E tests
 
-Before marking a task as complete:
-1. **Run all relevant tests** to verify your changes
-2. **Update documentation** to reflect your changes
-3. **Log your changes** in the appropriate development notebook files
-4. **Verify CI/CD pipeline** success for your changes
+### Test Quality
+- [ ] Tests are clear and readable
+- [ ] Tests focus on behavior, not implementation details
+- [ ] Mocks and stubs used appropriately
+- [ ] Test data doesn't contain sensitive information
+- [ ] Tests are reliable (not flaky)
 
----
+## React Native Specific
 
-**Remember**: This checklist is not just a formality but an essential quality assurance tool. Following it diligently will lead to higher quality code with fewer bugs and security issues.
+### Component Design
+- [ ] Functional components with hooks
+- [ ] Props properly typed and documented
+- [ ] No unnecessary re-renders
+- [ ] Responsive design principles followed
+- [ ] Accessibility considerations addressed
+
+### State Management
+- [ ] Proper use of state and context
+- [ ] Side effects handled with useEffect
+- [ ] No prop drilling where avoidable
+- [ ] Proper loading and error states
+- [ ] Form validation implemented
+
+### Performance
+- [ ] List rendering optimized (virtualization for long lists)
+- [ ] Memoization used where appropriate
+- [ ] Images optimized
+- [ ] Expensive operations moved out of render path
+- [ ] No memory leaks (cleanup in useEffect)
+
+## Backend Specific
+
+### API Design
+- [ ] RESTful principles followed
+- [ ] Consistent response format
+- [ ] Proper error responses
+- [ ] Pagination for list endpoints
+- [ ] API versioning considered
+
+### Performance
+- [ ] Database queries optimized
+- [ ] Proper indexing
+- [ ] Caching strategy where appropriate
+- [ ] Expensive operations handled asynchronously
+- [ ] Rate limiting for public endpoints
+
+### Error Handling
+- [ ] Comprehensive error handling
+- [ ] Errors logged with appropriate detail
+- [ ] Graceful handling of external service failures
+- [ ] User-friendly error messages
+- [ ] Proper HTTP status codes
+
+## Deployment Considerations
+
+- [ ] Environment variables documented
+- [ ] No hardcoded configuration
+- [ ] Backward compatibility maintained
+- [ ] Database migration plan
+- [ ] Rollback strategy defined
+
+## Final Review Criteria
+
+- All critical items must pass review
+- No more than 3 minor issues can be present
+- Documentation must be complete
+- All tests must pass
+- Security considerations must be addressed
+
+## Critical Reminders for AI Agents
+
+- Never bypass or ignore data integrity requirements
+- Always include AI agent guidance in docstrings for complex components
+- Security concerns always take priority
+- Update this checklist when new requirements are identified

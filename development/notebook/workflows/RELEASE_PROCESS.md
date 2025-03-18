@@ -1,189 +1,124 @@
-# 🚀 Release Process
+# Release Process
 
-This document outlines the complete release process for the Stripe Connect Marketplace application. It provides step-by-step instructions for preparing, testing, and deploying releases to different environments.
+## ATTENTION AI AGENTS
+This document outlines the release process for the Stripe Connect Marketplace project. Follow this process for all releases to ensure consistency and quality.
 
-## 🚨 CRITICAL NOTICE FOR AI AGENTS 🚨
+## Important Reminders
+1. **User-Driven Deployment**: Remember that actual deployment is performed by the user on Replit
+2. **Data Integrity**: Never delete customer/user data during migrations or updates
+3. **Safe Migrations**: All database schema changes must be backward compatible
+4. **API Compatibility**: Maintain backward compatibility for all API endpoints
+5. **External Services**: Ensure proper handling of external service dependencies
 
-As an AI agent working on this codebase, you should understand this release process to ensure your changes align with deployment expectations. Never attempt to bypass or modify these release procedures without explicit approval.
+## Pre-Release Checklist
 
-## 📅 Release Schedule
+### Code Quality
+- [ ] All tests are passing in the CI/CD pipeline
+- [ ] Code has been reviewed against docs/REVIEW_CHECKLIST.md
+- [ ] No known security vulnerabilities in dependencies
+- [ ] Development standards have been followed (docs/STANDARDS.md)
+- [ ] Documentation is up-to-date (README, API docs, etc.)
 
-The project follows this release cadence:
+### Database
+- [ ] Database migrations have been tested thoroughly
+- [ ] Migrations preserve existing user data
+- [ ] Rollback procedures have been documented
+- [ ] Database backup has been created
 
-- **Development Environment**: Continuous deployment on each successful CI build
-- **Staging Environment**: Weekly releases (every Monday)
-- **Production Environment**: Bi-weekly releases (every other Thursday)
+### Security
+- [ ] Security scanning has been completed
+- [ ] Authentication and authorization have been tested
+- [ ] CSRF protection is in place
+- [ ] Input validation is comprehensive
+- [ ] Proper error handling is implemented
 
-## 📋 Pre-Release Checklist
+### External Dependencies
+- [ ] Stripe integration has been tested in both TEST and LIVE modes
+- [ ] All external API integrations have graceful degradation
+- [ ] Environment variables are properly documented
+- [ ] Rate limiting is in place for public endpoints
 
-Before initiating a release, verify that:
+### User Experience
+- [ ] UI/UX testing has been completed
+- [ ] Mobile responsiveness has been verified
+- [ ] Accessibility standards have been met
+- [ ] User documentation has been updated
 
-1. **All critical tests pass**
-   - 100% of unit tests pass
-   - At least 90% of integration tests pass
-   - At least 80% of E2E tests pass
+## Release Steps
 
-2. **Documentation is up-to-date**
-   - API documentation matches implementation
-   - Release notes are prepared
-   - User guides reflect new features
+### 1. Preparation
+1. Update version number in package.json
+2. Update CHANGELOG.md with release notes
+3. Create a release branch (e.g., release/v1.0.0)
+4. Run final test suite on the release branch
+5. Generate final documentation
 
-3. **Performance benchmarks are met**
-   - Response times within acceptable limits
-   - Resource usage (CPU, memory) within bounds
-   - Database query performance verified
+### 2. User-Driven Deployment on Replit
+1. Prepare deployment instructions for the user
+2. Document the following steps for the user:
+   a. Click the "Deploy" button in the Replit interface
+   b. Review deployment settings
+   c. Confirm deployment
+3. Include troubleshooting guidance for common issues
 
-4. **Security checks are complete**
-   - Dependency vulnerabilities addressed
-   - Security scan issues resolved
-   - Input validation tested
+### 3. Post-Deployment Verification
+1. Verify application is running correctly
+2. Check critical functionality:
+   - User authentication
+   - Vendor onboarding
+   - Payment processing
+   - Admin dashboard
+3. Monitor for any unexpected errors
+4. Collect initial user feedback
 
-## 🔄 Release Workflow
+## Emergency Rollback Process
 
-The release process follows these stages:
+### Conditions for Rollback
+- Critical security vulnerability discovered
+- Severe performance degradation
+- Data integrity issues
+- Payment processing failures
 
-### 1. Release Preparation
+### Rollback Procedure
+1. Notify users of temporary service disruption
+2. Revert to previous stable version in Replit
+3. Apply database rollback scripts if needed
+4. Verify system functionality after rollback
+5. Communicate status to users
 
-1. **Version Bump**
-   - Update version number in package.json
-   - Create version tag in version control
-   - Generate changelog from commits
+## Release Monitoring
 
-2. **Release Branch Creation**
-   - Create release branch from main branch
-   - Name format: `release/vX.Y.Z`
-   - Push branch to remote repository
+### Initial Monitoring (First 24 Hours)
+- Monitor error rates and system performance
+- Watch for unexpected behaviors
+- Track user feedback and support requests
+- Verify Stripe payment processing
 
-3. **Release Candidate Build**
-   - CI system builds release candidate
-   - Release artifacts are generated
-   - Build is tagged as release candidate
+### Extended Monitoring (First Week)
+- Review application logs for patterns
+- Track key metrics (signups, transactions, etc.)
+- Identify potential improvements for next release
+- Document lessons learned
 
-### 2. Release Testing
+## Release Documentation
 
-1. **Automated Testing**
-   - Full test suite runs against release candidate
-   - Performance tests executed
-   - Security scanning performed
+### Internal Documentation
+- Update development notebook with release details
+- Document any issues encountered and their resolutions
+- Update task tracking to reflect completed work
+- Record decisions made during the release process
 
-2. **Manual Verification**
-   - Key user journeys manually verified
-   - Critical features tested on all platforms
-   - Visual review of user interface
+### User-Facing Documentation
+- Update user documentation with new features
+- Provide release notes highlighting changes
+- Update FAQs based on common questions
+- Refresh getting started guides if necessary
 
-3. **Release Candidate Approval**
-   - QA team signs off on release candidate
-   - Product manager approves feature set
-   - Engineering lead verifies technical quality
+## Critical Reminders for AI Agents
 
-### 3. Deployment Process
-
-1. **Staging Deployment**
-   - Release candidate deployed to staging environment
-   - Smoke tests run in staging environment
-   - Stakeholders notified of staging availability
-
-2. **Staging Verification**
-   - Critical paths tested in staging environment
-   - Integration with external systems verified
-   - Performance and monitoring confirmed
-
-3. **Production Deployment**
-   - Release deployed to production environment
-   - Deployment occurs during low-traffic window
-   - Phased rollout for major changes (if applicable)
-
-### 4. Post-Deployment
-
-1. **Monitoring**
-   - System health metrics monitored
-   - Error rates tracked
-   - User engagement metrics observed
-
-2. **Rollback Preparation**
-   - Rollback plan ready if issues arise
-   - Previous version available for quick restoration
-   - Database rollback procedures prepared if needed
-
-3. **Release Completion**
-   - Release notes published
-   - Stakeholders notified of successful deployment
-   - Post-mortem scheduled for any issues
-
-## 🚨 Rollback Procedures
-
-If critical issues are discovered after deployment:
-
-1. **Issue Assessment**
-   - Determine severity and impact of the issue
-   - Identify affected components and users
-   - Decide if immediate rollback is needed
-
-2. **Emergency Rollback**
-   - Deploy previous stable version
-   - Run smoke tests on rolled-back version
-   - Notify users of temporary service interruption
-
-3. **Post-Rollback Actions**
-   - Document the issue and rollback in incident report
-   - Fix the issue in development environment
-   - Prepare hotfix for subsequent release
-
-## 📝 Release Documentation
-
-Each release requires the following documentation:
-
-1. **Release Notes**
-   - List of new features
-   - Bug fixes included
-   - Known issues
-   - Performance improvements
-
-2. **Deployment Instructions**
-   - Step-by-step deployment commands
-   - Configuration changes required
-   - Database migration instructions
-   - Environment variable updates
-
-3. **Verification Plan**
-   - Test cases to verify after deployment
-   - Expected outcomes for each test
-   - Who will perform the verification
-   - Timeline for verification completion
-
-## 🔄 Continuous Improvement
-
-The release process is reviewed after each production deployment to identify:
-
-1. **Process Improvements**
-   - Bottlenecks in the release workflow
-   - Automation opportunities
-   - Communication gaps
-
-2. **Quality Improvements**
-   - Common types of issues found
-   - Test coverage gaps
-   - Monitoring enhancements needed
-
-## 📝 Special Instructions for AI Agents
-
-When preparing code for release:
-
-1. **Ensure feature completeness**
-   - All aspects of the feature are implemented
-   - Edge cases are handled
-   - Documentation is complete
-
-2. **Verify integration with CI/CD**
-   - Changes don't break the build process
-   - Tests cover new functionality
-   - Feature flags are used for incomplete features
-
-3. **Follow the versioning scheme**
-   - Semantic versioning (MAJOR.MINOR.PATCH)
-   - Version bumps align with change significance
-   - Changelog entries are clear and complete
-
----
-
-**Remember**: Releases must follow this documented process. Deviations require explicit approval and documentation in the DECISION_LOG.md file.
+- Never implement automatic deployment - deployment is user-driven on Replit
+- Always maintain backward compatibility for APIs and database schemas
+- Never delete customer/user data during migrations
+- Always document all changes and update relevant documentation
+- Always test in both TEST and LIVE modes for Stripe integration
+- Always implement graceful degradation for external services
