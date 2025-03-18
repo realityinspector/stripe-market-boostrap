@@ -7,7 +7,7 @@
 const axios = require('axios');
 const crypto = require('crypto');
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://localhost:5000';
 
 /**
  * Generate random data for testing

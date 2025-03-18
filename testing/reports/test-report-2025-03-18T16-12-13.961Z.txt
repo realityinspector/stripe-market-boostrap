@@ -1,0 +1,86 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/18/2025, 4:12:13 PM
+
+SUMMARY
+-------
+Total Tests:  22
+Passed:       4
+Failed:       18
+Success Rate: 18%
+
+API TESTS
+--------
+✗ authEndpoints.test.js - testUserRegistration
+  Error: Failed to create test customer user
+✗ authEndpoints.test.js - testVendorRegistration
+  Error: Failed to create test vendor user
+✗ authEndpoints.test.js - testUserLogin
+  Error: Failed to create test customer user
+✗ authEndpoints.test.js - testAuthMiddleware
+  Error: Failed to create test customer user
+✗ productEndpoints.test.js - testProductCreation
+  Error: Failed to create test vendor user
+✗ productEndpoints.test.js - testProductListing
+  Error: Failed to create test vendor user
+✗ productEndpoints.test.js - testProductRetrieval
+  Error: Failed to create test vendor user
+✗ productEndpoints.test.js - testProductUpdate
+  Error: Failed to create test vendor user
+✗ productEndpoints.test.js - testProductDeactivation
+  Error: Failed to create test vendor user
+✗ productEndpoints.test.js - testVendorProductListing
+  Error: Failed to create test vendor user
+
+E2E TESTS
+--------
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Failed to create test vendor user
+✗ paymentFlow.test.js - testOrderHistory
+  Error: Failed to create test vendor user
+✗ paymentFlow.test.js - testVendorOrders
+  Error: Failed to create test vendor user
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+FRONTEND TESTS
+--------------
+✗ pageRendering.test.js - testApiRootEndpoint
+  Error: connect ECONNREFUSED 127.0.0.1:5000
+✗ pageRendering.test.js - testApiResponseTimes
+  Error: connect ECONNREFUSED 127.0.0.1:5000
+✗ pageRendering.test.js - testApiCorsHeaders
+  Error: connect ECONNREFUSED 127.0.0.1:5000
+✗ pageRendering.test.js - testApiContentTypes
+  Error: connect ECONNREFUSED 127.0.0.1:5000
+✗ pageRendering.test.js - testApiErrorHandling
+  Error: connect ECONNREFUSED 127.0.0.1:5000
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- API Failures: 10
+  - authEndpoints.test.js - testUserRegistration
+  - authEndpoints.test.js - testVendorRegistration
+  - authEndpoints.test.js - testUserLogin
+  - authEndpoints.test.js - testAuthMiddleware
+  - productEndpoints.test.js - testProductCreation
+  - productEndpoints.test.js - testProductListing
+  - productEndpoints.test.js - testProductRetrieval
+  - productEndpoints.test.js - testProductUpdate
+  - productEndpoints.test.js - testProductDeactivation
+  - productEndpoints.test.js - testVendorProductListing
+- E2E Failures: 3
+  - paymentFlow.test.js - testPaymentFlow
+  - paymentFlow.test.js - testOrderHistory
+  - paymentFlow.test.js - testVendorOrders
+- Frontend Failures: 5
+  - pageRendering.test.js - testApiRootEndpoint
+  - pageRendering.test.js - testApiResponseTimes
+  - pageRendering.test.js - testApiCorsHeaders
+  - pageRendering.test.js - testApiContentTypes
+  - pageRendering.test.js - testApiErrorHandling
