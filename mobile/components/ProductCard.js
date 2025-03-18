@@ -5,30 +5,46 @@ import Colors from '../constants/Colors';
 
 const DEFAULT_IMAGE = 'https://via.placeholder.com/150?text=No+Image';
 
-export default function ProductCard({ product, onPress, style }) {
+/**
+ * ProductCard Component
+ * 
+ * Displays a product card with image, name, vendor, and price
+ * 
+ * @param {Object} product - The product data to display
+ * @param {Function} onPress - Function to call when card is pressed
+ * @param {Object} style - Optional custom styles
+ * @param {String} testID - Optional testID for testing (defaults to "product-card")
+ */
+export default function ProductCard({ product, onPress, style, testID = "product-card" }) {
   return (
     <TouchableOpacity 
       style={[styles.container, style]} 
       onPress={() => onPress(product)}
       activeOpacity={0.7}
+      testID={testID}
     >
-      <View style={styles.imageContainer}>
+      <View style={styles.imageContainer} testID={`${testID}-image-container`}>
         <Image 
           source={{ uri: product.image_url || DEFAULT_IMAGE }} 
           style={styles.image}
           resizeMode="cover"
+          testID={`${testID}-image`}
         />
       </View>
-      <View style={styles.contentContainer}>
-        <Text style={styles.name} numberOfLines={2}>{product.name}</Text>
-        <View style={styles.vendorContainer}>
+      <View style={styles.contentContainer} testID={`${testID}-content`}>
+        <Text style={styles.name} numberOfLines={2} testID={`${testID}-name`}>
+          {product.name}
+        </Text>
+        <View style={styles.vendorContainer} testID={`${testID}-vendor-container`}>
           <Feather name="shopping-bag" size={14} color={Colors.textLight} />
-          <Text style={styles.vendorName} numberOfLines={1}>
+          <Text style={styles.vendorName} numberOfLines={1} testID={`${testID}-vendor-name`}>
             {product.vendor_name}
           </Text>
         </View>
-        <View style={styles.footer}>
-          <Text style={styles.price}>${parseFloat(product.price).toFixed(2)}</Text>
+        <View style={styles.footer} testID={`${testID}-footer`}>
+          <Text style={styles.price} testID={`${testID}-price`}>
+            ${parseFloat(product.price).toFixed(2)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

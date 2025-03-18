@@ -42,7 +42,7 @@
  *                 Located in: testing/functional/
  * 
  *   stripe      - Stripe Connect integration tests
- *                 Located in: testing/*/stripe*.js
+ *                 Located in various test files with 'stripe' in the name
  * 
  *   all         - Run all tests (default)
  *   

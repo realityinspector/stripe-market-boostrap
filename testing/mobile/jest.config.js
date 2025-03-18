@@ -8,66 +8,55 @@
 module.exports = {
   preset: 'react-native',
   
-  // Where to find test files
+  // The root directory that Jest should scan for tests and modules
+  rootDir: '../../',
+  
+  // The test environment that will be used for testing
+  testEnvironment: 'node',
+  
+  // A list of paths to directories that Jest should use to search for files in
   testMatch: [
-    '**/testing/mobile/**/*.test.js',
-    '**/testing/mobile/**/*.spec.js'
+    '<rootDir>/testing/mobile/components/**/*.test.js',
+    '<rootDir>/testing/mobile/screens/**/*.test.js',
+    '<rootDir>/testing/mobile/contexts/**/*.test.js',
+    '<rootDir>/testing/mobile/navigation/**/*.test.js'
   ],
   
-  // Transform files with Babel
-  transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
-  },
+  // An array of file extensions your modules use
+  moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
   
-  // Ignore node_modules except for specific packages
-  transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-navigation|@react-navigation|@stripe|expo|@expo))'
-  ],
-  
-  // Setup files
-  setupFiles: [
-    './testing/mobile/setup.js'
-  ],
-  
-  // Setup after environment is loaded
-  setupFilesAfterEnv: [
-    '@testing-library/jest-native/extend-expect'
-  ],
-  
-  // Code coverage configuration
-  collectCoverageFrom: [
-    'mobile/**/*.{js,jsx}',
-    '!mobile/**/*.config.js',
-    '!mobile/constants/**',
-    '!**/node_modules/**'
-  ],
-  
-  // Coverage directory
-  coverageDirectory: 'coverage/mobile',
-  
-  // Mock file and asset imports
+  // A map from regular expressions to module names that allow to stub out resources
   moduleNameMapper: {
-    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/testing/mobile/__mocks__/fileMock.js',
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/testing/mobile/__mocks__/fileMock.js',
     '\\.(css|less|scss|sass)$': '<rootDir>/testing/mobile/__mocks__/styleMock.js'
   },
   
-  // Watch plugins
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname'
+  // Setup files to run before each test
+  setupFiles: ['<rootDir>/testing/mobile/setup.js'],
+  
+  // The directory where Jest should output its coverage files
+  coverageDirectory: '<rootDir>/testing/coverage',
+  
+  // An array of regexp pattern strings that should be skipped when collecting coverage
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/testing/mobile/__mocks__/'
   ],
   
-  // Test environment
-  testEnvironment: 'node',
-  
-  // Verbose output
+  // Indicates whether each individual test should be reported during the run
   verbose: true,
   
-  // Clear mocks between tests
+  // Transform files with babel-jest
+  transform: {
+    '^.+\\.(js|jsx)$': 'babel-jest'
+  },
+  
+  // Automatically clear mock calls and instances between every test
   clearMocks: true,
   
-  // Globals available in tests
-  globals: {
-    __DEV__: true
-  }
+  // Indicates whether the coverage information should be collected while executing the test
+  collectCoverage: false,
+  
+  // The directory where Jest should store its cached dependency information
+  cacheDirectory: '<rootDir>/testing/.jest-cache'
 };
