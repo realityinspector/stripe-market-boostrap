@@ -111,6 +111,9 @@ jest.mock('react-native', () => {
 // Configure Jest for React Native
 require('@react-native/js-polyfills/error-guard');
 
+// Setup React for JSX
+global.React = require('react');
+
 // Suppress React Native warnings during tests
 console.error = jest.fn();
 console.warn = jest.fn();

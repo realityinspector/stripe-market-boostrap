@@ -55,7 +55,23 @@ module.exports = {
   
   // Transform files with babel-jest
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}]
+    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
+  },
+  
+  // Use the babel config defined in this file
+  globals: {
+    'babel-jest': {
+      presets: [
+        ['@babel/preset-env', {targets: {node: 'current'}}],
+        '@babel/preset-react',
+        'module:metro-react-native-babel-preset',
+      ],
+      plugins: [
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-flow-strip-types',
+        '@babel/plugin-transform-react-jsx'
+      ]
+    }
   },
   
   // Automatically clear mock calls and instances between every test

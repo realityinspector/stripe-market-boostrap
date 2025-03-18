@@ -82,7 +82,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node testing/mobile/runMobileTests.js"
+args = "bash testing/mobile/run_test.sh"
 
 [deployment]
 run = ["sh", "-c", "node server/server.js"]
