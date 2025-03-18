@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - Stripe Connect Marketplace</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .admin-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .admin-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .admin-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .admin-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .admin-card img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+    }
+    
+    .admin-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--dark-color);
+    }
+    
+    .admin-card p {
+      color: var(--gray-dark);
+      margin-bottom: 20px;
+    }
+    
+    .getting-started {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+    
+    .getting-started h2 {
+      margin-bottom: 20px;
+      color: var(--dark-color);
+    }
+    
+    .steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .step {
+      display: flex;
+      margin-bottom: 25px;
+    }
+    
+    .step-number {
+      width: 35px;
+      height: 35px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+    
+    .step-content h3 {
+      margin-bottom: 5px;
+      color: var(--dark-color);
+    }
+    
+    .step-content p {
+      color: var(--gray-dark);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="container">
+        <h1>Stripe Connect Marketplace</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/admin" class="active">Admin</a></li>
+            <li><a id="logout-btn" href="#">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="admin-container">
+        <div class="admin-header">
+          <h1>Admin Portal</h1>
+          <p>Manage your Stripe Connect Marketplace platform</p>
+        </div>
+        
+        <div class="admin-cards">
+          <a href="/admin/dashboard.html" class="admin-card">
+            <img src="/img/admin-dashboard.svg" alt="Dashboard">
+            <h3>Dashboard</h3>
+            <p>View platform analytics, recent orders, and key metrics.</p>
+            <button class="btn primary">Go to Dashboard</button>
+          </a>
+          
+          <a href="/admin/onboarding.html" class="admin-card">
+            <img src="/img/check-circle.svg" alt="Onboarding">
+            <h3>Onboarding Wizard</h3>
+            <p>Set up or reconfigure your marketplace settings.</p>
+            <button class="btn primary">Start Onboarding</button>
+          </a>
+        </div>
+        
+        <div class="getting-started">
+          <h2>Getting Started</h2>
+          <ul class="steps">
+            <li class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>Complete Onboarding</h3>
+                <p>Set up your marketplace's basic configurations and Stripe Connect settings.</p>
+                <a href="/admin/onboarding.html" class="btn primary">Start Onboarding</a>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>Manage Vendors</h3>
+                <p>Review and approve vendor applications. Set commission rates and vendor settings.</p>
+                <a href="/admin/dashboard.html#vendors" class="btn primary">Manage Vendors</a>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>Curate Products</h3>
+                <p>Oversee product listings and feature top products on your marketplace.</p>
+                <a href="/admin/dashboard.html#products" class="btn primary">Manage Products</a>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3>Monitor Transactions</h3>
+                <p>View transaction history, commission earnings, and vendor payouts.</p>
+                <a href="/admin/dashboard.html#transactions" class="btn primary">View Transactions</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Stripe Connect Marketplace. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/about">About</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/contact">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user is authenticated and is admin
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = '/login?redirect=/admin';
+        return;
+      }
+      
+      // Hash links for dashboard tabs
+      document.querySelectorAll('a[href^="/admin/dashboard.html#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const targetTab = e.target.href.split('#')[1];
+          sessionStorage.setItem('activeAdminTab', targetTab);
+        });
+      });
+      
+      // Logout button handler
+      document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      });
+    });
+  </script>
+</body>
+</html>

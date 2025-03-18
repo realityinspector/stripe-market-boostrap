@@ -8,13 +8,15 @@
  *   node runFunctionalTests.js [test-name]
  * 
  * Options:
- *   [test-name] - Optional name of specific test to run (customer, vendor, admin, edge-cases, stripe)
+ *   [test-name] - Optional name of specific test to run (customer, vendor, admin, 
+ *                 edge-cases, stripe, connect, admin-onboarding)
  *                 If not specified, all functional tests will be run.
  * 
  * Example:
- *   node runFunctionalTests.js customer    # Run only customer journey tests
- *   node runFunctionalTests.js admin       # Run only admin journey tests
- *   node runFunctionalTests.js edge-cases  # Run only customer edge cases tests
+ *   node runFunctionalTests.js customer         # Run only customer journey tests
+ *   node runFunctionalTests.js admin            # Run only admin journey tests
+ *   node runFunctionalTests.js edge-cases       # Run only customer edge cases tests
+ *   node runFunctionalTests.js admin-onboarding # Run only admin onboarding tests
  */
 
 const { testCustomerJourney } = require('./customer_journey.test');
@@ -23,6 +25,7 @@ const { testAdminJourney } = require('./admin_journey.test');
 const { testCustomerEdgeCases } = require('./customer_edge_cases.test');
 const { testStripeIntegration } = require('./stripe_integration.test');
 const { runConnectTests } = require('./stripe_connect_onboarding.test');
+const { runAdminOnboardingTests } = require('./admin_onboarding.test');
 const fs = require('fs');
 const path = require('path');
 
@@ -124,6 +127,13 @@ async function runAllTests(specificTest = null) {
     testsToRun.push({
       name: 'Customer Edge Cases',
       fn: testCustomerEdgeCases
+    });
+  }
+  
+  if (!specificTest || specificTest === 'admin-onboarding') {
+    testsToRun.push({
+      name: 'Admin Onboarding',
+      fn: runAdminOnboardingTests
     });
   }
   
