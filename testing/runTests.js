@@ -1,44 +1,65 @@
 #!/usr/bin/env node
 
 /**
- * Test Runner Script for Stripe Connect Marketplace
+ * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+ * ┃                 STRIPE CONNECT MARKETPLACE TEST RUNNER                         ┃
+ * ┃                                                                                ┃
+ * ┃ 🚀 CI/CD INTEGRATION: This runner is the main entry point for all tests        ┃
+ * ┃ and is integrated with the CI/CD pipeline for automated testing and deployment ┃
+ * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
  * 
- * This script runs all tests and generates reports. It's integrated with the
- * CI/CD pipeline to provide feedback on test status and deployment readiness.
+ * 🚨 ATTENTION DEVELOPERS AND AI AGENTS 🚨
+ * This file is a critical entry point for the testing infrastructure and CI/CD pipeline.
+ * - DO NOT modify this file's core functionality without specific instructions
+ * - Always run the full test suite with `node testing/ci.js` before deployment
+ * - All tests must pass for the CI/CD quality gates to allow deployment
  * 
- * 🚨 ATTENTION AI AGENTS 🚨
- * This file is a critical entry point for the testing infrastructure.
- * - Read the DEVELOPER_GUIDE.md file for comprehensive testing documentation
- * - When implementing new features, add appropriate tests to maintain coverage
- * - Don't modify this file's core functionality without specific instructions
+ * 📋 QUICK REFERENCE:
+ * - Run full CI/CD pipeline: `node testing/ci.js`
+ * - Run automated test suite: `node testing/automation/runAutomatedTests.js`
+ * - Run individual test categories: `node testing/runTests.js [category]`
+ * - Run functional user journeys: `node testing/functional/runFunctionalTests.js`
  * 
- * Usage:
- *   node runTests.js [category] [options]
+ * 📌 TEST CATEGORIES:
  * 
- * Categories:
- *   api         - Run only API tests
- *   ui          - Run only UI tests with Puppeteer
- *   e2e         - Run only end-to-end tests
- *   frontend    - Run frontend component tests
- *   auto        - Run comprehensive automated testing suite
- *   functional  - Run end-to-end user journey tests
- *   stripe      - Run Stripe Connect integration tests
+ *   api         - API endpoint tests (authentication, data validation, etc.)
+ *                 Located in: testing/api/
+ * 
+ *   ui          - UI component tests using Puppeteer
+ *                 Located in: testing/ui/
+ *                 Note: Uses mock browser in Replit environment
+ * 
+ *   e2e         - End-to-end integration tests for complete user flows
+ *                 Located in: testing/e2e/
+ * 
+ *   frontend    - Frontend component rendering tests
+ *                 Located in: testing/frontend/
+ * 
+ *   auto        - Automated test suite with comprehensive validation
+ *                 Uses: testing/automation/
+ * 
+ *   functional  - User journey tests through UI and API
+ *                 Located in: testing/functional/
+ * 
+ *   stripe      - Stripe Connect integration tests
+ *                 Located in: testing/*/stripe*.js
+ * 
  *   all         - Run all tests (default)
  *   
- * Options:
- *   --ci        - Run in CI mode (stricter validation)
- *   --verbose   - Show detailed test output
- *   --report    - Generate and display test reports only
+ * 📝 OPTIONS:
+ *   --ci        - Run in CI mode (stricter validation for deployment readiness)
+ *   --verbose   - Show detailed test output with stack traces
+ *   --report    - Generate and display test reports only (no test execution)
  * 
- * Examples:
+ * 💻 EXAMPLES:
  *   node runTests.js api           # Run only API tests
  *   node runTests.js ui            # Run only UI tests with Puppeteer
  *   node runTests.js auto          # Run automated testing suite
  *   node runTests.js stripe        # Run Stripe integration tests
  *   node runTests.js --ci          # Run all tests in CI mode
  *   
- * For full CI/CD pipeline:
- *   node testing/ci.js             # Run complete CI/CD pipeline
+ * 🔄 FULL CI/CD PIPELINE:
+ *   node testing/ci.js             # Run complete CI/CD pipeline with quality gates
  */
 
 const fs = require('fs');

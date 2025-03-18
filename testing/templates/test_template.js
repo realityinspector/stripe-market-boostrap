@@ -1,20 +1,27 @@
 /**
  * Test Template for Stripe Connect Marketplace
  * 
- * 🚨 ATTENTION AI AGENTS 🚨
+ * 🚨 ATTENTION AI AGENTS AND DEVELOPERS 🚨
  * This template provides a structured format for creating new tests
  * for the Stripe Connect Marketplace application. The test infrastructure
- * expects certain patterns and conventions to be followed for proper integration.
+ * expects certain patterns and conventions to be followed for proper CI/CD integration.
  * 
+ * 📌 REQUIRED FOR CI/CD PIPELINE 📌
  * Use this template when adding new tests to maintain consistency
- * and ensure proper integration with the CI/CD pipeline.
+ * and ensure proper integration with the CI/CD pipeline. Tests that don't follow
+ * this structure will NOT be properly detected by the test coordinator.
  * 
- * Test Categories:
- * - API tests: Add to /testing/api/
- * - Frontend tests: Add to /testing/frontend/
- * - E2E tests: Add to /testing/e2e/
- * - Functional tests: Add to /testing/functional/
- * - UI tests: Add to /testing/ui/
+ * 📋 QUICK REFERENCE FOR CI/CD TESTING 📋
+ * - Run full CI/CD pipeline: `node testing/ci.js`
+ * - Run automated tests: `node testing/automation/runAutomatedTests.js`
+ * - Run specific tests: `node testing/runTests.js [category]`
+ * 
+ * Test Categories (place files in the correct directory):
+ * - API tests: Add to /testing/api/ (e.g., productEndpoints.test.js)
+ * - Frontend tests: Add to /testing/frontend/ (e.g., componentRendering.test.js)
+ * - E2E tests: Add to /testing/e2e/ (e.g., userJourney.test.js)
+ * - Functional tests: Add to /testing/functional/ (e.g., customerJourney.test.js)
+ * - UI tests: Add to /testing/ui/ (e.g., responsiveDesign.test.js)
  */
 
 /**
