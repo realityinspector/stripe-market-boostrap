@@ -22,6 +22,7 @@ const authenticateToken = (req, res, next) => {
     req.isAuthenticated = () => true; // Add isAuthenticated method for Stripe API
     next();
   } catch (err) {
+    console.error('JWT Verification Error:', err.message);
     return res.status(401).json({
       success: false,
       message: 'Invalid or expired token'
@@ -52,5 +53,6 @@ const authorizeRole = (roles) => {
 
 module.exports = {
   authenticateToken,
-  authorizeRole
+  authorizeRole,
+  JWT_SECRET
 };
