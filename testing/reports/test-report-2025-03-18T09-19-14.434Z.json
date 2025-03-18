@@ -1,0 +1,371 @@
+{
+  "timestamp": "2025-03-18T09:19:14.435Z",
+  "summary": {
+    "totalTests": 18,
+    "passedTests": 11,
+    "failedTests": 7,
+    "successRate": 61,
+    "categories": {
+      "api": {
+        "total": 10,
+        "passed": 7,
+        "failed": 3,
+        "successRate": 70
+      },
+      "e2e": {
+        "total": 3,
+        "passed": 0,
+        "failed": 3,
+        "successRate": 0
+      },
+      "frontend": {
+        "total": 5,
+        "passed": 4,
+        "failed": 1,
+        "successRate": 80
+      }
+    }
+  },
+  "details": {
+    "api": [
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "success": true,
+        "duration": 204,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "User registered successfully",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImVtYWlsIjoidGVzdF8xNzQyMjg5NTUxNzQzXzE4OTJAZXhhbXBsZS5jb20iLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NDIyODk1NTEsImV4cCI6MTc0MjM3NTk1MX0.s3eq3jVk9RosjWvOA-D_cJ2YFiTowgchfNCwoFT3YIs",
+          "user": {
+            "id": 23,
+            "email": "test_1742289551743_1892@example.com",
+            "name": "Test User 1742289551743",
+            "role": "customer"
+          }
+        },
+        "timestamp": "2025-03-18T09:19:11.947Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "success": true,
+        "duration": 180,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "User registered successfully",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsImVtYWlsIjoidGVzdF8xNzQyMjg5NTUxOTQ4XzY0NjVAZXhhbXBsZS5jb20iLCJyb2xlIjoidmVuZG9yIiwiaWF0IjoxNzQyMjg5NTUyLCJleHAiOjE3NDIzNzU5NTJ9.ST5-BRal3Dh0x8uy7-OqXaRjNRUf2fMGikg1pQqafwc",
+          "user": {
+            "id": 24,
+            "email": "test_1742289551948_6465@example.com",
+            "name": "Test User 1742289551948",
+            "role": "vendor"
+          }
+        },
+        "timestamp": "2025-03-18T09:19:12.128Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "success": true,
+        "duration": 262,
+        "error": null,
+        "result": {
+          "success": true,
+          "message": "Login successful",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUsImVtYWlsIjoidGVzdF8xNzQyMjg5NTUyMTI4XzI3MDFAZXhhbXBsZS5jb20iLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NDIyODk1NTIsImV4cCI6MTc0MjM3NTk1Mn0.Sx4qxGYGKh8t-MF1WNmZ8TzYHpgsS9m3tRL26IsqQZ0",
+          "user": {
+            "id": 25,
+            "email": "test_1742289552128_2701@example.com",
+            "name": "Test User 1742289552128",
+            "role": "customer",
+            "vendor": null
+          }
+        },
+        "timestamp": "2025-03-18T09:19:12.390Z"
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthenticatedRoute",
+        "success": false,
+        "duration": 188,
+        "error": "Expected 401 status, got 403",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:12.578Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "success": true,
+        "duration": 232,
+        "error": null,
+        "result": {
+          "id": 9,
+          "vendor_id": 12,
+          "name": "Test Product 1742289552748",
+          "description": "Test product description",
+          "price": "12.94",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:19:12.792Z"
+        },
+        "timestamp": "2025-03-18T09:19:12.811Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "success": true,
+        "duration": 35,
+        "error": null,
+        "result": [
+          {
+            "id": 4,
+            "vendor_id": 5,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:19.561Z",
+            "vendor_name": "Test Business 1742289439148"
+          },
+          {
+            "id": 2,
+            "vendor_id": 3,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:18.644Z",
+            "vendor_name": "Test Business 1742289436045"
+          },
+          {
+            "id": 3,
+            "vendor_id": 4,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:19.100Z",
+            "vendor_name": "Test Business 1742289438694"
+          },
+          {
+            "id": 8,
+            "vendor_id": 10,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:44.677Z",
+            "vendor_name": "Test Business 1742289464265"
+          },
+          {
+            "id": 7,
+            "vendor_id": 9,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:44.214Z",
+            "vendor_name": "Test Business 1742289463795"
+          },
+          {
+            "id": 6,
+            "vendor_id": 8,
+            "name": "Test Product",
+            "description": "This is a test product",
+            "price": "29.99",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:43.743Z",
+            "vendor_name": "Test Business 1742289463134"
+          },
+          {
+            "id": 9,
+            "vendor_id": 12,
+            "name": "Test Product 1742289552748",
+            "description": "Test product description",
+            "price": "12.94",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:19:12.792Z",
+            "vendor_name": "Test Business 1742289552579"
+          },
+          {
+            "id": 1,
+            "vendor_id": 2,
+            "name": "Updated Test Product 1742289435900",
+            "description": "Updated test product description",
+            "price": "31.28",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:15.812Z",
+            "vendor_name": "Test Business 1742289435570"
+          },
+          {
+            "id": 5,
+            "vendor_id": 7,
+            "name": "Updated Test Product 1742289462994",
+            "description": "Updated test product description",
+            "price": "52.59",
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-18T09:17:42.912Z",
+            "vendor_name": "Test Business 1742289462694"
+          }
+        ],
+        "timestamp": "2025-03-18T09:19:12.846Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "success": true,
+        "duration": 30,
+        "error": null,
+        "result": {
+          "id": 9,
+          "vendor_id": 12,
+          "name": "Test Product 1742289552748",
+          "description": "Test product description",
+          "price": "12.94",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:19:12.792Z",
+          "vendor_name": "Test Business 1742289552579"
+        },
+        "timestamp": "2025-03-18T09:19:12.876Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "success": true,
+        "duration": 88,
+        "error": null,
+        "result": {
+          "id": 9,
+          "vendor_id": 12,
+          "name": "Updated Test Product 1742289552876",
+          "description": "Updated test product description",
+          "price": "107.09",
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-18T09:19:12.792Z"
+        },
+        "timestamp": "2025-03-18T09:19:12.964Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "success": false,
+        "duration": 7,
+        "error": "Request failed with status code 404",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:12.972Z"
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "success": false,
+        "duration": 35,
+        "error": "Request failed with status code 500",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:13.007Z"
+      }
+    ],
+    "e2e": [
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "success": false,
+        "duration": 473,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:13.482Z"
+      },
+      {
+        "name": "paymentFlow.test.js - testCustomerOrderHistory",
+        "success": false,
+        "duration": 468,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:13.950Z"
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrderManagement",
+        "success": false,
+        "duration": 472,
+        "error": "Request failed with status code 400",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:14.422Z"
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "success": true,
+        "duration": 1,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:19:14.424Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "success": true,
+        "duration": 6,
+        "error": null,
+        "result": [
+          {
+            "page": "Home Page",
+            "path": "/",
+            "status": 200,
+            "responseTime": 1.1612190000000737
+          },
+          {
+            "page": "Login API Endpoint",
+            "path": "/api/auth/login",
+            "status": 204,
+            "responseTime": 1.3577489999997852
+          },
+          {
+            "page": "Register API Endpoint",
+            "path": "/api/auth/register",
+            "status": 204,
+            "responseTime": 0.828059999999823
+          },
+          {
+            "page": "Vendors API Endpoint",
+            "path": "/api/vendors",
+            "status": 204,
+            "responseTime": 0.8082799999997405
+          },
+          {
+            "page": "Products API Endpoint",
+            "path": "/api/products",
+            "status": 204,
+            "responseTime": 1.085149999999885
+          }
+        ],
+        "timestamp": "2025-03-18T09:19:14.430Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "success": false,
+        "duration": 1,
+        "error": "CORS test failed for Login API Endpoint: CORS header \"access-control-allow-headers\" missing for Login API Endpoint",
+        "result": null,
+        "timestamp": "2025-03-18T09:19:14.431Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "success": true,
+        "duration": 2,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:19:14.433Z"
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "success": true,
+        "duration": 1,
+        "error": null,
+        "result": true,
+        "timestamp": "2025-03-18T09:19:14.434Z"
+      }
+    ]
+  }
+}

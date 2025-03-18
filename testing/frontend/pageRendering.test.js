@@ -2,6 +2,18 @@
  * Page Rendering Tests
  * 
  * Tests to verify that frontend pages are rendering correctly.
+ * 
+ * Assumptions:
+ * - The API root endpoint returns a welcome message
+ * - API endpoints return appropriate response times (under 1000ms)
+ * - API endpoints include proper CORS headers for cross-origin requests
+ * - API responses use the application/json content type
+ * - Non-existent endpoints return 404 status codes
+ * 
+ * Current Status:
+ * - Most tests are passing, but the CORS headers test is failing
+ * - The API is missing the 'access-control-allow-headers' CORS header
+ * - This needs to be fixed in the server's CORS middleware configuration
  */
 
 const axios = require('axios');

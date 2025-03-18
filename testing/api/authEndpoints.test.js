@@ -2,6 +2,16 @@
  * Auth Endpoints Tests
  * 
  * Tests for authentication-related API endpoints.
+ * 
+ * Assumptions:
+ * - The /api/auth/register endpoint accepts user registration with email, password, name, and role
+ * - The /api/auth/login endpoint authenticates users with email and password
+ * - The /api/auth/me endpoint returns the authenticated user's data when provided a valid token
+ * - Invalid authentication should return 401 Unauthorized status
+ * 
+ * Current Status:
+ * - Most tests are passing but the authenticated route test is failing because we're
+ *   receiving a 403 status instead of 401 for invalid tokens
  */
 
 const axios = require('axios');

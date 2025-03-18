@@ -6,6 +6,19 @@
  * 2. Customer places an order
  * 3. Payment is processed
  * 4. Vendor receives payment (minus commission)
+ * 
+ * Assumptions:
+ * - Vendors need to complete Stripe Connect onboarding to receive payments
+ * - The /api/payments/create-payment-intent endpoint initiates payment processing
+ * - The /api/payments/orders/:id endpoint allows retrieving order details
+ * - The /api/payments/orders endpoint lists a customer's order history
+ * - The /api/payments/vendor/orders endpoint lists a vendor's orders
+ * 
+ * Current Status:
+ * - All E2E tests are failing with a 400 error
+ * - The error message indicates that vendors have not completed Stripe onboarding
+ * - We need to implement proper Stripe Connect integration for vendors
+ * - Currently, the tests attempt to mock the Stripe account ID for testing purposes
  */
 
 const axios = require('axios');

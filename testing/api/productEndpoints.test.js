@@ -2,6 +2,18 @@
  * Product Endpoints Tests
  * 
  * Tests for product-related API endpoints.
+ * 
+ * Assumptions:
+ * - The /api/products endpoint allows creating and listing products
+ * - The /api/products/:id endpoint allows retrieving and updating specific products
+ * - The /api/products/:id/status endpoint allows activating/deactivating products
+ * - The /api/products/vendor endpoint allows vendors to list their own products
+ * 
+ * Current Status:
+ * - Product creation, listing, and retrieval tests are passing
+ * - Product deactivation fails with a 404 error (endpoint not found)
+ * - Vendor product listing fails with a 500 error (server error)
+ * - Server logs show an error in parsing "vendor" as integer - route may be misconfigured
  */
 
 const axios = require('axios');
