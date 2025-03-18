@@ -15,6 +15,11 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
   
+  // Make Jest use Babel to transform files
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
+  },
+  
   // A list of paths to directories that Jest should use to search for files in
   testMatch: [
     '<rootDir>/testing/mobile/components/**/*.test.js',
@@ -52,11 +57,6 @@ module.exports = {
   
   // Indicates whether each individual test should be reported during the run
   verbose: true,
-  
-  // Transform files with babel-jest
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
-  },
   
   // Use the babel config defined in this file
   globals: {

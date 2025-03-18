@@ -4,14 +4,15 @@
  * This file contains tests for the Button component in the React Native mobile app.
  */
 
-// Import React
-const React = require('react');
-// Import testing utilities
-const { render, fireEvent } = require('@testing-library/react-native');
-// Import the component - handle default export properly
-const Button = require('../../../mobile/components/Button').default;
+// Import dependencies
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+
+// Import the Button component directly
+import Button from '../../../mobile/components/Button';
+
 // Import colors
-const Colors = require('../../../mobile/constants/Colors');
+import Colors from '../../../mobile/constants/Colors';
 
 describe('Button', () => {
   // Mock function for onPress callback

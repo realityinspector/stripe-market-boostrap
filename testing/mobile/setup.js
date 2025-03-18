@@ -114,6 +114,15 @@ require('@react-native/js-polyfills/error-guard');
 // Setup React for JSX
 global.React = require('react');
 
+// Import React Native components properly
+jest.doMock('react-native', () => {
+  const reactNative = jest.requireActual('react-native');
+  return {
+    ...reactNative,
+    // Add any specific overrides here
+  };
+});
+
 // Suppress React Native warnings during tests
 console.error = jest.fn();
 console.warn = jest.fn();
