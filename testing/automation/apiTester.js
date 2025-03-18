@@ -270,7 +270,7 @@ async function performApiTests(config) {
       
       const meDetails = {
         status: meResponse.status,
-        hasUser: meResponse.data?.id !== undefined
+        hasUser: meResponse.data?.user !== undefined
       };
       
       const mePassed = meResponse.status === 200 && meDetails.hasUser;
@@ -346,11 +346,11 @@ async function performApiTests(config) {
       
       const createDetails = {
         status: createResponse.status,
-        success: createResponse.data?.id !== undefined
+        success: createResponse.data?.product?.id !== undefined
       };
       
-      if (createResponse.data?.id) {
-        createDetails.productId = createResponse.data.id;
+      if (createResponse.data?.product?.id) {
+        createDetails.productId = createResponse.data.product.id;
       }
       
       const createPassed = createResponse.status === 201 && createDetails.success;
@@ -360,7 +360,7 @@ async function performApiTests(config) {
       
       if (!createPassed) return;
       
-      const productId = createResponse.data.id;
+      const productId = createResponse.data.product.id;
       
       // Test product listing
       const listResponse = await api.get('/api/products');
@@ -380,7 +380,7 @@ async function performApiTests(config) {
       
       const getDetails = {
         status: getResponse.status,
-        found: getResponse.data?.id === productId
+        found: getResponse.data?.product?.id === productId
       };
       
       const getPassed = getResponse.status === 200 && getDetails.found;
