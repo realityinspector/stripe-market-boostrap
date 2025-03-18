@@ -65,6 +65,29 @@ async function runTests() {
       return;
     }
     
+    // Handle functional user journey tests if requested
+    if (category === 'functional') {
+      try {
+        console.log('Running functional user journey tests...');
+        // Use the functional tests runner
+        const { runAllTests } = require('./functional/runFunctionalTests');
+        const results = await runAllTests();
+        
+        // Exit with appropriate code
+        if (results.summary.failed > 0) {
+          console.log(`Functional tests completed with ${results.summary.failed} failures.`);
+          process.exit(1);
+        } else {
+          console.log('All functional tests passed successfully!');
+          process.exit(0);
+        }
+      } catch (error) {
+        console.error('Error running functional tests:', error);
+        process.exit(1);
+      }
+      return;
+    }
+    
     // Run legacy tests
     const testResults = await runAllTests(category);
     

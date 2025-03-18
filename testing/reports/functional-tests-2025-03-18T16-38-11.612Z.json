@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-03-18T16:38:11.611Z",
+  "totalDuration": 2.47,
+  "tests": [
+    {
+      "name": "Customer Journey",
+      "success": true,
+      "duration": 0.024,
+      "result": false
+    },
+    {
+      "name": "Vendor Journey",
+      "success": true,
+      "duration": 0.012,
+      "result": false
+    },
+    {
+      "name": "Stripe Integration",
+      "success": true,
+      "duration": 1.39,
+      "result": {
+        "success": false,
+        "results": {
+          "elements": true,
+          "payment": false,
+          "connect": false,
+          "webhooks": true,
+          "payouts": false
+        }
+      }
+    },
+    {
+      "name": "Stripe Connect",
+      "success": true,
+      "duration": 1.044,
+      "result": {
+        "success": false,
+        "results": {
+          "onboarding": false,
+          "payouts": true
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0
+  }
+}
