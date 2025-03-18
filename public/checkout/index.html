@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Stripe Connect Marketplace</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="container">
+        <h1>Stripe Connect Marketplace</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+            <li><a href="/cart" class="cart-link">Cart <span class="cart-count">0</span></a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <h1>Checkout</h1>
+        <div class="checkout-container">
+          <form id="checkout-form" class="checkout-form">
+            <h2>Shipping Information</h2>
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" id="address" name="address" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+              </div>
+              <div class="form-group">
+                <label for="state">State/Province</label>
+                <input type="text" id="state" name="state" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="postalCode">Postal Code</label>
+                <input type="text" id="postalCode" name="postalCode" required>
+              </div>
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" name="country" required value="United States">
+              </div>
+            </div>
+            
+            <h2>Payment Information</h2>
+            <div class="form-group">
+              <label for="card-element">Credit or Debit Card</label>
+              <div id="card-element" class="stripe-element">
+                <!-- Stripe Elements will create form input elements here -->
+              </div>
+              <div id="card-errors" role="alert" class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn primary btn-block">Complete Payment</button>
+            </div>
+          </form>
+          
+          <div class="checkout-summary">
+            <!-- Order summary will be loaded here -->
+            <div class="loading">Loading order summary...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Stripe Connect Marketplace. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/about">About</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/contact">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize checkout
+      initializeCheckout();
+      
+      // Initialize Stripe Elements
+      const stripe = Stripe(process.env.VITE_STRIPE_PUBLIC_KEY);
+      const elements = stripe.elements();
+      
+      const cardElement = elements.create('card');
+      cardElement.mount('#card-element');
+      
+      // Handle form submission
+      const form = document.getElementById('checkout-form');
+      const cardErrors = document.getElementById('card-errors');
+      
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const submitButton = form.querySelector('button[type="submit"]');
+          submitButton.disabled = true;
+          submitButton.textContent = 'Processing...';
+          
+          try {
+            // For testing, we're just submitting directly without Stripe confirmation
+            handleCheckoutSubmit(e);
+          } catch (error) {
+            console.error('Checkout error:', error);
+            cardErrors.textContent = error.message || 'An error occurred during checkout.';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Complete Payment';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -31,6 +31,7 @@ if (!publicKeyMatches) {
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 8000;
+const path = require('path');
 
 // Middleware setup
 const corsOptions = {
@@ -90,9 +91,34 @@ app.use('/api/products', productRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Root route
-app.get('/', (req, res) => {
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '../public')));
+
+// API root endpoint
+app.get('/api', (req, res) => {
   res.json({ message: 'Stripe Connect Marketplace API' });
+});
+
+// Handle all other routes by sending the frontend app
+app.get('*', (req, res) => {
+  // Handle specific routes by sending the appropriate HTML file
+  if (req.path === '/products') {
+    res.sendFile(path.join(__dirname, '../public/products/index.html'));
+  } else if (req.path === '/login') {
+    res.sendFile(path.join(__dirname, '../public/login/index.html'));
+  } else if (req.path === '/register') {
+    res.sendFile(path.join(__dirname, '../public/register/index.html'));
+  } else if (req.path === '/cart') {
+    res.sendFile(path.join(__dirname, '../public/cart/index.html'));
+  } else if (req.path === '/checkout') {
+    res.sendFile(path.join(__dirname, '../public/checkout/index.html'));
+  } else if (req.path.startsWith('/products/')) {
+    // Product detail pages
+    res.sendFile(path.join(__dirname, '../public/products/detail.html'));
+  } else {
+    // Default to the main index.html
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  }
 });
 
 // Initialize database and start server
