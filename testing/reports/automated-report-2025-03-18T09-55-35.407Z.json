@@ -1,0 +1,245 @@
+{
+  "timestamp": "2025-03-18T09:55:35.407Z",
+  "summary": {
+    "totalTests": 16,
+    "totalPassed": 9,
+    "totalFailed": 7,
+    "totalWarnings": 0,
+    "successRate": 56,
+    "api": {
+      "total": 11,
+      "passed": 8,
+      "failed": 3,
+      "warnings": 0
+    },
+    "ui": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "warnings": 0
+    },
+    "e2e": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3,
+      "warnings": 0
+    }
+  },
+  "environment": {
+    "apiServer": "http://localhost:8000",
+    "clientUrl": "http://localhost:5000",
+    "timeouts": {
+      "apiResponse": 5000,
+      "pageLoad": 10000,
+      "elementAppear": 5000
+    },
+    "browserVersion": "Mock Browser"
+  },
+  "results": {
+    "api": {
+      "passed": [
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-18T09:55:29.172Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "28ms"
+          }
+        },
+        {
+          "name": "CORS Headers",
+          "timestamp": "2025-03-18T09:55:34.306Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/auth/login": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/products": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/payments/create-payment-intent": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-18T09:55:34.308Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/login",
+          "timestamp": "2025-03-18T09:55:34.310Z",
+          "details": {
+            "endpoint": "/api/auth/login",
+            "status": 404,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/register",
+          "timestamp": "2025-03-18T09:55:34.312Z",
+          "details": {
+            "endpoint": "/api/auth/register",
+            "status": 404,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/products",
+          "timestamp": "2025-03-18T09:55:34.576Z",
+          "details": {
+            "endpoint": "/api/products",
+            "status": 200,
+            "time": "264ms"
+          }
+        },
+        {
+          "name": "API Response Times",
+          "timestamp": "2025-03-18T09:55:34.576Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "passed": true,
+                "time": 2,
+                "status": 200
+              },
+              "/api/auth/login": {
+                "passed": true,
+                "time": 2,
+                "status": 404
+              },
+              "/api/auth/register": {
+                "passed": true,
+                "time": 2,
+                "status": 404
+              },
+              "/api/products": {
+                "passed": true,
+                "time": 264,
+                "status": 200
+              }
+            }
+          }
+        },
+        {
+          "name": "404 Error Handling",
+          "timestamp": "2025-03-18T09:55:34.579Z",
+          "details": {
+            "status": 404,
+            "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/non-existent-endpoint</pre>\n</body>\n</html>\n"
+          }
+        }
+      ],
+      "failed": [
+        {
+          "name": "User Registration",
+          "timestamp": "2025-03-18T09:55:31.969Z",
+          "details": {
+            "status": 500,
+            "success": false
+          },
+          "error": "Failed to register user"
+        },
+        {
+          "name": "Vendor Registration",
+          "timestamp": "2025-03-18T09:55:34.297Z",
+          "details": {
+            "status": 500
+          },
+          "error": "Failed to register vendor: 500"
+        },
+        {
+          "name": "Create Payment Intent",
+          "timestamp": "2025-03-18T09:55:34.300Z",
+          "details": {
+            "status": 401,
+            "success": false
+          },
+          "error": "Failed to create payment intent"
+        }
+      ],
+      "warnings": []
+    },
+    "ui": {
+      "passed": [
+        {
+          "name": "Page Rendering - Home Page",
+          "timestamp": "2025-03-18T09:55:34.592Z",
+          "details": {
+            "url": "http://localhost:5000/",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              "header": true,
+              "main": true,
+              "footer": true
+            }
+          }
+        }
+      ],
+      "failed": [
+        {
+          "name": "UI Testing Suite",
+          "timestamp": "2025-03-18T09:55:34.594Z",
+          "details": {},
+          "error": "page.close is not a function"
+        }
+      ],
+      "warnings": []
+    },
+    "e2e": {
+      "passed": [],
+      "failed": [
+        {
+          "name": "Vendor Flow",
+          "timestamp": "2025-03-18T09:55:34.743Z",
+          "details": {},
+          "error": "Failed to create vendor user: 500"
+        },
+        {
+          "name": "Customer Flow",
+          "timestamp": "2025-03-18T09:55:35.076Z",
+          "details": {},
+          "error": "Failed to create customer user: 500"
+        },
+        {
+          "name": "Full Purchase Flow",
+          "timestamp": "2025-03-18T09:55:35.406Z",
+          "details": {},
+          "error": "page.close is not a function"
+        }
+      ],
+      "warnings": []
+    }
+  }
+}

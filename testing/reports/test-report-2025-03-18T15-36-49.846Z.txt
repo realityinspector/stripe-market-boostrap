@@ -1,0 +1,57 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/18/2025, 3:36:49 PM
+
+SUMMARY
+-------
+Total Tests:  22
+Passed:       18
+Failed:       4
+Success Rate: 82%
+
+API TESTS
+--------
+✓ authEndpoints.test.js - testUserRegistration
+✓ authEndpoints.test.js - testVendorRegistration
+✓ authEndpoints.test.js - testUserLogin
+✓ authEndpoints.test.js - testAuthMiddleware
+✓ productEndpoints.test.js - testProductCreation
+✓ productEndpoints.test.js - testProductListing
+✓ productEndpoints.test.js - testProductRetrieval
+✗ productEndpoints.test.js - testProductUpdate
+  Error: Updated product price does not match
+✓ productEndpoints.test.js - testProductDeactivation
+✓ productEndpoints.test.js - testVendorProductListing
+
+E2E TESTS
+--------
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Payment flow failed: Vendor has not completed Stripe onboarding
+✗ paymentFlow.test.js - testOrderHistory
+  Error: Order history test failed: Vendor has not completed Stripe onboarding
+✗ paymentFlow.test.js - testVendorOrders
+  Error: Vendor orders test failed: Vendor has not completed Stripe onboarding
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+FRONTEND TESTS
+--------------
+✓ pageRendering.test.js - testApiRootEndpoint
+✓ pageRendering.test.js - testApiResponseTimes
+✓ pageRendering.test.js - testApiCorsHeaders
+✓ pageRendering.test.js - testApiContentTypes
+✓ pageRendering.test.js - testApiErrorHandling
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- API Failures: 1
+  - productEndpoints.test.js - testProductUpdate
+- E2E Failures: 3
+  - paymentFlow.test.js - testPaymentFlow
+  - paymentFlow.test.js - testOrderHistory
+  - paymentFlow.test.js - testVendorOrders

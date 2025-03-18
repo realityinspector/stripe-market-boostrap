@@ -21,16 +21,45 @@
  */
 
 const { runAllTests, scheduleTests, config } = require('./testCoordinator');
-// Create a simple chalk replacement for terminal colors
-const chalk = {
-  blue: (text) => `\x1b[34m${text}\x1b[0m`,
-  green: (text) => `\x1b[32m${text}\x1b[0m`,
-  red: (text) => `\x1b[31m${text}\x1b[0m`,
-  yellow: (text) => `\x1b[33m${text}\x1b[0m`,
+// Simple color functions without chaining
+function blue(text) {
+  return `\x1b[34m${text}\x1b[0m`;
+}
+
+function green(text) {
+  return `\x1b[32m${text}\x1b[0m`;
+}
+
+function red(text) {
+  return `\x1b[31m${text}\x1b[0m`;
+}
+
+function yellow(text) {
+  return `\x1b[33m${text}\x1b[0m`;
+}
+
+function boldBlue(text) {
+  return `\x1b[1m\x1b[34m${text}\x1b[0m`;
+}
+
+function boldGreen(text) {
+  return `\x1b[1m\x1b[32m${text}\x1b[0m`;
+}
+
+function boldRed(text) {
+  return `\x1b[1m\x1b[31m${text}\x1b[0m`;
+}
+
+// Simplified chalk object
+const chalk = { 
+  blue, 
+  green, 
+  red, 
+  yellow,
   bold: {
-    blue: (text) => `\x1b[1m\x1b[34m${text}\x1b[0m`,
-    green: (text) => `\x1b[1m\x1b[32m${text}\x1b[0m`,
-    red: (text) => `\x1b[1m\x1b[31m${text}\x1b[0m`
+    blue: boldBlue,
+    green: boldGreen,
+    red: boldRed
   }
 };
 
@@ -91,10 +120,10 @@ if (options.apiOnly) {
 
 // Execute tests based on mode
 if (options.monitor) {
-  console.log(chalk.blue.bold(`Starting test monitoring at ${options.interval} minute intervals...`));
+  console.log(chalk.bold.blue(`Starting test monitoring at ${options.interval} minute intervals...`));
   scheduleTests(options.interval);
 } else {
-  console.log(chalk.blue.bold('Running automated tests once...'));
+  console.log(chalk.bold.blue('Running automated tests once...'));
   runAllTests().then(results => {
     const { summary } = results;
     

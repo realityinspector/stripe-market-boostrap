@@ -1,0 +1,412 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Automated Test Report - 3/18/2025, 3:36:37 PM</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        header {
+          text-align: center;
+          margin-bottom: 30px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid #eee;
+        }
+        .summary {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 30px;
+        }
+        .summary-card {
+          background: #f9f9f9;
+          border-radius: 8px;
+          padding: 15px;
+          width: 30%;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary-card h3 {
+          margin-top: 0;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 10px;
+        }
+        .tests-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+        }
+        .tests-table th, .tests-table td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: left;
+        }
+        .tests-table th {
+          background: #f2f2f2;
+        }
+        .passed { background-color: #e6ffe6; }
+        .failed { background-color: #ffe6e6; }
+        .warning { background-color: #fffbe6; }
+        .chart-container {
+          width: 200px;
+          height: 200px;
+          margin: 0 auto;
+        }
+        .progress-bar {
+          height: 20px;
+          background-color: #e0e0e0;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          overflow: hidden;
+        }
+        .progress-value {
+          height: 20px;
+          background-color: #4CAF50;
+          border-radius: 10px 0 0 10px;
+        }
+        details {
+          margin-top: 8px;
+        }
+        summary {
+          cursor: pointer;
+          color: #0066cc;
+        }
+        pre {
+          background: #f5f5f5;
+          padding: 10px;
+          border-radius: 4px;
+          overflow-x: auto;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <h1>Automated Test Report</h1>
+        <p>Generated on 3/18/2025, 3:36:37 PM</p>
+      </header>
+      
+      <div class="summary">
+        <div class="summary-card">
+          <h3>Test Results</h3>
+          <div class="progress-bar">
+            <div class="progress-value" style="width: 56%;"></div>
+          </div>
+          <p><strong>Success Rate:</strong> 56%</p>
+          <p><strong>Total Tests:</strong> 16</p>
+          <p><strong>Passed:</strong> 9</p>
+          <p><strong>Failed:</strong> 7</p>
+          <p><strong>Warnings:</strong> 0</p>
+        </div>
+        <div class="summary-card">
+          <h3>API Tests</h3>
+          <p><strong>Total:</strong> 11</p>
+          <p><strong>Passed:</strong> 8</p>
+          <p><strong>Failed:</strong> 3</p>
+          <p><strong>Warnings:</strong> 0</p>
+        </div>
+        <div class="summary-card">
+          <h3>UI & E2E Tests</h3>
+          <p><strong>UI Total:</strong> 2</p>
+          <p><strong>UI Passed:</strong> 1 / Failed: 1</p>
+          <p><strong>E2E Total:</strong> 3</p>
+          <p><strong>E2E Passed:</strong> 0 / Failed: 3</p>
+        </div>
+      </div>
+      
+      <div class="test-details">
+        
+      <h3>API Tests</h3>
+      <table class="tests-table">
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+    
+        <tr class="passed">
+          <td>Response Time - /</td>
+          <td>PASSED</td>
+          <td>3:36:34 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoint&quot;: &quot;/&quot;,
+  &quot;status&quot;: 200,
+  &quot;time&quot;: &quot;64ms&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>CORS Headers</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoints&quot;: {
+    &quot;/&quot;: {
+      &quot;status&quot;: 204,
+      &quot;headers&quot;: {
+        &quot;access-control-allow-origin&quot;: true,
+        &quot;access-control-allow-methods&quot;: true,
+        &quot;access-control-allow-headers&quot;: true
+      }
+    },
+    &quot;/api/auth/login&quot;: {
+      &quot;status&quot;: 204,
+      &quot;headers&quot;: {
+        &quot;access-control-allow-origin&quot;: true,
+        &quot;access-control-allow-methods&quot;: true,
+        &quot;access-control-allow-headers&quot;: true
+      }
+    },
+    &quot;/api/products&quot;: {
+      &quot;status&quot;: 204,
+      &quot;headers&quot;: {
+        &quot;access-control-allow-origin&quot;: true,
+        &quot;access-control-allow-methods&quot;: true,
+        &quot;access-control-allow-headers&quot;: true
+      }
+    },
+    &quot;/api/payments/create-payment-intent&quot;: {
+      &quot;status&quot;: 204,
+      &quot;headers&quot;: {
+        &quot;access-control-allow-origin&quot;: true,
+        &quot;access-control-allow-methods&quot;: true,
+        &quot;access-control-allow-headers&quot;: true
+      }
+    }
+  }
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>Response Time - /</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoint&quot;: &quot;/&quot;,
+  &quot;status&quot;: 200,
+  &quot;time&quot;: &quot;3ms&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>Response Time - /api/auth/login</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoint&quot;: &quot;/api/auth/login&quot;,
+  &quot;status&quot;: 404,
+  &quot;time&quot;: &quot;1ms&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>Response Time - /api/auth/register</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoint&quot;: &quot;/api/auth/register&quot;,
+  &quot;status&quot;: 404,
+  &quot;time&quot;: &quot;2ms&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>Response Time - /api/products</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoint&quot;: &quot;/api/products&quot;,
+  &quot;status&quot;: 200,
+  &quot;time&quot;: &quot;367ms&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>API Response Times</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;endpoints&quot;: {
+    &quot;/&quot;: {
+      &quot;passed&quot;: true,
+      &quot;time&quot;: 3,
+      &quot;status&quot;: 200
+    },
+    &quot;/api/auth/login&quot;: {
+      &quot;passed&quot;: true,
+      &quot;time&quot;: 1,
+      &quot;status&quot;: 404
+    },
+    &quot;/api/auth/register&quot;: {
+      &quot;passed&quot;: true,
+      &quot;time&quot;: 2,
+      &quot;status&quot;: 404
+    },
+    &quot;/api/products&quot;: {
+      &quot;passed&quot;: true,
+      &quot;time&quot;: 367,
+      &quot;status&quot;: 200
+    }
+  }
+}</pre></details></td>
+        </tr>
+      
+        <tr class="passed">
+          <td>404 Error Handling</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;status&quot;: 404,
+  &quot;data&quot;: &quot;&lt;!DOCTYPE html&gt;\n&lt;html lang=\&quot;en\&quot;&gt;\n&lt;head&gt;\n&lt;meta charset=\&quot;utf-8\&quot;&gt;\n&lt;title&gt;Error&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n&lt;pre&gt;Cannot GET /api/non-existent-endpoint&lt;/pre&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n&quot;
+}</pre></details></td>
+        </tr>
+      
+        <tr class="failed">
+          <td>User Registration</td>
+          <td>FAILED</td>
+          <td>3:36:35 PM</td>
+          <td>
+            Failed to register user
+            <details><summary>Details</summary><pre>{
+  &quot;status&quot;: 500,
+  &quot;success&quot;: false
+}</pre></details>
+          </td>
+        </tr>
+      
+        <tr class="failed">
+          <td>Vendor Registration</td>
+          <td>FAILED</td>
+          <td>3:36:36 PM</td>
+          <td>
+            Failed to register vendor: 500
+            <details><summary>Details</summary><pre>{
+  &quot;status&quot;: 500
+}</pre></details>
+          </td>
+        </tr>
+      
+        <tr class="failed">
+          <td>Create Payment Intent</td>
+          <td>FAILED</td>
+          <td>3:36:36 PM</td>
+          <td>
+            Failed to create payment intent
+            <details><summary>Details</summary><pre>{
+  &quot;status&quot;: 401,
+  &quot;success&quot;: false
+}</pre></details>
+          </td>
+        </tr>
+      
+        </tbody>
+      </table>
+    
+        
+      <h3>UI Tests</h3>
+      <table class="tests-table">
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+    
+        <tr class="passed">
+          <td>Page Rendering - Home Page</td>
+          <td>PASSED</td>
+          <td>3:36:36 PM</td>
+          <td><details><summary>Details</summary><pre>{
+  &quot;url&quot;: &quot;http://localhost:5000/&quot;,
+  &quot;title&quot;: &quot;Mock Page Title&quot;,
+  &quot;contentLength&quot;: &quot;Mock Text Content&quot;,
+  &quot;selectors&quot;: {
+    &quot;header&quot;: true,
+    &quot;main&quot;: true,
+    &quot;footer&quot;: true
+  }
+}</pre></details></td>
+        </tr>
+      
+        <tr class="failed">
+          <td>UI Testing Suite</td>
+          <td>FAILED</td>
+          <td>3:36:36 PM</td>
+          <td>
+            page.close is not a function
+            
+          </td>
+        </tr>
+      
+        </tbody>
+      </table>
+    
+        
+      <h3>E2E Tests</h3>
+      <table class="tests-table">
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+    
+        <tr class="failed">
+          <td>Vendor Flow</td>
+          <td>FAILED</td>
+          <td>3:36:36 PM</td>
+          <td>
+            Failed to create vendor user: 500
+            
+          </td>
+        </tr>
+      
+        <tr class="failed">
+          <td>Customer Flow</td>
+          <td>FAILED</td>
+          <td>3:36:37 PM</td>
+          <td>
+            Failed to create customer user: 500
+            
+          </td>
+        </tr>
+      
+        <tr class="failed">
+          <td>Full Purchase Flow</td>
+          <td>FAILED</td>
+          <td>3:36:37 PM</td>
+          <td>
+            page.close is not a function
+            
+          </td>
+        </tr>
+      
+        </tbody>
+      </table>
+    
+      </div>
+      
+      <div class="environment">
+        <h3>Test Environment</h3>
+        <p><strong>API Server:</strong> http://localhost:8000</p>
+        <p><strong>Client URL:</strong> http://localhost:5000</p>
+        <p><strong>Browser:</strong> Mock Browser</p>
+      </div>
+    </body>
+    </html>
+  
