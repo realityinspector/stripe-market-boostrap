@@ -11,7 +11,14 @@
 const puppeteer = require('puppeteer');
 const puppeteerHelper = require('../utils/puppeteerHelper');
 const testHelpers = require('../utils/testHelpers');
-const chalk = require('chalk');
+
+// Simple chalk replacement for terminal colors
+const chalk = {
+  blue: (text) => `\x1b[34m${text}\x1b[0m`,
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  red: (text) => `\x1b[31m${text}\x1b[0m`,
+  yellow: (text) => `\x1b[33m${text}\x1b[0m`
+};
 
 /**
  * Test the complete admin journey flow
