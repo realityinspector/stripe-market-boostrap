@@ -12,16 +12,25 @@ const fs = require('fs');
 
 /**
  * Create a mock browser in case we can't launch a real one
+ * @param {string} baseUrl - The base URL to use for navigation
  */
-function createMockBrowser() {
+function createMockBrowser(baseUrl) {
   console.log('Using mock browser for UI testing...');
   
   // Create a mock page that simulates Puppeteer's API
+  // Keep track of the current URL for the mock browser
+  let currentMockUrl = baseUrl;
+  
   const createMockPage = () => {
     return {
       goto: async (url) => {
         console.log(`Mock navigating to: ${url}`);
+        currentMockUrl = url;
         return { status: () => 200 };
+      },
+      url: () => {
+        console.log(`Mock page.url() returning: ${currentMockUrl}`);
+        return currentMockUrl;
       },
       waitForSelector: async (selector, options = {}) => {
         console.log(`Mock waiting for selector: ${selector}`);
@@ -156,7 +165,7 @@ async function performUiTests(config) {
   } catch (error) {
     console.warn(`Error initializing browser: ${error.message}`);
     console.log('Mocking browser for testing purposes...');
-    browser = createMockBrowser();
+    browser = createMockBrowser(config.clientUrl);
   }
   
   try {
