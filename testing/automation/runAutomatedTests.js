@@ -21,7 +21,18 @@
  */
 
 const { runAllTests, scheduleTests, config } = require('./testCoordinator');
-const chalk = require('chalk');
+// Create a simple chalk replacement for terminal colors
+const chalk = {
+  blue: (text) => `\x1b[34m${text}\x1b[0m`,
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  red: (text) => `\x1b[31m${text}\x1b[0m`,
+  yellow: (text) => `\x1b[33m${text}\x1b[0m`,
+  bold: {
+    blue: (text) => `\x1b[1m\x1b[34m${text}\x1b[0m`,
+    green: (text) => `\x1b[1m\x1b[32m${text}\x1b[0m`,
+    red: (text) => `\x1b[1m\x1b[31m${text}\x1b[0m`
+  }
+};
 
 // Parse command line arguments
 const args = process.argv.slice(2);

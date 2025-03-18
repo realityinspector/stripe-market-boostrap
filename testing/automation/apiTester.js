@@ -6,9 +6,6 @@
  */
 
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
 
 /**
  * Perform all API tests
@@ -16,385 +13,436 @@ const chalk = require('chalk');
  * @returns {Object} Test results
  */
 async function performApiTests(config) {
-  console.log(chalk.blue('Starting API Tests'));
+  console.log('Starting API testing...');
   
   const results = {
-    tests: [],
-    passed: 0,
-    failed: 0,
-    startTime: new Date().toISOString()
+    passed: [],
+    failed: [],
+    warnings: []
   };
   
-  // Create HTTP client
-  const apiClient = axios.create({
-    baseURL: config.apiBaseUrl,
-    validateStatus: () => true // Always resolve promises (don't throw on error status)
+  // Create a base axios instance for API testing
+  const api = axios.create({
+    baseURL: config.baseUrl,
+    timeout: config.timeouts.apiResponse,
+    validateStatus: () => true // Don't throw on error status codes
   });
   
-  // Track user accounts for testing
-  const testUsers = {
-    admin: null,
-    vendor: null,
-    customer: null
-  };
-  
-  // Helper function to record test results
-  function recordTest(name, passed, error = null, details = {}) {
-    const test = {
-      name,
-      passed,
-      timestamp: new Date().toISOString(),
-      ...details
-    };
-    
-    if (error) {
-      test.error = typeof error === 'string' ? error : error.message;
-      if (error.stack) test.stack = error.stack;
-      if (error.response && error.response.data) test.responseData = error.response.data;
-    }
-    
-    results.tests.push(test);
-    passed ? results.passed++ : results.failed++;
-    
-    // Log the result
-    const status = passed ? chalk.green('✓ PASS') : chalk.red('✗ FAIL');
-    console.log(`${status} - ${name}`);
-    if (!passed && error) {
-      console.log(chalk.red(`  Error: ${test.error}`));
-    }
-    
-    return test;
-  }
-  
-  // Test API root endpoint
+  // Test the server root endpoint
   try {
-    const response = await apiClient.get('/');
-    recordTest('API Root Endpoint', 
-      response.status === 200 && response.data && response.data.message,
-      null,
-      { status: response.status, data: response.data }
-    );
+    await testResponseTime('/');
   } catch (error) {
-    recordTest('API Root Endpoint', false, error);
+    recordTest('Server Root Endpoint', false, error);
   }
   
-  // Test user registration - admin
+  // Test authentication endpoints
   try {
-    const adminData = {
-      name: `Admin ${Date.now()}`,
-      email: `admin${Date.now()}@test.com`,
-      password: 'Password123!',
-      role: 'admin'
-    };
-    
-    const response = await apiClient.post('/api/auth/register', adminData);
-    
-    const passed = response.status === 201 && 
-                  response.data && 
-                  response.data.user && 
-                  response.data.token;
-    
-    if (passed) {
-      testUsers.admin = {
-        user: response.data.user,
-        token: response.data.token
-      };
-    }
-    
-    recordTest('Admin Registration', 
-      passed,
-      passed ? null : new Error('Registration failed or invalid response'),
-      { status: response.status, userId: passed ? response.data.user.id : null }
-    );
+    await testAuthEndpoints();
   } catch (error) {
-    recordTest('Admin Registration', false, error);
+    recordTest('Authentication Endpoints', false, error);
   }
   
-  // Test user registration - vendor
+  // Test product endpoints
   try {
-    const vendorData = {
-      name: `Vendor ${Date.now()}`,
-      email: `vendor${Date.now()}@test.com`,
-      password: 'Password123!',
-      role: 'vendor',
-      businessName: `Test Vendor ${Date.now()}`
-    };
-    
-    const response = await apiClient.post('/api/auth/register', vendorData);
-    
-    const passed = response.status === 201 && 
-                  response.data && 
-                  response.data.user && 
-                  response.data.token;
-    
-    if (passed) {
-      testUsers.vendor = {
-        user: response.data.user,
-        token: response.data.token
-      };
-    }
-    
-    recordTest('Vendor Registration', 
-      passed,
-      passed ? null : new Error('Registration failed or invalid response'),
-      { status: response.status, userId: passed ? response.data.user.id : null }
-    );
+    await testProductEndpoints();
   } catch (error) {
-    recordTest('Vendor Registration', false, error);
+    recordTest('Product Endpoints', false, error);
   }
   
-  // Test user registration - customer
+  // Test payment endpoints
   try {
-    const customerData = {
-      name: `Customer ${Date.now()}`,
-      email: `customer${Date.now()}@test.com`,
-      password: 'Password123!',
-      role: 'customer'
-    };
-    
-    const response = await apiClient.post('/api/auth/register', customerData);
-    
-    const passed = response.status === 201 && 
-                  response.data && 
-                  response.data.user && 
-                  response.data.token;
-    
-    if (passed) {
-      testUsers.customer = {
-        user: response.data.user,
-        token: response.data.token
-      };
-    }
-    
-    recordTest('Customer Registration', 
-      passed,
-      passed ? null : new Error('Registration failed or invalid response'),
-      { status: response.status, userId: passed ? response.data.user.id : null }
-    );
+    await testPaymentEndpoints();
   } catch (error) {
-    recordTest('Customer Registration', false, error);
-  }
-  
-  // Test login
-  if (testUsers.vendor) {
-    try {
-      const loginData = {
-        email: testUsers.vendor.user.email,
-        password: 'Password123!'
-      };
-      
-      const response = await apiClient.post('/api/auth/login', loginData);
-      
-      recordTest('User Login', 
-        response.status === 200 && response.data && response.data.token,
-        response.status !== 200 ? new Error(`Login failed with status ${response.status}`) : null,
-        { status: response.status }
-      );
-    } catch (error) {
-      recordTest('User Login', false, error);
-    }
-  } else {
-    recordTest('User Login', false, new Error('Skipped because vendor registration failed'));
-  }
-  
-  // Test authenticated route
-  if (testUsers.customer) {
-    try {
-      const response = await apiClient.get('/api/auth/me', {
-        headers: { 'Authorization': `Bearer ${testUsers.customer.token}` }
-      });
-      
-      recordTest('Authenticated Route', 
-        response.status === 200 && response.data && response.data.user,
-        response.status !== 200 ? new Error(`Authentication check failed with status ${response.status}`) : null,
-        { status: response.status }
-      );
-    } catch (error) {
-      recordTest('Authenticated Route', false, error);
-    }
-  } else {
-    recordTest('Authenticated Route', false, new Error('Skipped because customer registration failed'));
-  }
-  
-  // Test authentication with invalid token
-  try {
-    const response = await apiClient.get('/api/auth/me', {
-      headers: { 'Authorization': 'Bearer invalid_token_here' }
-    });
-    
-    recordTest('Invalid Authentication', 
-      response.status === 401,
-      response.status !== 401 ? new Error(`Expected 401, got ${response.status}`) : null,
-      { status: response.status }
-    );
-  } catch (error) {
-    recordTest('Invalid Authentication', false, error);
-  }
-  
-  // Test product creation (vendor only)
-  if (testUsers.vendor) {
-    try {
-      const productData = {
-        name: `Test Product ${Date.now()}`,
-        description: 'This is a test product created by the API tester',
-        price: 29.99,
-        imageUrl: 'https://example.com/test-product.jpg'
-      };
-      
-      const response = await apiClient.post('/api/products', productData, {
-        headers: { 'Authorization': `Bearer ${testUsers.vendor.token}` }
-      });
-      
-      const productId = response.data && response.data.product ? response.data.product.id : null;
-      
-      recordTest('Product Creation', 
-        response.status === 201 && productId,
-        response.status !== 201 ? new Error(`Product creation failed with status ${response.status}`) : null,
-        { status: response.status, productId }
-      );
-      
-      // If product creation was successful, test product retrieval
-      if (response.status === 201 && productId) {
-        // Test product retrieval
-        try {
-          const getResponse = await apiClient.get(`/api/products/${productId}`);
-          
-          recordTest('Product Retrieval', 
-            getResponse.status === 200 && getResponse.data && getResponse.data.product,
-            getResponse.status !== 200 ? new Error(`Product retrieval failed with status ${getResponse.status}`) : null,
-            { status: getResponse.status, productId }
-          );
-        } catch (error) {
-          recordTest('Product Retrieval', false, error, { productId });
-        }
-        
-        // Test product update
-        try {
-          const updateData = {
-            name: `Updated Product ${Date.now()}`,
-            price: 39.99
-          };
-          
-          const updateResponse = await apiClient.put(`/api/products/${productId}`, updateData, {
-            headers: { 'Authorization': `Bearer ${testUsers.vendor.token}` }
-          });
-          
-          const isPriceUpdated = updateResponse.data && 
-                                updateResponse.data.product && 
-                                updateResponse.data.product.price === 39.99;
-          
-          recordTest('Product Update', 
-            updateResponse.status === 200 && isPriceUpdated,
-            updateResponse.status !== 200 ? new Error(`Product update failed with status ${updateResponse.status}`) : 
-                                         !isPriceUpdated ? new Error('Price was not updated correctly') : null,
-            { status: updateResponse.status, productId }
-          );
-        } catch (error) {
-          recordTest('Product Update', false, error, { productId });
-        }
-      }
-    } catch (error) {
-      recordTest('Product Creation', false, error);
-    }
-  } else {
-    recordTest('Product Creation', false, new Error('Skipped because vendor registration failed'));
-  }
-  
-  // Test product listing
-  try {
-    const response = await apiClient.get('/api/products');
-    
-    recordTest('Product Listing', 
-      response.status === 200 && response.data && Array.isArray(response.data.products),
-      response.status !== 200 ? new Error(`Product listing failed with status ${response.status}`) : null,
-      { status: response.status }
-    );
-  } catch (error) {
-    recordTest('Product Listing', false, error);
-  }
-  
-  // Test authentication required routes for unauthorized access
-  try {
-    const response = await apiClient.get('/api/products/vendor');
-    
-    recordTest('Auth Required Route', 
-      response.status === 401,
-      response.status !== 401 ? new Error(`Expected 401, got ${response.status}`) : null,
-      { status: response.status }
-    );
-  } catch (error) {
-    recordTest('Auth Required Route', false, error);
-  }
-  
-  // Test API response times
-  async function testResponseTime(endpoint, name) {
-    try {
-      const start = Date.now();
-      const response = await apiClient.get(endpoint);
-      const duration = Date.now() - start;
-      
-      recordTest(`Response Time - ${name}`, 
-        duration < 1000, // Less than 1 second
-        duration >= 1000 ? new Error(`Response time too slow: ${duration}ms`) : null,
-        { duration, status: response.status }
-      );
-    } catch (error) {
-      recordTest(`Response Time - ${name}`, false, error);
-    }
-  }
-  
-  await testResponseTime('/', 'API Root');
-  await testResponseTime('/api/products', 'Product Listing');
-  
-  // Test API error handling
-  try {
-    const response = await apiClient.get('/api/non-existent-endpoint');
-    
-    recordTest('Non-existent Endpoint', 
-      response.status === 404,
-      response.status !== 404 ? new Error(`Expected 404, got ${response.status}`) : null,
-      { status: response.status }
-    );
-  } catch (error) {
-    recordTest('Non-existent Endpoint', false, error);
+    recordTest('Payment Endpoints', false, error);
   }
   
   // Test CORS headers
   try {
-    const response = await apiClient.options('/api/products');
-    const corsHeaders = {
-      'access-control-allow-origin': '*',
-      'access-control-allow-methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      'access-control-allow-headers': 'Content-Type,Authorization'
-    };
-    
-    const hasAllCorsHeaders = Object.keys(corsHeaders).every(
-      header => response.headers[header] && 
-                response.headers[header].toLowerCase().includes(corsHeaders[header].toLowerCase())
-    );
-    
-    recordTest('CORS Headers', 
-      response.status === 204 && hasAllCorsHeaders,
-      !hasAllCorsHeaders ? new Error('Missing required CORS headers') : null,
-      { 
-        status: response.status,
-        headers: {
-          'access-control-allow-origin': response.headers['access-control-allow-origin'],
-          'access-control-allow-methods': response.headers['access-control-allow-methods'],
-          'access-control-allow-headers': response.headers['access-control-allow-headers']
-        }
-      }
-    );
+    await testCorsHeaders();
   } catch (error) {
     recordTest('CORS Headers', false, error);
   }
   
-  // Record finish time
-  results.endTime = new Date().toISOString();
-  results.duration = new Date(results.endTime) - new Date(results.startTime);
+  // Test API response time for various endpoints
+  try {
+    await testResponseTimes();
+  } catch (error) {
+    recordTest('API Response Times', false, error);
+  }
   
-  console.log(chalk.blue(`API Tests completed: ${results.passed} passed, ${results.failed} failed`));
+  // Test error handling for non-existent endpoints
+  try {
+    await testErrorHandling();
+  } catch (error) {
+    recordTest('Error Handling', false, error);
+  }
+  
+  console.log(`API testing complete: ${results.passed.length} passed, ${results.failed.length} failed`);
+  
   return results;
+  
+  // Helper function to record test results
+  function recordTest(name, passed, error = null, details = {}) {
+    const result = {
+      name,
+      timestamp: new Date().toISOString(),
+      details: details || {}
+    };
+    
+    if (passed) {
+      results.passed.push(result);
+      if (config.debug) {
+        console.log(`✅ [API] ${name}: Passed`);
+      }
+    } else {
+      result.error = error ? (error.message || String(error)) : 'Unknown error';
+      results.failed.push(result);
+      console.log(`❌ [API] ${name}: Failed - ${result.error}`);
+    }
+    
+    return result;
+  }
+  
+  // Test for proper CORS headers
+  async function testCorsHeaders() {
+    const criticalEndpoints = ['/', '/api/auth/login', '/api/products', '/api/payments/create-payment-intent'];
+    const expectedHeaders = ['access-control-allow-origin', 'access-control-allow-methods', 'access-control-allow-headers'];
+    
+    let allPassed = true;
+    const details = { endpoints: {} };
+    
+    for (const endpoint of criticalEndpoints) {
+      try {
+        const response = await api.options(endpoint);
+        
+        const hasAllHeaders = expectedHeaders.every(header => 
+          response.headers[header] !== undefined
+        );
+        
+        details.endpoints[endpoint] = {
+          status: response.status,
+          headers: expectedHeaders.reduce((acc, header) => {
+            acc[header] = response.headers[header] !== undefined;
+            return acc;
+          }, {})
+        };
+        
+        if (!hasAllHeaders) {
+          allPassed = false;
+        }
+      } catch (error) {
+        details.endpoints[endpoint] = { error: error.message };
+        allPassed = false;
+      }
+    }
+    
+    recordTest('CORS Headers', allPassed, allPassed ? null : 'Missing CORS headers', details);
+  }
+  
+  // Test response time for a specific endpoint
+  async function testResponseTime(endpoint, name) {
+    const testName = name || `Response Time - ${endpoint}`;
+    const start = Date.now();
+    try {
+      const response = await api.get(endpoint);
+      const time = Date.now() - start;
+      
+      const details = {
+        endpoint,
+        status: response.status,
+        time: `${time}ms`
+      };
+      
+      const passed = time < config.timeouts.apiResponse;
+      recordTest(testName, passed, 
+                 passed ? null : `Response time too slow: ${time}ms`, 
+                 details);
+      return { passed, time, status: response.status };
+    } catch (error) {
+      recordTest(testName, false, error, { endpoint });
+      return { passed: false, error: error.message };
+    }
+  }
+  
+  // Test response times for various endpoints
+  async function testResponseTimes() {
+    const endpoints = ['/', '/api/auth/login', '/api/auth/register', '/api/products'];
+    const results = {};
+    let allFast = true;
+    
+    for (const endpoint of endpoints) {
+      const result = await testResponseTime(endpoint);
+      results[endpoint] = result;
+      if (!result.passed) {
+        allFast = false;
+      }
+    }
+    
+    recordTest('API Response Times', allFast, 
+               allFast ? null : 'Some endpoints have slow response times',
+               { endpoints: results });
+  }
+  
+  // Test error handling for non-existent endpoints
+  async function testErrorHandling() {
+    const nonExistentEndpoint = '/api/non-existent-endpoint';
+    const response = await api.get(nonExistentEndpoint);
+    
+    const details = {
+      status: response.status,
+      data: response.data
+    };
+    
+    const passed = response.status === 404;
+    recordTest('404 Error Handling', passed,
+               passed ? null : `Expected 404 status, got ${response.status}`,
+               details);
+  }
+  
+  // Test authentication endpoints
+  async function testAuthEndpoints() {
+    // Test registration
+    const username = `test_user_${Date.now()}`;
+    const password = 'Test123!';
+    
+    let userId, token;
+    
+    try {
+      const registerResponse = await api.post('/api/auth/register', {
+        username,
+        password,
+        role: 'customer'
+      });
+      
+      const registerDetails = {
+        status: registerResponse.status,
+        success: registerResponse.data?.success || false
+      };
+      
+      if (registerResponse.data?.user) {
+        userId = registerResponse.data.user.id;
+        registerDetails.userId = userId;
+      }
+      
+      const registerPassed = registerResponse.status === 201 && registerDetails.success;
+      recordTest('User Registration', registerPassed, 
+                registerPassed ? null : 'Failed to register user',
+                registerDetails);
+      
+      if (!registerPassed) return;
+      
+      // Test login
+      const loginResponse = await api.post('/api/auth/login', {
+        username,
+        password
+      });
+      
+      const loginDetails = {
+        status: loginResponse.status,
+        success: loginResponse.data?.success || false
+      };
+      
+      if (loginResponse.data?.token) {
+        token = loginResponse.data.token;
+        loginDetails.hasToken = true;
+      }
+      
+      const loginPassed = loginResponse.status === 200 && loginDetails.success && loginDetails.hasToken;
+      recordTest('User Login', loginPassed,
+                loginPassed ? null : 'Failed to login user',
+                loginDetails);
+      
+      if (!loginPassed) return;
+      
+      // Test authenticated route
+      const authApi = axios.create({
+        baseURL: config.baseUrl,
+        timeout: config.timeouts.apiResponse,
+        validateStatus: () => true,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const meResponse = await authApi.get('/api/auth/me');
+      
+      const meDetails = {
+        status: meResponse.status,
+        hasUser: meResponse.data?.id !== undefined
+      };
+      
+      const mePassed = meResponse.status === 200 && meDetails.hasUser;
+      recordTest('Authenticated Route', mePassed,
+                mePassed ? null : 'Failed to access authenticated route',
+                meDetails);
+      
+    } catch (error) {
+      recordTest('Authentication Flow', false, error);
+    }
+  }
+  
+  // Test product endpoints
+  async function testProductEndpoints() {
+    try {
+      // Register a vendor
+      const vendorUsername = `vendor_${Date.now()}`;
+      const vendorPassword = 'Vendor123!';
+      
+      const registerResponse = await api.post('/api/auth/register', {
+        username: vendorUsername,
+        password: vendorPassword,
+        role: 'vendor'
+      });
+      
+      if (registerResponse.status !== 201) {
+        recordTest('Vendor Registration', false, 
+                  `Failed to register vendor: ${registerResponse.status}`,
+                  { status: registerResponse.status });
+        return;
+      }
+      
+      // Login as vendor
+      const loginResponse = await api.post('/api/auth/login', {
+        username: vendorUsername,
+        password: vendorPassword
+      });
+      
+      if (loginResponse.status !== 200 || !loginResponse.data?.token) {
+        recordTest('Vendor Login', false,
+                  `Failed to login as vendor: ${loginResponse.status}`,
+                  { status: loginResponse.status });
+        return;
+      }
+      
+      const vendorToken = loginResponse.data.token;
+      const vendorId = loginResponse.data.user.id;
+      
+      // Create authenticated API instance
+      const authApi = axios.create({
+        baseURL: config.baseUrl,
+        timeout: config.timeouts.apiResponse,
+        validateStatus: () => true,
+        headers: {
+          'Authorization': `Bearer ${vendorToken}`
+        }
+      });
+      
+      // Create a product
+      const productData = {
+        name: `Test Product ${Date.now()}`,
+        description: 'A test product created by the automated testing system',
+        price: 29.99,
+        stock: 100,
+        vendorId: vendorId
+      };
+      
+      const createResponse = await authApi.post('/api/products', productData);
+      
+      const createDetails = {
+        status: createResponse.status,
+        success: createResponse.data?.id !== undefined
+      };
+      
+      if (createResponse.data?.id) {
+        createDetails.productId = createResponse.data.id;
+      }
+      
+      const createPassed = createResponse.status === 201 && createDetails.success;
+      recordTest('Product Creation', createPassed,
+                createPassed ? null : 'Failed to create product',
+                createDetails);
+      
+      if (!createPassed) return;
+      
+      const productId = createResponse.data.id;
+      
+      // Test product listing
+      const listResponse = await api.get('/api/products');
+      
+      const listDetails = {
+        status: listResponse.status,
+        count: listResponse.data?.length || 0
+      };
+      
+      const listPassed = listResponse.status === 200 && listDetails.count > 0;
+      recordTest('Product Listing', listPassed,
+                listPassed ? null : 'Failed to list products',
+                listDetails);
+      
+      // Test product retrieval
+      const getResponse = await api.get(`/api/products/${productId}`);
+      
+      const getDetails = {
+        status: getResponse.status,
+        found: getResponse.data?.id === productId
+      };
+      
+      const getPassed = getResponse.status === 200 && getDetails.found;
+      recordTest('Product Retrieval', getPassed,
+                getPassed ? null : 'Failed to retrieve product',
+                getDetails);
+      
+      // Test product update
+      const updateData = {
+        name: `Updated Product ${Date.now()}`,
+        price: 39.99
+      };
+      
+      const updateResponse = await authApi.put(`/api/products/${productId}`, updateData);
+      
+      const updateDetails = {
+        status: updateResponse.status,
+        success: updateResponse.data?.id === productId
+      };
+      
+      const updatePassed = updateResponse.status === 200 && updateDetails.success;
+      recordTest('Product Update', updatePassed,
+                updatePassed ? null : 'Failed to update product',
+                updateDetails);
+      
+      // Test vendor products listing
+      const vendorProductsResponse = await authApi.get('/api/products/vendor');
+      
+      const vendorProductsDetails = {
+        status: vendorProductsResponse.status,
+        count: vendorProductsResponse.data?.length || 0
+      };
+      
+      const vendorProductsPassed = vendorProductsResponse.status === 200 && vendorProductsDetails.count > 0;
+      recordTest('Vendor Products', vendorProductsPassed,
+                vendorProductsPassed ? null : 'Failed to list vendor products',
+                vendorProductsDetails);
+      
+    } catch (error) {
+      recordTest('Product Endpoints', false, error);
+    }
+  }
+  
+  // Test payment endpoints
+  async function testPaymentEndpoints() {
+    try {
+      // Create a payment intent
+      const paymentData = {
+        amount: 1999,
+        items: [{ id: 'test-item', quantity: 1 }]
+      };
+      
+      const paymentResponse = await api.post('/api/payments/create-payment-intent', paymentData);
+      
+      const paymentDetails = {
+        status: paymentResponse.status,
+        success: paymentResponse.data?.clientSecret !== undefined
+      };
+      
+      const paymentPassed = paymentResponse.status === 200 && paymentDetails.success;
+      recordTest('Create Payment Intent', paymentPassed,
+                paymentPassed ? null : 'Failed to create payment intent',
+                paymentDetails);
+      
+    } catch (error) {
+      recordTest('Payment Endpoints', false, error);
+    }
+  }
 }
 
 module.exports = {

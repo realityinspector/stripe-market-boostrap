@@ -40,7 +40,30 @@ async function runTests() {
 
     console.log('=== Starting Test Run ===');
 
-    // Run all tests or tests for a specific category
+    // Handle automated testing suite if requested
+    if (category === 'auto') {
+      try {
+        console.log('Running comprehensive automated testing suite...');
+        // Use the new automated testing system
+        const { runAllTests } = require('./automation/testCoordinator');
+        const results = await runAllTests();
+        
+        // Exit with appropriate code
+        if (results.summary.totalFailed > 0) {
+          console.log(`Automated tests completed with ${results.summary.totalFailed} failures.`);
+          process.exit(1);
+        } else {
+          console.log('All automated tests passed successfully!');
+          process.exit(0);
+        }
+      } catch (error) {
+        console.error('Error running automated tests:', error);
+        process.exit(1);
+      }
+      return;
+    }
+    
+    // Run legacy tests
     const testResults = await runAllTests(category);
     
     // Generate test report
