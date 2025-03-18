@@ -173,21 +173,21 @@ function calculateStats(results) {
  * @param {Object} stats - Test statistics
  */
 function outputTestSummary(stats) {
-  console.log(chalk.blue.bold('\n=== Test Suite Summary ==='));
-  console.log(chalk.blue(`Total Tests: ${stats.totalTests}`));
-  console.log(chalk.green(`Passed Tests: ${stats.passedTests}`));
-  console.log(chalk.red(`Failed Tests: ${stats.failedTests}`));
-  console.log(chalk.blue(`Success Rate: ${stats.successRate.toFixed(2)}%`));
+  console.log(colors.bold.blue('\n=== Test Suite Summary ==='));
+  console.log(colors.blue(`Total Tests: ${stats.totalTests}`));
+  console.log(colors.green(`Passed Tests: ${stats.passedTests}`));
+  console.log(colors.red(`Failed Tests: ${stats.failedTests}`));
+  console.log(colors.blue(`Success Rate: ${stats.successRate.toFixed(2)}%`));
   
-  console.log(chalk.blue.bold('\nCategory Breakdown:'));
+  console.log(colors.bold.blue('\nCategory Breakdown:'));
   
   Object.entries(stats.categories).forEach(([category, categoryStats]) => {
     const successRate = categoryStats.successRate.toFixed(2);
-    let color = chalk.green;
-    if (successRate < 80) color = chalk.red;
-    else if (successRate < 90) color = chalk.yellow;
+    let colorFn = colors.green;
+    if (successRate < 80) colorFn = colors.red;
+    else if (successRate < 90) colorFn = colors.yellow;
     
-    console.log(chalk.blue(`  ${category}: ${categoryStats.passed}/${categoryStats.total} (${color(successRate + '%')})`));
+    console.log(colors.blue(`  ${category}: ${categoryStats.passed}/${categoryStats.total} (${colorFn(successRate + '%')})`));
   });
 }
 
@@ -219,7 +219,10 @@ function checkDeploymentReadiness(testResults = null) {
     'Customer Registration & Login',
     'Vendor Registration & Login',
     'Payment Initiation',
-    'Full Purchase Flow'
+    'Full Purchase Flow',
+    'Admin Authentication',
+    'Admin Analytics',
+    'Admin Vendors Management'
   ];
   
   // Initialize readiness as true, will set to false if any issues found
@@ -242,6 +245,16 @@ function checkDeploymentReadiness(testResults = null) {
     if (apiFailures.length > 0) {
       ready = false;
       issues.push(`${apiFailures.length} failed API tests, all API tests must pass for deployment`);
+    }
+    
+    // Check 3: Admin-related tests must pass (they control the platform)
+    const adminApiTests = apiResults.filter(test => 
+      test.name.toLowerCase().includes('admin')
+    );
+    const adminFailures = adminApiTests.filter(test => !test.passed);
+    if (adminFailures.length > 0) {
+      ready = false;
+      issues.push(`${adminFailures.length} failed admin API tests, all admin endpoints must function properly`);
     }
     
     // Check 3: Critical user flows must pass
@@ -304,9 +317,9 @@ function updateDevNotes(results) {
     // Update notes with latest run
     fs.writeFileSync(NOTES_PATH, `${notes}\n${summary}${details}`);
     
-    console.log(chalk.green('\n✅ Development notes updated with test results'));
+    console.log(colors.green('\n✅ Development notes updated with test results'));
   } catch (error) {
-    console.error(chalk.yellow('⚠️ Could not update development notes:'), error.message);
+    console.error(colors.yellow('⚠️ Could not update development notes:'), error.message);
   }
 }
 

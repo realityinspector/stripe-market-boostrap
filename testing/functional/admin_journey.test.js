@@ -9,75 +9,76 @@
  */
 
 const puppeteer = require('puppeteer');
-const { 
-  initBrowser, 
-  closeBrowser, 
-  navigateTo,
-  waitForElement,
-  clickElement,
-  fillInput,
-  getElementText,
-  evaluate,
-  takeScreenshot,
-  mockSafeWait
-} = require('../utils/puppeteerHelper');
-const { createTestUser } = require('../utils/testHelpers');
-
-// Base URL for the application
-const BASE_URL = 'http://localhost:8000';
-const API_URL = 'http://localhost:8000';
+const puppeteerHelper = require('../utils/puppeteerHelper');
+const testHelpers = require('../utils/testHelpers');
+const chalk = require('chalk');
 
 /**
  * Test the complete admin journey flow
  */
 async function testAdminJourney() {
-  console.log('Testing admin journey flow...');
-  
-  let browser, page;
+  let browser;
+  let page;
+  let testPassed = false;
   let admin = null;
   
   try {
-    browser = await initBrowser();
-    page = await browser.newPage();
+    console.log(chalk.blue('🧪 Testing admin journey...'));
     
-    // 1. Login as admin (assuming admin account exists)
-    admin = {
-      email: 'admin@marketplace.com',
-      password: 'Admin123!'
-    };
-    await testAdminLogin(page, admin);
+    // Initialize browser
+    browser = await puppeteerHelper.initBrowser();
+    page = await puppeteerHelper.createPage();
     
-    // 2. View platform analytics
-    await testPlatformAnalytics(page);
+    // Create test admin if needed
+    admin = await testHelpers.createTestUser('admin');
     
-    // 3. Manage vendors
-    await testVendorManagement(page);
-    
-    // 4. Manage products
-    await testProductManagement(page);
-    
-    // 5. View transactions
-    await testTransactionOversight(page);
-    
-    // 6. Manage platform commission
-    await testCommissionManagement(page);
-    
-    console.log('Admin journey test passed');
-    return true;
-  } catch (error) {
-    console.error(`Admin journey error: ${error.message}`);
-    
-    // Take a failure screenshot
-    if (page) {
-      await takeScreenshot(page, 'testing/screenshots/admin-journey-failure.png');
+    // Test admin login
+    const loginResult = await testAdminLogin(page, admin);
+    if (!loginResult.passed) {
+      throw new Error('Admin login test failed: ' + loginResult.error);
     }
     
-    // In testing mode, we'll proceed even if there are errors
-    console.log('Testing in mock mode - some steps may have been skipped');
-    return false;
+    // Test platform analytics dashboard
+    const analyticsResult = await testPlatformAnalytics(page);
+    if (!analyticsResult.passed) {
+      throw new Error('Platform analytics test failed: ' + analyticsResult.error);
+    }
+    
+    // Test vendor management
+    const vendorResult = await testVendorManagement(page);
+    if (!vendorResult.passed) {
+      throw new Error('Vendor management test failed: ' + vendorResult.error);
+    }
+    
+    // Test product management
+    const productResult = await testProductManagement(page);
+    if (!productResult.passed) {
+      throw new Error('Product management test failed: ' + productResult.error);
+    }
+    
+    // Test transaction oversight
+    const transactionResult = await testTransactionOversight(page);
+    if (!transactionResult.passed) {
+      throw new Error('Transaction oversight test failed: ' + transactionResult.error);
+    }
+    
+    // Test commission management
+    const commissionResult = await testCommissionManagement(page);
+    if (!commissionResult.passed) {
+      throw new Error('Commission management test failed: ' + commissionResult.error);
+    }
+    
+    console.log(chalk.green('✅ Admin journey test passed'));
+    testPassed = true;
+    
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('❌ Admin journey test failed:'), err);
+    return { passed: false, error: err.message };
   } finally {
+    // Clean up resources
     if (browser) {
-      await closeBrowser();
+      await puppeteerHelper.closeBrowser(browser);
     }
   }
 }
@@ -86,290 +87,240 @@ async function testAdminJourney() {
  * Test admin login
  */
 async function testAdminLogin(page, admin) {
-  console.log('Testing admin login...');
-  
-  // Try to create admin user first if it doesn't exist
   try {
-    // Make API call to create admin user
-    const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: admin.email,
-        password: admin.password,
-        name: 'Admin User',
-        role: 'admin'
-      })
-    });
+    console.log(chalk.blue('  Testing admin login...'));
     
-    if (response.ok) {
-      console.log('Admin user created successfully');
-    } else {
-      // Admin might already exist, which is fine
-      console.log('Admin user might already exist, proceeding to login');
+    // Navigate to login page
+    await puppeteerHelper.navigateTo(page, 'http://localhost:8000/login');
+    
+    // Fill login form
+    await puppeteerHelper.fillInput(page, '#email', admin.email);
+    await puppeteerHelper.fillInput(page, '#password', admin.password);
+    
+    // Submit login form
+    await puppeteerHelper.clickElement(page, '#login-button');
+    
+    // Wait for redirect to admin dashboard
+    await puppeteerHelper.waitForElement(page, '#admin-dashboard', 5000);
+    
+    // Verify admin name is displayed
+    const adminName = await puppeteerHelper.getElementText(page, '#user-name');
+    if (!adminName.includes(admin.name)) {
+      throw new Error('Admin name not displayed correctly');
     }
-  } catch (error) {
-    // Ignore errors here - we'll proceed to login
-    console.warn('Error creating admin user (might already exist):', error.message);
+    
+    console.log(chalk.green('  ✅ Admin login successful'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Admin login failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-login-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  // Navigate to login page
-  await navigateTo(page, `${BASE_URL}/login`);
-  
-  // Wait for login form
-  await waitForElement(page, 'form');
-  
-  // Fill out login form
-  await fillInput(page, 'input[name="email"]', admin.email);
-  await fillInput(page, 'input[name="password"]', admin.password);
-  
-  // Submit form
-  await clickElement(page, 'button[type="submit"]');
-  
-  // Wait for admin dashboard redirect
-  await waitForElement(page, '.admin-dashboard, .dashboard', 5000);
-  
-  // Get auth token from localStorage
-  const token = await evaluate(page, () => {
-    return localStorage.getItem('authToken');
-  });
-  
-  console.log('Admin login test passed');
-  return token;
 }
 
 /**
  * Test platform analytics dashboard
  */
 async function testPlatformAnalytics(page) {
-  console.log('Testing platform analytics...');
-  
-  // Navigate to admin dashboard
-  await navigateTo(page, `${BASE_URL}/admin/dashboard`);
-  
-  // Wait for analytics components
-  await waitForElement(page, '.analytics-summary, .dashboard-metrics', 5000);
-  
-  // Check for key metrics
-  const hasRevenue = await waitForElement(page, '.total-revenue, .revenue-metric', 2000);
-  const hasOrders = await waitForElement(page, '.total-orders, .orders-metric', 2000);
-  const hasVendors = await waitForElement(page, '.total-vendors, .vendors-metric', 2000);
-  
-  if (!hasRevenue || !hasOrders || !hasVendors) {
-    console.warn('Some analytics components not found, dashboard may be structured differently');
+  try {
+    console.log(chalk.blue('  Testing platform analytics...'));
+    
+    // Navigate to analytics dashboard
+    await puppeteerHelper.clickElement(page, '#analytics-link');
+    
+    // Verify analytics components are displayed
+    await puppeteerHelper.waitForElement(page, '#total-users-metric', 5000);
+    await puppeteerHelper.waitForElement(page, '#total-revenue-metric', 5000);
+    await puppeteerHelper.waitForElement(page, '#total-orders-metric', 5000);
+    await puppeteerHelper.waitForElement(page, '#total-products-metric', 5000);
+    
+    // Verify analytics sections
+    const userCount = await puppeteerHelper.getElementText(page, '#total-users-metric');
+    const productCount = await puppeteerHelper.getElementText(page, '#total-products-metric');
+    
+    // Analytics should contain numbers
+    if (!/\d+/.test(userCount) || !/\d+/.test(productCount)) {
+      throw new Error('Analytics data not displayed correctly');
+    }
+    
+    // Take a screenshot of the analytics dashboard
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-analytics.png');
+    
+    console.log(chalk.green('  ✅ Platform analytics test passed'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Platform analytics test failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-analytics-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  // Take screenshot of analytics dashboard
-  await takeScreenshot(page, 'testing/screenshots/admin-analytics.png');
-  
-  console.log('Platform analytics test passed');
 }
 
 /**
  * Test vendor management
  */
 async function testVendorManagement(page) {
-  console.log('Testing vendor management...');
-  
-  // Navigate to vendor management page
-  await navigateTo(page, `${BASE_URL}/admin/vendors`);
-  
-  // Wait for vendor list
-  await waitForElement(page, '.vendor-list, .vendors-table', 5000);
-  
-  // Take screenshot of vendor management
-  await takeScreenshot(page, 'testing/screenshots/admin-vendor-management.png');
-  
-  // Test search/filter if available
-  const hasSearch = await waitForElement(page, 'input[type="search"]', 2000);
-  
-  if (hasSearch) {
-    await fillInput(page, 'input[type="search"]', 'Test Vendor');
+  try {
+    console.log(chalk.blue('  Testing vendor management...'));
     
-    // Look for search button or just press Enter
-    const searchButton = await waitForElement(page, 'button[type="submit"], button.search-button', 1000);
+    // Navigate to vendor management
+    await puppeteerHelper.clickElement(page, '#vendors-link');
     
-    if (searchButton) {
-      await clickElement(page, 'button[type="submit"], button.search-button');
+    // Verify vendor table is displayed
+    await puppeteerHelper.waitForElement(page, '#vendors-table', 5000);
+    
+    // Check if there are vendors listed
+    const vendorsExist = await puppeteerHelper.elementExists(page, '.vendor-row');
+    
+    if (vendorsExist) {
+      // Test approve/suspend vendor (if vendors exist)
+      await puppeteerHelper.clickElement(page, '.vendor-status-dropdown');
+      await puppeteerHelper.clickElement(page, '.vendor-status-active');
+      
+      // Verify status change confirmation
+      await puppeteerHelper.waitForElement(page, '#status-change-success', 5000);
     } else {
-      // Press Enter in the search box
-      await page.keyboard.press('Enter');
+      console.log(chalk.yellow('  ⚠️ No vendors found to test status changes'));
     }
     
-    // Wait briefly for search results (using mock compatibility)
-    await mockSafeWait(page, 1000);
-  }
-  
-  // Test vendor approval/suspension if a vendor is present
-  const hasVendorActions = await waitForElement(page, '.vendor-actions, .action-buttons', 2000);
-  
-  if (hasVendorActions) {
-    // Check if there's a status toggle button
-    const hasStatusToggle = await waitForElement(page, '.status-toggle, .toggle-status', 1000);
+    // Take a screenshot of vendor management
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-vendors.png');
     
-    if (hasStatusToggle) {
-      await clickElement(page, '.status-toggle, .toggle-status');
-      
-      // Wait for confirmation dialog if it appears
-      const hasConfirmation = await waitForElement(page, '.confirmation-dialog, .confirm-action', 2000);
-      
-      if (hasConfirmation) {
-        await clickElement(page, '.confirm-button, .yes-button');
-        
-        // Wait for status update
-        await mockSafeWait(page, 1000);
-      }
-    }
+    console.log(chalk.green('  ✅ Vendor management test passed'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Vendor management test failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-vendors-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  console.log('Vendor management test passed');
 }
 
 /**
  * Test product management
  */
 async function testProductManagement(page) {
-  console.log('Testing product management...');
-  
-  // Navigate to product management page
-  await navigateTo(page, `${BASE_URL}/admin/products`);
-  
-  // Wait for product list
-  await waitForElement(page, '.product-list, .products-table', 5000);
-  
-  // Take screenshot of product management
-  await takeScreenshot(page, 'testing/screenshots/admin-product-management.png');
-  
-  // Test search/filter if available
-  const hasSearch = await waitForElement(page, 'input[type="search"]', 2000);
-  
-  if (hasSearch) {
-    await fillInput(page, 'input[type="search"]', 'Test Product');
+  try {
+    console.log(chalk.blue('  Testing product management...'));
     
-    // Look for search button or just press Enter
-    const searchButton = await waitForElement(page, 'button[type="submit"], button.search-button', 1000);
+    // Navigate to product management
+    await puppeteerHelper.clickElement(page, '#products-link');
     
-    if (searchButton) {
-      await clickElement(page, 'button[type="submit"], button.search-button');
-    } else {
-      // Press Enter in the search box
-      await page.keyboard.press('Enter');
-    }
+    // Verify product table is displayed
+    await puppeteerHelper.waitForElement(page, '#products-table', 5000);
     
-    // Wait briefly for search results (using mock compatibility)
-    await mockSafeWait(page, 1000);
-  }
-  
-  // Test product feature/removal if a product is present
-  const hasProductActions = await waitForElement(page, '.product-actions, .action-buttons', 2000);
-  
-  if (hasProductActions) {
-    // Check if there's a feature toggle button
-    const hasFeatureToggle = await waitForElement(page, '.feature-toggle, .toggle-feature', 1000);
+    // Check if there are products listed
+    const productsExist = await puppeteerHelper.elementExists(page, '.product-row');
     
-    if (hasFeatureToggle) {
-      await clickElement(page, '.feature-toggle, .toggle-feature');
+    if (productsExist) {
+      // Test featuring a product
+      await puppeteerHelper.clickElement(page, '.feature-product-checkbox');
       
-      // Wait for status update
-      await mockSafeWait(page, 1000);
+      // Verify feature change confirmation
+      await puppeteerHelper.waitForElement(page, '#feature-change-success', 5000);
+    } else {
+      console.log(chalk.yellow('  ⚠️ No products found to test featuring'));
     }
+    
+    // Take a screenshot of product management
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-products.png');
+    
+    console.log(chalk.green('  ✅ Product management test passed'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Product management test failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-products-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  console.log('Product management test passed');
 }
 
 /**
  * Test transaction oversight
  */
 async function testTransactionOversight(page) {
-  console.log('Testing transaction oversight...');
-  
-  // Navigate to transactions page
-  await navigateTo(page, `${BASE_URL}/admin/transactions`);
-  
-  // Wait for transactions list
-  await waitForElement(page, '.transactions-list, .transactions-table', 5000);
-  
-  // Take screenshot of transactions page
-  await takeScreenshot(page, 'testing/screenshots/admin-transactions.png');
-  
-  // Test filtering by date range if available
-  const hasDateFilter = await waitForElement(page, 'input[type="date"]', 2000);
-  
-  if (hasDateFilter) {
-    // Set date filters - note: input[type="date"] accepts YYYY-MM-DD format
-    const dateInputs = await page.$$('input[type="date"]');
+  try {
+    console.log(chalk.blue('  Testing transaction oversight...'));
     
-    if (dateInputs.length >= 2) {
-      // Set start date (30 days ago)
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 30);
-      const startDateStr = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    // Navigate to transactions
+    await puppeteerHelper.clickElement(page, '#transactions-link');
+    
+    // Verify transaction table is displayed
+    await puppeteerHelper.waitForElement(page, '#transactions-table', 5000);
+    
+    // Check if export functionality exists
+    const exportExists = await puppeteerHelper.elementExists(page, '#export-transactions');
+    
+    if (exportExists) {
+      // Test exporting transactions
+      await puppeteerHelper.clickElement(page, '#export-transactions');
       
-      // Set end date (today)
-      const endDate = new Date();
-      const endDateStr = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
-      
-      await fillInput(page, 'input[type="date"]:nth-child(1)', startDateStr);
-      await fillInput(page, 'input[type="date"]:nth-child(2)', endDateStr);
-      
-      // Apply filters
-      const filterButton = await waitForElement(page, 'button.apply-filter, button.filter-button', 1000);
-      if (filterButton) {
-        await clickElement(page, 'button.apply-filter, button.filter-button');
-        
-        // Wait for filtered results
-        await mockSafeWait(page, 1000);
-      }
+      // Verify export confirmation
+      await puppeteerHelper.waitForElement(page, '#export-success', 5000);
+    } else {
+      console.log(chalk.yellow('  ⚠️ Export functionality not found'));
     }
+    
+    // Take a screenshot of transaction oversight
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-transactions.png');
+    
+    console.log(chalk.green('  ✅ Transaction oversight test passed'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Transaction oversight test failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-transactions-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  console.log('Transaction oversight test passed');
 }
 
 /**
  * Test commission management
  */
 async function testCommissionManagement(page) {
-  console.log('Testing commission management...');
-  
-  // Navigate to commission management page
-  await navigateTo(page, `${BASE_URL}/admin/commission`);
-  
-  // Wait for commission form or table
-  await waitForElement(page, '.commission-settings, .platform-settings', 5000);
-  
-  // Take screenshot of commission settings
-  await takeScreenshot(page, 'testing/screenshots/admin-commission.png');
-  
-  // Test updating commission rate if form exists
-  const hasCommissionForm = await waitForElement(page, 'form', 2000);
-  
-  if (hasCommissionForm) {
-    // Look for commission rate input
-    const hasRateInput = await waitForElement(page, 'input[name="commissionRate"], input[name="platformFee"]', 1000);
+  try {
+    console.log(chalk.blue('  Testing commission management...'));
     
-    if (hasRateInput) {
-      // Get current value
-      const currentValue = await evaluate(page, () => {
-        const input = document.querySelector('input[name="commissionRate"], input[name="platformFee"]');
-        return input ? input.value : null;
-      });
-      
-      // Set a new value (for testing, we'll set it back to current value)
-      if (currentValue) {
-        await fillInput(page, 'input[name="commissionRate"], input[name="platformFee"]', currentValue);
-        
-        // Submit form
-        await clickElement(page, 'button[type="submit"]');
-        
-        // Wait for success message
-        await waitForElement(page, '.success-message, .alert-success', 5000);
-      }
+    // Navigate to commission settings
+    await puppeteerHelper.clickElement(page, '#settings-link');
+    
+    // Verify commission form is displayed
+    await puppeteerHelper.waitForElement(page, '#commission-form', 5000);
+    
+    // Get current commission rate
+    const currentRate = await page.evaluate(() => {
+      return document.querySelector('#commission-rate').value;
+    });
+    
+    // Set new commission rate (add 1 to current rate, or reset to 10 if it's too high)
+    const newRate = parseFloat(currentRate) >= 20 ? 10 : parseFloat(currentRate) + 1;
+    
+    // Fill commission form
+    await page.evaluate((rate) => {
+      document.querySelector('#commission-rate').value = rate;
+    }, newRate);
+    
+    // Submit commission form
+    await puppeteerHelper.clickElement(page, '#update-commission');
+    
+    // Verify update confirmation
+    await puppeteerHelper.waitForElement(page, '#commission-update-success', 5000);
+    
+    // Verify new commission rate is displayed
+    const updatedRate = await page.evaluate(() => {
+      return document.querySelector('#commission-rate').value;
+    });
+    
+    if (parseFloat(updatedRate) !== newRate) {
+      throw new Error(`Commission rate not updated correctly. Expected ${newRate}, got ${updatedRate}`);
     }
+    
+    // Take a screenshot of commission management
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-commission.png');
+    
+    console.log(chalk.green('  ✅ Commission management test passed'));
+    return { passed: true };
+  } catch (err) {
+    console.error(chalk.red('  ❌ Commission management test failed:'), err);
+    await puppeteerHelper.takeScreenshot(page, 'testing/screenshots/admin-commission-failed.png');
+    return { passed: false, error: err.message };
   }
-  
-  console.log('Commission management test passed');
 }
 
 module.exports = {
