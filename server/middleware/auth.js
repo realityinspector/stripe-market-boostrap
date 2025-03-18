@@ -15,18 +15,18 @@ const authenticateToken = (req, res, next) => {
   }
   
   // Verify token
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid or expired token'
-      });
-    }
-    
+  try {
+    const user = jwt.verify(token, JWT_SECRET);
     // Store user info in request object
     req.user = user;
+    req.isAuthenticated = () => true; // Add isAuthenticated method for Stripe API
     next();
-  });
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token'
+    });
+  }
 };
 
 // Middleware to check user role
