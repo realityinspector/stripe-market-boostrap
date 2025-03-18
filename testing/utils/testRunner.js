@@ -85,7 +85,7 @@ async function runTestsInDirectory(testDir) {
 
 /**
  * Run all tests and generate reports
- * @param {string} category - Optional category of tests to run (api, e2e, frontend)
+ * @param {string} category - Optional category of tests to run (api, e2e, frontend, ui)
  * @returns {Object} - Object containing test results by category
  */
 async function runAllTests(category) {
@@ -95,8 +95,37 @@ async function runAllTests(category) {
     frontend: []
   };
   
+  // If 'ui' category is specified, run the UI tests via a separate script
+  if (category === 'ui') {
+    console.log('=== Running UI Tests with Puppeteer ===');
+    const { spawn } = require('child_process');
+    const uiTestProcess = spawn('node', [path.join(__dirname, '..', 'runUiTests.js')], {
+      stdio: 'inherit'
+    });
+    
+    return new Promise((resolve, reject) => {
+      uiTestProcess.on('close', (code) => {
+        if (code === 0) {
+          // Create mock results for reporting purposes
+          resolve({
+            api: [],
+            e2e: [{ name: 'UI Tests', passed: true, error: null }],
+            frontend: []
+          });
+        } else {
+          // Create mock results with failure for reporting purposes
+          resolve({
+            api: [],
+            e2e: [{ name: 'UI Tests', passed: false, error: `UI tests failed with exit code ${code}` }],
+            frontend: []
+          });
+        }
+      });
+    });
+  }
+  
   // If a specific category is provided, only run those tests
-  if (category) {
+  if (category && category !== 'ui') {
     switch (category) {
       case 'api':
         console.log('=== Running API Tests ===');
@@ -113,7 +142,7 @@ async function runAllTests(category) {
       default:
         console.warn(`Unknown test category: ${category}`);
     }
-  } else {
+  } else if (!category) {
     // Run all tests by default
     console.log('=== Running API Tests ===');
     results.api = await runTestsInDirectory('api');

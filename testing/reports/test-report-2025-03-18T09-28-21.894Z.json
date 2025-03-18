@@ -1,0 +1,162 @@
+{
+  "timestamp": "2025-03-18T09:28:21.894Z",
+  "summary": {
+    "total": 22,
+    "passed": 9,
+    "failed": 13,
+    "successRate": 41
+  },
+  "results": {
+    "api": [
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthMiddleware",
+        "passed": false,
+        "error": "Expected status 401 for invalid token, got 403",
+        "stack": "Error: Expected status 401 for invalid token, got 403\n    at exports.testAuthMiddleware (/home/runner/workspace/testing/api/authEndpoints.test.js:123:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "passed": false,
+        "error": "Product vendorId (undefined) does not match vendor ID (74)",
+        "stack": "Error: Product vendorId (undefined) does not match vendor ID (74)\n    at exports.testProductCreation (/home/runner/workspace/testing/api/productEndpoints.test.js:43:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "passed": false,
+        "error": "Updated product price does not match",
+        "stack": "Error: Updated product price does not match\n    at exports.testProductUpdate (/home/runner/workspace/testing/api/productEndpoints.test.js:137:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "passed": false,
+        "error": "Product deactivation endpoint not found (404)",
+        "stack": "Error: Product deactivation endpoint not found (404)\n    at exports.testProductDeactivation (/home/runner/workspace/testing/api/productEndpoints.test.js:173:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "passed": false,
+        "error": "Vendor product listing endpoint returned server error (500)",
+        "stack": "Error: Vendor product listing endpoint returned server error (500)\n    at exports.testVendorProductListing (/home/runner/workspace/testing/api/productEndpoints.test.js:231:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      }
+    ],
+    "e2e": [
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "passed": false,
+        "error": "Payment flow failed: Vendor has not completed Stripe onboarding",
+        "stack": "Error: Payment flow failed: Vendor has not completed Stripe onboarding\n    at exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:132:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testOrderHistory",
+        "passed": false,
+        "error": "Order history test failed: Vendor has not completed Stripe onboarding",
+        "stack": "Error: Order history test failed: Vendor has not completed Stripe onboarding\n    at exports.testOrderHistory (/home/runner/workspace/testing/e2e/paymentFlow.test.js:210:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrders",
+        "passed": false,
+        "error": "Vendor orders test failed: Vendor has not completed Stripe onboarding",
+        "stack": "Error: Vendor orders test failed: Vendor has not completed Stripe onboarding\n    at exports.testVendorOrders (/home/runner/workspace/testing/e2e/paymentFlow.test.js:272:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testHomePageRendering",
+        "passed": false,
+        "error": "Home page rendering test failed: Error loading page: page.title is not a function",
+        "stack": "Error: Home page rendering test failed: Error loading page: page.title is not a function\n    at testHomePageRendering (/home/runner/workspace/testing/e2e/uiTesting.test.js:46:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testLoginFlow",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testProductDetailsPage",
+        "passed": false,
+        "error": "Product details page test failed: Error loading page: page.title is not a function",
+        "stack": "Error: Product details page test failed: Error loading page: page.title is not a function\n    at testProductDetailsPage (/home/runner/workspace/testing/e2e/uiTesting.test.js:100:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testCheckoutProcess",
+        "passed": false,
+        "error": "Checkout process test failed: Error during payment flow: page.evaluateOnNewDocument is not a function",
+        "stack": "Error: Checkout process test failed: Error during payment flow: page.evaluateOnNewDocument is not a function\n    at testCheckoutProcess (/home/runner/workspace/testing/e2e/uiTesting.test.js:134:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:19)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "passed": false,
+        "error": "Cannot read properties of undefined (reading 'toFixed')",
+        "stack": "TypeError: Cannot read properties of undefined (reading 'toFixed')\n    at exports.testApiResponseTimes (/home/runner/workspace/testing/frontend/pageRendering.test.js:48:72)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:154:24)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "passed": false,
+        "error": "CORS test failed for Login API Endpoint: CORS header \"access-control-allow-methods\" missing for Login API Endpoint",
+        "stack": "Error: CORS test failed for Login API Endpoint: CORS header \"access-control-allow-methods\" missing for Login API Endpoint\n    at exports.testApiCorsHeaders (/home/runner/workspace/testing/frontend/pageRendering.test.js:79:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:154:24)\n    at async runTests (/home/runner/workspace/testing/runTests.js:42:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ]
+  }
+}

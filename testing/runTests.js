@@ -9,11 +9,13 @@
  *   node runTests.js [category]
  * 
  * Options:
- *   [category] - Optional category of tests to run (api, e2e, frontend)
+ *   [category] - Optional category of tests to run (api, e2e, frontend, ui)
  *                If not specified, all tests will be run.
+ *                Use 'ui' to run UI tests with Puppeteer.
  * 
  * Example:
- *   node runTests.js api
+ *   node runTests.js api   # Run only API tests
+ *   node runTests.js ui    # Run only UI tests with Puppeteer
  */
 
 const fs = require('fs');
