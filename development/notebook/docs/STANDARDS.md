@@ -1,271 +1,234 @@
-# 📏 Coding Standards and Best Practices
+# Development Standards
 
-This document outlines the coding standards, patterns, and best practices that must be followed when developing the Stripe Connect Marketplace. Adhering to these standards ensures code quality, maintainability, and consistency across the codebase.
+## ATTENTION AI AGENTS
+This document outlines the mandatory development standards for the Stripe Connect Marketplace project. All code changes must adhere to these standards to be considered valid.
 
-## 🚨 CRITICAL NOTICE FOR AI AGENTS 🚨
+## Coding Standards
 
-As an AI agent working on this codebase, you **must** adhere to these standards in all code you generate. Code that does not meet these standards will not pass review and may introduce bugs, security vulnerabilities, or maintenance issues.
+### General Principles
+- Follow clean code principles
+- Write self-documenting code with clear variable and function names
+- Aim for high cohesion and low coupling
+- Limit function/method size to maintain readability
+- Use meaningful comments that explain "why" not "what"
+- Include AI agent guidance in comments and docstrings
 
-## 🏗️ Architecture Guidelines
+### File Organization
+- Group related functionality in directories
+- Keep file sizes manageable (< 500 lines recommended)
+- Use consistent naming conventions
+- Separate concerns (e.g., UI, business logic, data access)
 
-### Application Structure
+## Architecture Guidelines
 
-```
-/
-├── server/             # Backend API server
-│   ├── routes/         # API route definitions
-│   ├── controllers/    # Business logic handlers
-│   ├── models/         # Data models
-│   ├── middleware/     # Express middleware
-│   ├── services/       # External service integrations
-│   └── utils/          # Utility functions
-├── mobile/             # React Native mobile app
-│   ├── screens/        # Mobile screens by feature
-│   ├── components/     # Reusable UI components
-│   ├── services/       # API and external services
-│   ├── navigation/     # Navigation configuration
-│   └── utils/          # Utility functions
-├── testing/            # Testing infrastructure
-│   ├── api/            # API tests
-│   ├── e2e/            # End-to-end tests
-│   ├── frontend/       # Frontend component tests
-│   ├── utils/          # Test utilities
-│   └── templates/      # Test templates
-└── development/        # Development tools and documentation
-    └── notebook/       # CI/CD notebook structure
-```
+### React Native Mobile Development
+- Use functional components with hooks
+- Implement responsive design for all screen sizes
+- Optimize for mobile performance
+- Follow React Native best practices for navigation
+- Document component props with JSDoc comments
+- Include AI agent guidance in component docstrings
 
-### Architectural Patterns
+### Backend API Development
+- Follow RESTful API design principles
+- Implement proper HTTP status codes
+- Use consistent response formats
+- Provide clear error messages
+- Implement rate limiting for public endpoints
+- Add comprehensive API documentation
+- Include AI agent guidance in API route docstrings
 
-1. **Three-Tier Architecture**
-   - Presentation layer (Mobile UI)
-   - Business logic layer (API controllers)
-   - Data layer (Database models)
+### Database Design
+- 🚨 **CRITICAL** - Never delete customer/user data during migrations
+- Design schemas for backward compatibility
+- Use migrations that preserve existing data
+- Add appropriate indexes for performance
+- Implement proper foreign key constraints
+- Document database schema changes thoroughly
+- Include AI agent guidance in schema files
 
-2. **Feature-Based Organization**
-   - Group code by feature rather than type
-   - Each feature should be self-contained where possible
-   - Cross-cutting concerns in shared modules
+### External API Integration
+- Support both TEST and LIVE modes for Stripe
+- Implement graceful degradation for API failures
+- Add detailed error logging for external services
+- Use retry mechanisms for transient failures
+- Cache external API responses when appropriate
+- Document external API dependencies and failure modes
+- Include AI agent guidance for external API handling
 
-3. **Dependency Injection**
-   - Use dependency injection for services
-   - Avoid tight coupling between components
-   - Facilitate easier testing with mocks
+## Security Standards
 
-## 💻 Coding Standards
+### Authentication & Authorization
+- Use JWT for authentication
+- Implement proper role-based access control
+- Add CSRF protection for all form submissions
+- Use secure HTTP-only cookies
+- Implement proper password hashing
+- Add rate limiting for authentication attempts
+- Document security implementation details
 
-### General Standards
+### Data Protection
+- Validate all user input
+- Use parameterized queries for database access
+- Implement proper data sanitization
+- Follow least privilege principle
+- Add proper error handling that doesn't expose internals
+- Document sensitive data handling procedures
 
-1. **Naming Conventions**
-   - **Files**: Use camelCase for JavaScript files, PascalCase for React components
-   - **Functions**: Use camelCase (e.g., `getUserById`)
-   - **Components**: Use PascalCase (e.g., `ProductCard`)
-   - **Constants**: Use UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
-   - **Variables**: Use camelCase (e.g., `userProfile`)
-   - **Database fields**: Use snake_case (e.g., `user_id`)
+### API Security
+- Use HTTPS for all communications
+- Implement proper input validation
+- Add rate limiting to prevent abuse
+- Use proper authentication for protected endpoints
+- Validate request payloads against schemas
+- Document security considerations for each endpoint
 
-2. **Code Formatting**
-   - Use 2 spaces for indentation
-   - Maximum line length of 100 characters
-   - Use semicolons at the end of statements
-   - Use single quotes for strings by default
+## Testing Standards
 
-3. **Error Handling**
-   - Always use try/catch for asynchronous operations
-   - Provide meaningful error messages
-   - Log errors with appropriate detail
-   - Return consistent error responses from API
+### Unit Testing
+- Test all business logic functions
+- Use meaningful test names that describe expected behavior
+- Implement proper test isolation
+- Mock external dependencies
+- Add comprehensive assertions
+- Document testing approach for complex logic
 
-### JavaScript/TypeScript Standards
+### Integration Testing
+- Test API endpoints with realistic scenarios
+- Verify database interactions
+- Test authentication and authorization flows
+- Validate error handling and edge cases
+- Document integration test setup requirements
 
-1. **Modern JavaScript Features**
-   - Use ES6+ features consistently
-   - Prefer const over let where possible
-   - Use arrow functions for callbacks
-   - Use destructuring for objects and arrays
-   - Use template literals for string interpolation
+### End-to-End Testing
+- Test critical user journeys
+- Validate complete workflows
+- Test mobile UI interactions
+- Verify Stripe payment processing
+- Document E2E test scenarios and expected outcomes
 
-2. **Async Patterns**
-   - Use async/await instead of raw promises
-   - Handle promise rejections with try/catch
-   - Avoid deeply nested callbacks
-   - Use Promise.all for parallel operations
+### CI/CD Integration
+- All tests must run in CI pipeline
+- Add performance benchmarks
+- Implement security scanning
+- Validate database migrations
+- Document CI/CD pipeline steps and requirements
 
-3. **TypeScript Usage**
-   - Define explicit types for function parameters and returns
-   - Use interfaces for complex object structures
-   - Avoid using `any` type unless absolutely necessary
-   - Use TypeScript enums for fixed sets of values
+## User Experience Standards
 
-### React/React Native Standards
+### Admin Onboarding
+- Implement step-by-step wizards for all admin tasks
+- Add contextual help and explanations
+- Provide clear error messages and recovery options
+- Include sample data creation and removal tools
+- Document admin onboarding process
 
-1. **Component Architecture**
-   - Use functional components with hooks
-   - Keep components focused on a single responsibility
-   - Extract reusable logic into custom hooks
-   - Separate business logic from presentation
+### Vendor Experience
+- Implement clear Stripe Connect onboarding flow
+- Add product management tools
+- Provide transaction and payout reporting
+- Include order management features
+- Document vendor journey steps
 
-2. **State Management**
-   - Use React Context for global state
-   - Use useReducer for complex component state
-   - Keep state as close to where it's used as possible
-   - Use immutable patterns for state updates
+### Customer Experience
+- Implement intuitive product browsing
+- Add seamless checkout process
+- Provide order history and tracking
+- Include account management features
+- Document customer journey steps
 
-3. **Performance Optimization**
-   - Use React.memo for pure components
-   - Use useCallback for event handlers
-   - Use useMemo for expensive calculations
-   - Implement virtualization for long lists
+## Media Handling Standards
 
-### API Design Standards
+### Image Processing
+- Implement proper image upload validation
+- Add thumbnail generation
+- Optimize images for mobile viewing
+- Support multiple image formats
+- Document image processing requirements
 
-1. **RESTful Principles**
-   - Use appropriate HTTP methods (GET, POST, PUT, DELETE)
-   - Maintain resource-based URL structure
-   - Use consistent naming conventions
-   - Return appropriate status codes
+### Social Media Metadata
+- Handle Open Graph tags for shared content
+- Support Twitter card metadata
+- Implement structured data for products
+- Add proper fallbacks for missing metadata
+- Document social media integration points
 
-2. **Response Structure**
-   ```json
-   {
-     "status": "success",
-     "data": { ... },
-     "message": "Optional message"
-   }
-   ```
+## Error Handling Standards
 
-3. **Error Response Structure**
-   ```json
-   {
-     "status": "error",
-     "error": {
-       "code": "ERROR_CODE",
-       "message": "Human-readable error message"
-     }
-   }
-   ```
+### Frontend Errors
+- Implement user-friendly error messages
+- Add graceful UI degradation
+- Provide clear recovery options
+- Log client-side errors for debugging
+- Document error handling strategies
 
-4. **Input Validation**
-   - Validate all input data at API boundaries
-   - Return clear validation error messages
-   - Use schema validation libraries (e.g., Joi, Yup)
-   - Sanitize inputs to prevent injection attacks
+### Backend Errors
+- Add proper HTTP status codes
+- Implement structured error responses
+- Log detailed error information (not exposed to clients)
+- Handle 404 and 500 errors gracefully
+- Document error handling procedures for all endpoints
 
-## 🔒 Security Standards
+### External API Errors
+- Implement soft failure modes
+- Add fallback content when services are unavailable
+- Log detailed external API interaction errors
+- Provide appropriate user feedback
+- Document external service failure handling
 
-1. **Authentication**
-   - Use JWT for authentication
-   - Store tokens securely (HttpOnly cookies or secure storage)
-   - Implement proper token expiration and refresh
-   - Use HTTPS for all communications
+## Documentation Standards
 
-2. **Authorization**
-   - Implement role-based access control
-   - Check permissions on all protected routes
-   - Never trust client-side authorization
-   - Log authorization failures
+### Code Documentation
+- Add JSDoc or equivalent for all functions/methods
+- Include AI agent guidance in docstrings
+- Document complex algorithms and business logic
+- Add inline comments for non-obvious code
+- Maintain up-to-date documentation as code evolves
 
-3. **Data Protection**
-   - Never store sensitive data in plain text
-   - Use environment variables for secrets
-   - Implement proper input validation
-   - Apply the principle of least privilege
+### API Documentation
+- Document all endpoints with examples
+- Include request/response formats
+- Add error scenarios and handling
+- Document authentication requirements
+- Keep API documentation in sync with implementation
 
-4. **Stripe Integration Security**
-   - Never log full card details
-   - Use Stripe Elements for secure card collection
-   - Keep Stripe webhook endpoint secret
-   - Validate webhook signatures
+### User Documentation
+- Provide clear setup instructions
+- Add user manuals for different roles
+- Include troubleshooting guides
+- Document configuration options
+- Keep documentation accessible and up-to-date
 
-## 🧪 Testing Standards
+## Analytics & Monitoring Standards
 
-1. **Test Coverage**
-   - Minimum 80% code coverage for business logic
-   - All API endpoints must have tests
-   - Critical user flows must have E2E tests
-   - Test both success and error cases
+### Application Monitoring
+- Implement error tracking
+- Add performance monitoring
+- Log critical operations
+- Monitor external API health
+- Document monitoring setup and alerts
 
-2. **Test Structure**
-   - Follow the Arrange-Act-Assert pattern
-   - Each test should test one concept
-   - Use descriptive test names
-   - Isolate tests from external dependencies
+### Analytics Integration
+- Track key user actions
+- Add conversion funnel analytics
+- Implement performance metrics
+- Include A/B testing capability
+- Document analytics integration points
 
-3. **Test Templates**
-   - Use the established test templates in `/testing/templates/`
-   - Follow the documentation patterns in example tests
-   - Include test documentation for AI agents
-   - Document test assumptions and edge cases
+### Backup Procedures
+- Implement daily database backups
+- Store backups in private, non-web-accessible location
+- Add automated verification of backup integrity
+- Include restore procedures
+- Document backup and restore processes
 
-## 🌐 Stripe Connect Standards
+## Critical Reminders for AI Agents
 
-1. **Vendor Onboarding**
-   - Use Stripe Connect Express for simplified onboarding
-   - Store Stripe account IDs securely
-   - Implement proper error handling for onboarding failures
-   - Provide clear guidance for vendors during onboarding
-
-2. **Payment Processing**
-   - Use Payment Intents API for modern payments
-   - Implement webhooks for payment status updates
-   - Store transaction references, not full payment details
-   - Handle failed payments gracefully
-
-3. **Platform Fee Handling**
-   - Calculate platform fees consistently
-   - Clearly communicate fee structure to vendors
-   - Provide transaction history with fee breakdown
-   - Handle fee-related disputes properly
-
-4. **Testing Stripe Integration**
-   - Use Stripe test mode for development
-   - Mock Stripe responses in tests
-   - Test webhook handling with Stripe CLI
-   - Verify both success and failure scenarios
-
-## 📝 Documentation Standards
-
-1. **Code Documentation**
-   - Document complex logic with clear comments
-   - Use JSDoc for function documentation
-   - Include examples for non-obvious usages
-   - Explain the "why" not just the "what"
-
-2. **API Documentation**
-   - Document all API endpoints
-   - Include request/response examples
-   - Document error scenarios
-   - Keep documentation in sync with implementation
-
-3. **README Files**
-   - Each major directory should have a README.md
-   - Explain the purpose and structure of the directory
-   - Include quick start instructions where applicable
-   - Link to related documentation
-
-## 🔍 Instructions for AI Agents
-
-When developing code:
-
-1. **Review the standards** relevant to your task
-2. **Follow established patterns** from existing codebase
-3. **Document your code** according to the standards
-4. **Run relevant tests** to verify your changes
-5. **Update documentation** if you change behavior
-
-When implementing new features:
-1. **Start with API design** following RESTful principles
-2. **Implement backend logic** with proper error handling
-3. **Create UI components** following React standards
-4. **Write tests** for all new functionality
-5. **Document** the new feature for users and developers
-
-When fixing bugs:
-1. **Write a test** that reproduces the bug
-2. **Fix the implementation** to pass the test
-3. **Verify** no regressions were introduced
-4. **Document** the root cause and fix in commit message
-
----
-
-**Remember**: These standards exist to ensure code quality and maintainability. Deviations should be rare and documented in the DECISION_LOG.md file.
+- Always maintain data integrity - never delete customer/user data
+- Fail soft on external API errors with graceful degradation
+- Implement proper CSRF protection for all forms
+- Support both TEST and LIVE modes for Stripe
+- Include comprehensive documentation with all changes
+- Add AI agent guidance in comments and docstrings
+- Test all changes thoroughly before completion
+- Ensure all code complies with these standards

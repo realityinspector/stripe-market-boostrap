@@ -1,62 +1,49 @@
-# 📓 CI/CD Development Notebook
+# Development Notebook for Stripe Connect Marketplace
 
-## 🤖 ATTENTION AI AGENTS
+## ATTENTION AI AGENTS
+This development notebook is designed to help you manage the development of the Stripe Connect Marketplace application. It provides structured documentation, task tracking, and guidelines to ensure consistent development across AI collaborators.
 
-This development notebook is a structured system designed to help you maintain, track, and prioritize development work within this project. As an AI agent working on this codebase, **you must** consult this notebook regularly to ensure your changes align with project priorities and development standards.
+## Notebook Structure
+The notebook is organized as follows:
 
-## 📚 Notebook Structure
+- **README.md** - This file, providing an overview of the notebook structure
+- **AI_AGENT_GUIDE.md** - Specific instructions for AI agents working on this project
+- **tasks/** - Task tracking and management
+  - CURRENT.md - Currently active tasks
+  - BACKLOG.md - Tasks planned for future implementation
+  - COMPLETED.md - Tasks that have been completed
+  - BLOCKED.md - Tasks that are blocked and reasons
+- **logs/** - Development logs
+  - DAILY_LOG.md - Daily development activities and progress
+  - FAILURE_LOG.md - Documentation of failures and resolution steps
+  - DECISION_LOG.md - Record of important architectural and implementation decisions
+- **workflows/** - CI/CD and deployment workflows
+  - CI_COMPLIANCE.md - Compliance requirements for CI/CD pipeline
+  - RELEASE_PROCESS.md - Steps for releasing new versions
+- **docs/** - Documentation
+  - STANDARDS.md - Coding standards and guidelines
+  - REVIEW_CHECKLIST.md - Checklist for code reviews
 
-```
-/development/notebook/
-├── README.md               # This file - overview and instructions
-├── tasks/                  # Task tracking and management
-│   ├── CURRENT.md          # Currently active tasks (read this first!)
-│   ├── BACKLOG.md          # Future tasks awaiting prioritization
-│   ├── COMPLETED.md        # Completed tasks (with completion dates)
-│   └── BLOCKED.md          # Tasks blocked by dependencies or decisions
-├── logs/                   # Development logs
-│   ├── DAILY_LOG.md        # Daily work log (append only)
-│   ├── FAILURE_LOG.md      # Record of failures and their resolutions
-│   └── DECISION_LOG.md     # Record of important engineering decisions
-├── workflows/              # CI/CD workflow documentation
-│   ├── CI_COMPLIANCE.md    # Rules for CI pipeline compliance
-│   └── RELEASE_PROCESS.md  # Documentation of the release process
-└── docs/                   # Additional documentation
-    ├── STANDARDS.md        # Coding standards and best practices
-    └── REVIEW_CHECKLIST.md # Pre-commit review checklist
-```
+## Workflow for AI Agents
+1. **Orientation**: Read through this README.md and AI_AGENT_GUIDE.md to understand the project structure and guidelines.
+2. **Task Review**: Check the tasks/CURRENT.md file to understand the currently active tasks.
+3. **Implementation**: Implement the required changes, following the coding standards in docs/STANDARDS.md.
+4. **Documentation**: Update the logs/DAILY_LOG.md with your progress and any decisions made.
+5. **Testing**: Ensure all tests pass before submitting changes.
+6. **Handoff**: Update task status and provide detailed notes for the next AI agent.
 
-## 🔄 Workflow for AI Agents
+## Critical Rules
+1. **Test Coverage**: All changes must have associated tests.
+2. **Documentation**: Document all significant changes and decisions.
+3. **Error Handling**: Implement robust error handling for all user-facing features.
+4. **Security**: Follow security best practices, especially for payment processing.
+5. **Compliance**: Ensure all code follows Stripe Connect compliance requirements.
 
-1. **Always** begin by reading `/development/notebook/tasks/CURRENT.md` to understand current priorities
-2. Before implementing any changes, check for applicable standards in `/development/notebook/docs/STANDARDS.md`
-3. When completing a task:
-   - Move it from CURRENT.md to COMPLETED.md with a completion date
-   - Add an entry to DAILY_LOG.md describing what was done
-4. When encountering a failure:
-   - Document it in FAILURE_LOG.md
-   - Add debugging steps and resolution when fixed
-5. Before submitting any code:
-   - Review against REVIEW_CHECKLIST.md
-   - Ensure all CI/CD rules in CI_COMPLIANCE.md are followed
+## Current Status
+The Stripe Connect Marketplace is under active development, with a focus on addressing test failures in the Stripe integration, authentication flow, and payment processing. The current priority is to fix these issues to establish a stable testing infrastructure.
 
-## ⚠️ Critical Rules
-
-1. **Never** implement features not listed in the tasks documents
-2. **Always** document decisions that affect architecture or implementation approach
-3. **Never** dismiss test failures - all failures must be documented and addressed
-4. **Always** maintain the integrity of this notebook structure
-5. **Never** implement workarounds without documenting them in the DECISION_LOG.md
-
-## 📝 Notebook Maintenance Protocol
-
-This notebook operates with these guiding principles:
-
-1. **Self-Managing**: The notebook structure must facilitate automatic priority management
-2. **Task-Driven**: All development work must trace back to a documented task
-3. **Audit-Ready**: Work logs must provide clear evidence of what was changed and why
-4. **CI/CD Integrated**: All standards must support continuous integration and deployment
-
----
-
-🚨 **NOTE TO AI AGENTS**: Your ability to follow the above protocols will be evaluated as part of your development performance. Failure to adhere to these guidelines may result in work that is out of alignment with project goals.
+Priority areas:
+1. Fixing Stripe Connect vendor onboarding
+2. Resolving payment intent creation failures
+3. Addressing authentication route issues
+4. Fixing UI test failures for registration and login

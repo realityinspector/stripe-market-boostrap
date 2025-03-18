@@ -1,154 +1,144 @@
-# 🔄 CI/CD Compliance Guide
+# CI/CD Compliance Requirements
 
-This document provides comprehensive guidelines for ensuring all code and development activities comply with the project's CI/CD pipeline requirements. Following these rules is **mandatory** for all development work.
+## ATTENTION AI AGENTS
+This document outlines the mandatory CI/CD compliance requirements for the Stripe Connect Marketplace project. All code changes must adhere to these requirements to be considered valid.
 
-## 🚨 CRITICAL NOTICE FOR AI AGENTS 🚨
+## Core CI/CD Principles
 
-As an AI agent working on this codebase, you **must** follow these compliance guidelines for all code changes. Failing to do so will result in broken builds, test failures, and deployment issues. The CI/CD pipeline automatically validates these requirements.
+### Database Integrity (HIGHEST PRIORITY)
+- **MANDATORY**: All database migrations must be non-destructive
+- **MANDATORY**: Never delete customer or user data during migrations
+- **CRITICAL**: Database schema changes must be backward compatible
+- **REQUIRED**: All migrations must be tested in isolation before deployment
+- **REQUIRED**: Rollback plans must be documented for all schema changes
+- **AUTOMATED**: CI pipeline must validate data integrity during migrations
 
-## 📋 Pre-Commit Checklist
+### Security Requirements
+- **MANDATORY**: CSRF protection for all form submissions
+- **MANDATORY**: Input validation on all user-supplied data
+- **MANDATORY**: Parameterized queries for all database operations
+- **AUTOMATED**: Security scans must run on all code changes
+- **AUTOMATED**: Dependency vulnerability checks must run in CI
+- **REQUIRED**: All authentication flows must be tested in CI
 
-Before committing any code changes, verify that:
+### API Integration
+- **MANDATORY**: Stripe integration must support both TEST and LIVE modes
+- **MANDATORY**: All external API calls must implement graceful degradation
+- **REQUIRED**: Detailed error logging for external API failures
+- **AUTOMATED**: API endpoint tests must simulate failure scenarios
+- **AUTOMATED**: Mock responses for external APIs in test environment
 
-1. **All tests pass locally**
-   - Run `node testing/runTests.js` to ensure all tests pass
-   - If any tests fail, they must be fixed or documented in KNOWN_ISSUES.md
+### Testing Coverage
+- **MANDATORY**: All API endpoints must have test coverage
+- **MANDATORY**: All user-facing features must have UI tests
+- **MANDATORY**: E2E tests must cover critical user journeys
+- **REQUIRED**: Test coverage metrics must be tracked in CI
+- **AUTOMATED**: Tests must run on all pull requests and merges
 
-2. **Code meets style guidelines**
-   - No linting errors (run linter if available)
-   - Consistent formatting
-   - Follows naming conventions
+### Error Handling
+- **MANDATORY**: All 404 and 500 errors must be handled gracefully
+- **REQUIRED**: Custom error pages for all error types
+- **AUTOMATED**: Error simulation testing in CI pipeline
+- **AUTOMATED**: Load testing for critical endpoints
 
-3. **Documentation is updated**
-   - New features are documented
-   - API changes are reflected in documentation
-   - Complex logic has explanatory comments
+### Media Handling
+- **REQUIRED**: Image upload and processing tests
+- **REQUIRED**: Thumbnail generation validation
+- **AUTOMATED**: Tests for media metadata extraction
 
-4. **No sensitive information**
-   - No API keys or secrets in code
-   - No personal data or credentials
-   - Environment variables used for configuration
+### Performance Monitoring
+- **REQUIRED**: Response time metrics in CI pipeline
+- **REQUIRED**: Lighthouse performance scoring
+- **AUTOMATED**: Performance regression detection
 
-5. **Proper error handling**
-   - All API endpoints handle errors gracefully
-   - User-facing error messages are clear and helpful
-   - Errors are logged appropriately
+### Analytics & Logging
+- **REQUIRED**: Analytics tracking must be validated in CI
+- **REQUIRED**: Log format validation
+- **AUTOMATED**: Analytics event tracking tests
 
-## 🏗️ CI Pipeline Stages
+## CI/CD Pipeline Stages
 
-Our CI/CD pipeline consists of the following stages that will automatically run on your code:
+### 1. Pre-Commit Checks
+- Lint validation
+- Code formatting check
+- Initial test run
 
-### 1. Build Stage
-- **Syntax Checking**: Validates JavaScript/TypeScript syntax
-- **Dependency Installation**: Confirms all dependencies can be installed
-- **Compilation**: Ensures code compiles correctly (if applicable)
+### 2. Build Validation
+- Full build process
+- Dependency resolution
+- Asset compilation
 
-### 2. Test Stage
-- **Unit Tests**: Fast tests for individual components
-- **Integration Tests**: Tests for component interactions
-- **E2E Tests**: Full end-to-end workflow tests
-- **API Tests**: Tests for API endpoints
-- **UI Tests**: Tests for user interface components
+### 3. Test Suite Execution
+- Unit tests
+- Integration tests
+- API tests
+- UI tests
+- E2E tests
 
-### 3. Quality Stage
-- **Code Coverage**: Measures test coverage percentage
-- **Linting**: Checks code style and patterns
-- **Security Scanning**: Identifies potential security issues
-- **Performance Benchmarks**: Validates performance metrics
+### 4. Security Analysis
+- CSRF protection verification
+- Input validation tests
+- Dependency vulnerability scans
+- Authentication flow tests
 
-### 4. Deployment Stage
-- **Environment Preparation**: Sets up deployment environment
-- **Configuration Validation**: Checks environment configuration
-- **Deployment Execution**: Deploys application to target environment
-- **Smoke Tests**: Confirms basic functionality after deployment
+### 5. Database Migration Validation
+- Schema migration tests
+- Data integrity checks
+- Rollback validation
+- Performance impact assessment
 
-## 🚫 Common CI/CD Failures
+### 6. Feature Validation
+- User journey tests
+- Admin functionality tests
+- Vendor onboarding tests
+- Stripe payment processing tests
 
-Avoid these common causes of CI/CD failures:
+### 7. Performance & Load Testing
+- Basic load testing
+- Response time validation
+- Resource utilization checks
 
-1. **Missing Dependencies**
-   - Always update package.json when adding new dependencies
-   - Ensure all dependencies are explicitly listed (no implicit dependencies)
+### 8. Pre-Deployment Checklist
+- Documentation updates verification
+- API contract validation
+- README updates
+- Security sign-off
 
-2. **Inconsistent Environment Variables**
-   - Document all required environment variables
-   - Provide sensible defaults or clear error messages when variables are missing
+## CI/CD Test Requirements Matrix
 
-3. **Flaky Tests**
-   - Tests should be deterministic and reliable
-   - Avoid time-dependent or network-dependent tests without proper mocking
-   - Don't rely on specific test execution order
+| Feature Area            | Unit Tests | Integration Tests | E2E Tests | Security Tests | Performance Tests |
+|-------------------------|:----------:|:-----------------:|:---------:|:--------------:|:-----------------:|
+| User Authentication     |     ✓      |         ✓         |     ✓     |        ✓       |                   |
+| Database Migrations     |     ✓      |         ✓         |           |        ✓       |         ✓         |
+| API Endpoints           |     ✓      |         ✓         |     ✓     |        ✓       |         ✓         |
+| Stripe Integration      |     ✓      |         ✓         |     ✓     |        ✓       |                   |
+| Vendor Onboarding       |     ✓      |         ✓         |     ✓     |                |                   |
+| Admin Functionality     |     ✓      |         ✓         |     ✓     |        ✓       |                   |
+| Media Handling          |     ✓      |         ✓         |           |                |         ✓         |
+| Error Handling          |     ✓      |         ✓         |     ✓     |                |                   |
+| Analytics               |     ✓      |         ✓         |           |                |                   |
 
-4. **Long-Running Tests**
-   - Keep tests efficient and focused
-   - Split large tests into smaller units
-   - Use proper test categories (unit, integration, e2e)
+## Deployment Process
 
-5. **Incomplete Error Handling**
-   - Always handle API errors appropriately
-   - Provide user-friendly error messages
-   - Log detailed error information for debugging
+- **IMPORTANT**: Actual deployment is performed by the user on Replit
+- CI/CD pipeline prepares the deployment but does not execute it
+- Final deployment checklist is provided to the user
+- Deployment documentation must be kept updated
 
-## 🛠️ Fixing CI/CD Failures
+## Compliance Enforcement
 
-When the CI/CD pipeline fails:
+All pull requests and code changes must:
+1. Pass the complete CI/CD pipeline
+2. Address all test failures
+3. Document the reasoning for any test modifications
+4. Maintain or improve test coverage
+5. Include updated documentation for changes
 
-1. **Read the Error Logs Carefully**
-   - CI/CD logs provide detailed information about failures
-   - Identify the specific test or stage that failed
+## Critical Reminders for AI Agents
 
-2. **Reproduce Locally**
-   - Attempt to reproduce the failure in your local environment
-   - Use the same environment variables and configuration
-
-3. **Fix the Root Cause**
-   - Address the underlying issue, not just the symptom
-   - Update tests if requirements have changed
-   - Document any workarounds in DECISION_LOG.md
-
-4. **Document Persistent Issues**
-   - If an issue cannot be immediately resolved, document it in FAILURE_LOG.md
-   - Add a clear description of the problem and planned resolution
-
-## 📝 Special Instructions for AI Agents
-
-When developing code as an AI agent:
-
-1. **Always check CI/CD status before making changes**
-   - Review recent test runs
-   - Note any existing failures
-
-2. **Test changes thoroughly before submitting**
-   - Run the specific category of tests affected by your changes
-   - Verify that your changes don't break existing functionality
-
-3. **Document CI/CD-related decisions**
-   - Any changes to test structure or CI/CD process should be documented
-   - Explain the rationale for test modifications or exemptions
-
-4. **Update the development notebook**
-   - Record any CI/CD issues in FAILURE_LOG.md
-   - Document successful fixes in DAILY_LOG.md
-
-## 🔄 Continuous Improvement
-
-The CI/CD pipeline is continuously improving. Watch for these upcoming changes:
-
-1. **Automated Code Review**
-   - Static analysis tools
-   - Code quality metrics
-   - Automated suggestions
-
-2. **Performance Testing**
-   - Load testing integration
-   - Memory usage analysis
-   - Response time benchmarking
-
-3. **Enhanced Security Scanning**
-   - Dependency vulnerability checking
-   - Secret detection
-   - OWASP compliance verification
-
----
-
-**Remember**: A passing CI/CD pipeline is a requirement for all code changes. Do not circumvent or disable CI/CD checks under any circumstances.
+- Never bypass or disable tests to make the pipeline pass
+- Document all decisions related to CI/CD changes
+- Maintain backward compatibility in all changes
+- Always prioritize data integrity above all else
+- Ensure graceful degradation for external service failures
+- Implement progressive enhancement for all user-facing features

@@ -1,141 +1,131 @@
-# 🔄 Current Tasks
+# Current Tasks
 
-This document contains the current active tasks that should be prioritized by AI agents working on this codebase. Tasks here are in priority order (highest priority first).
+## ATTENTION AI AGENTS
+This document tracks currently active tasks for the Stripe Connect Marketplace project. Refer to this document to understand what needs to be worked on next.
 
-## 🚨 Critical Tasks
+## Critical Tasks
 
-### CT-001: Fix failing E2E tests related to payment flow
+### STRIPE-001: Fix Stripe Connect Vendor Onboarding
+**Priority**: High  
+**Status**: In Progress  
+**Assigned**: AI Agent  
+**Description**: Implement proper Stripe Connect onboarding flow for vendors. Current tests are failing because vendors are not properly connected to Stripe.
 
-**Description:** The E2E tests in `testing/e2e/paymentFlow.test.js` are failing with a 400 error. The error indicates that vendors have not completed Stripe Connect onboarding. Implement proper Stripe Connect integration for vendors.
+**Steps**:
+1. Update vendor registration to create a Stripe Connect account
+2. Implement Connect account onboarding URL generation
+3. Handle onboarding completion webhook
+4. Add vendor dashboard to show onboarding status
+5. Update tests to properly mock Stripe Connect API calls
 
-**Success Criteria:**
-- All tests in paymentFlow.test.js pass
-- Vendors can complete the Stripe Connect onboarding process
-- Payment processing works end-to-end
+**Acceptance Criteria**:
+- Vendor registration creates a Stripe Connect account
+- Vendors can complete Stripe onboarding process
+- Payment tests pass with proper Connect integration
+- Both TEST and LIVE modes are supported
+- Soft failure handling for API errors
 
-**Technical Notes:**
-- See documentation in `development/notebook/docs/STANDARDS.md` for Stripe Connect implementation guidelines
-- Will require updates to vendor onboarding flow
-- Mock implementation for testing should be available
+### AUTH-001: Fix Authentication Route Issues
+**Priority**: High  
+**Status**: Pending  
+**Assigned**: AI Agent  
+**Description**: Address issues with authenticated API routes. Tests are failing with 403 errors instead of the expected 401 for invalid tokens.
 
-**Assigned To:** AI Agent
-**Due Date:** High Priority
+**Steps**:
+1. Review authentication middleware implementation
+2. Fix token validation and error response handling
+3. Update tests to validate correct behavior
+4. Add comprehensive error messages
 
----
+**Acceptance Criteria**:
+- Authentication middleware returns appropriate status codes
+- Error messages are clear and helpful
+- Tests verify both success and failure scenarios
+- All authenticated route tests pass
 
-### CT-002: Implement proper CORS headers for API endpoints
+### PAYMENT-001: Fix Payment Intent Creation
+**Priority**: High  
+**Status**: Pending  
+**Assigned**: AI Agent  
+**Description**: Address issues with Stripe payment intent creation. Tests are failing when attempting to create payment intents.
 
-**Description:** The API endpoints are missing required CORS headers, specifically 'access-control-allow-headers'. This needs to be fixed in the server's CORS middleware configuration.
+**Steps**:
+1. Review payment intent creation logic
+2. Fix Stripe integration for payment intents
+3. Improve error handling for API failures
+4. Update tests to properly validate behavior
 
-**Success Criteria:**
-- All API endpoints return appropriate CORS headers
-- Tests in `testing/frontend/pageRendering.test.js` pass
+**Acceptance Criteria**:
+- Payment intents are created successfully
+- Both direct and Connect payments are supported
+- Error handling is robust with soft failures
+- Tests pass for all payment scenarios
 
-**Technical Notes:**
-- Update CORS middleware configuration in the Express server
-- Ensure all required headers are included
-- Test with cross-origin requests
+### UI-001: Fix User Registration UI Tests
+**Priority**: Medium  
+**Status**: Pending  
+**Assigned**: AI Agent  
+**Description**: Fix UI tests for user registration that are currently failing due to unexpected redirects or form submission issues.
 
-**Assigned To:** AI Agent
-**Due Date:** High Priority
+**Steps**:
+1. Review registration form implementation
+2. Fix form submission and redirect logic
+3. Update tests to match expected behavior
+4. Improve error handling and user feedback
 
----
+**Acceptance Criteria**:
+- Registration form submits successfully
+- Appropriate redirects occur on success/failure
+- Error messages are clear and helpful
+- UI tests pass for all registration scenarios
 
-## 🔄 In Progress Tasks
+### UI-002: Fix User Login UI Tests
+**Priority**: Medium  
+**Status**: Pending  
+**Assigned**: AI Agent  
+**Description**: Fix UI tests for user login that are currently failing due to unexpected redirects or authentication issues.
 
-### IP-001: Complete the Stripe Connect marketplace implementation
+**Steps**:
+1. Review login form implementation
+2. Fix authentication flow and redirect logic
+3. Update tests to match expected behavior
+4. Improve error handling and user feedback
 
-**Description:** Implement the core functionality for the Stripe Connect marketplace, enabling vendors to receive payments through the platform.
+**Acceptance Criteria**:
+- Login form submits successfully
+5. Authentication happens properly
+6. Appropriate redirects occur on success/failure
+7. Error messages are clear and helpful
+8. UI tests pass for all login scenarios
 
-**Success Criteria:**
-- Vendors can onboard with Stripe Connect
-- Customers can make purchases from vendors
-- Platform fees are automatically deducted
-- Funds are transferred to vendor accounts
+### CI-001: Complete Development Notebook Structure
+**Priority**: Medium  
+**Status**: In Progress  
+**Assigned**: AI Agent  
+**Description**: Complete the development notebook structure and integrate it with the CI/CD pipeline to ensure proper documentation and process adherence.
 
-**Technical Notes:**
-- Follow the Stripe Connect documentation
-- Implement webhook handling for account updates
-- Create proper database schema for vendors and transactions
-- Implement error handling for payment failures
+**Steps**:
+1. ✅ Create core notebook structure files
+2. ✅ Implement AI agent guidance documentation
+3. ✅ Define CI/CD compliance requirements
+4. ✅ Document development standards
+5. Create daily log tracking
+6. Set up failure logging system
+7. Establish decision log
+8. Integrate notebook checks with test runner
 
-**Assigned To:** AI Agent
-**Due Date:** Medium Priority
+**Acceptance Criteria**:
+- Complete notebook structure is in place
+- AI agents have clear guidance documentation
+- CI/CD pipeline checks notebook compliance
+- Documentation is comprehensive and useful
 
----
+## Instructions for AI Agents
 
-### IP-002: Enhance test coverage for mobile components
-
-**Description:** The mobile components currently lack comprehensive test coverage. Create additional tests for React Native components to ensure they work correctly.
-
-**Success Criteria:**
-- Test coverage for all major mobile UI components
-- Tests for mobile navigation flow
-- Tests for mobile form validation
-- Tests for mobile payment integration
-
-**Technical Notes:**
-- Follow the test templates in `/testing/templates/`
-- Use React Native Testing Library
-- Implement mock responses for API calls
-
-**Assigned To:** AI Agent
-**Due Date:** Medium Priority
-
----
-
-## 📝 Pending Tasks
-
-### PT-001: Implement user account management features
-
-**Description:** Create user account management features including profile editing, password reset, and account deletion.
-
-**Success Criteria:**
-- Users can edit their profile information
-- Users can change their password
-- Users can request password reset via email
-- Users can delete their account
-
-**Technical Notes:**
-- Create new API endpoints for account management
-- Update database schema as needed
-- Implement email notifications
-- Follow security best practices
-
-**Assigned To:** Unassigned
-**Due Date:** Low Priority
-
----
-
-### PT-002: Create admin dashboard for marketplace management
-
-**Description:** Develop an admin dashboard for platform administrators to manage vendors, customers, products, and transactions.
-
-**Success Criteria:**
-- Admins can view and manage vendors
-- Admins can view and manage customers
-- Admins can view and manage products
-- Admins can view and manage transactions
-- Admins can view platform analytics
-
-**Technical Notes:**
-- Create new React components for admin dashboard
-- Implement role-based access control
-- Create new API endpoints for admin operations
-- Follow design standards in `/development/notebook/docs/STANDARDS.md`
-
-**Assigned To:** Unassigned
-**Due Date:** Low Priority
-
----
-
-## 🔍 Instructions for AI Agents
-
-When working on a task from this list:
-
-1. Move the task from this file to "In Progress" section if starting work
-2. Add details of your implementation approach to the DAILY_LOG.md
-3. When completed, move the task to COMPLETED.md with date of completion
-4. Add any new tasks discovered during implementation to this file in the appropriate section
-
-**Note:** Always prioritize Critical Tasks over In Progress or Pending Tasks.
+1. Always create detailed development logs in logs/DAILY_LOG.md
+2. Document any failures encountered in logs/FAILURE_LOG.md
+3. Record significant decisions in logs/DECISION_LOG.md
+4. When completing a task, move it from CURRENT.md to COMPLETED.md
+5. When encountering blockers, document them in BLOCKED.md
+6. Always follow the development standards in docs/STANDARDS.md
+7. Ensure all work complies with CI/CD requirements in workflows/CI_COMPLIANCE.md
