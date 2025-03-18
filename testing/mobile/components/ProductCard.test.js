@@ -122,11 +122,11 @@ describe('ProductCard', () => {
     };
 
     const { getByTestId } = render(
-      <ProductCard 
-        product={productWithLongVendorName} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: productWithLongVendorName,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Find the vendor name element
@@ -143,11 +143,11 @@ describe('ProductCard', () => {
     };
 
     const { getByText } = render(
-      <ProductCard 
-        product={productWithIntegerPrice} 
-        onPress={mockOnPress}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: productWithIntegerPrice,
+        onPress: mockOnPress,
+        testID: "product-card"
+      })
     );
 
     // Verify price is formatted with two decimal places
@@ -159,12 +159,12 @@ describe('ProductCard', () => {
     const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };
     
     const { getByTestId } = render(
-      <ProductCard 
-        product={mockProduct} 
-        onPress={mockOnPress}
-        style={customStyle}
-        testID="product-card"
-      />
+      React.createElement(ProductCard, {
+        product: mockProduct,
+        onPress: mockOnPress,
+        style: customStyle,
+        testID: "product-card"
+      })
     );
 
     // Find the container

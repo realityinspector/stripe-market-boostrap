@@ -23,11 +23,11 @@ describe('SearchBar', () => {
 
   test('renders correctly with default props', () => {
     const { getByPlaceholderText, getByTestId } = render(
-      <SearchBar 
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Verify search input is displayed with correct placeholder
@@ -41,12 +41,12 @@ describe('SearchBar', () => {
 
   test('renders correctly with custom placeholder', () => {
     const { getByPlaceholderText } = render(
-      <SearchBar 
-        placeholder="Find vendors..."
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        placeholder: "Find vendors...",
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Verify search input is displayed with custom placeholder
@@ -56,11 +56,11 @@ describe('SearchBar', () => {
 
   test('calls onChangeText when text changes', () => {
     const { getByTestId } = render(
-      <SearchBar 
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Find the TextInput
@@ -76,12 +76,12 @@ describe('SearchBar', () => {
 
   test('calls onSubmit when submit button is pressed', () => {
     const { getByTestId } = render(
-      <SearchBar 
-        value="test search"
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        value: "test search",
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Find the TextInput
@@ -96,12 +96,12 @@ describe('SearchBar', () => {
 
   test('shows clear button when value is provided', () => {
     const { getByTestId } = render(
-      <SearchBar 
-        value="test search"
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        value: "test search",
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Verify clear button is displayed
@@ -115,12 +115,12 @@ describe('SearchBar', () => {
 
   test('does not show clear button when value is empty', () => {
     const { queryByTestId } = render(
-      <SearchBar 
-        value=""
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        value: "",
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Verify clear button is not displayed
@@ -130,12 +130,12 @@ describe('SearchBar', () => {
 
   test('calls onClear when clear button is pressed', () => {
     const { getByTestId } = render(
-      <SearchBar 
-        value="test search"
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-      />
+      React.createElement(SearchBar, {
+        value: "test search",
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear
+      })
     );
 
     // Find the clear button
@@ -152,12 +152,12 @@ describe('SearchBar', () => {
     const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };
     
     const { getByTestId } = render(
-      <SearchBar 
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-        style={customStyle}
-      />
+      React.createElement(SearchBar, {
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear,
+        style: customStyle
+      })
     );
 
     // Find the container
@@ -169,12 +169,12 @@ describe('SearchBar', () => {
 
   test('uses custom testID when provided', () => {
     const { getByTestId } = render(
-      <SearchBar 
-        onChangeText={mockOnChangeText}
-        onSubmit={mockOnSubmit}
-        onClear={mockOnClear}
-        testID="custom-search"
-      />
+      React.createElement(SearchBar, {
+        onChangeText: mockOnChangeText,
+        onSubmit: mockOnSubmit,
+        onClear: mockOnClear,
+        testID: "custom-search"
+      })
     );
 
     // Find elements with custom testID

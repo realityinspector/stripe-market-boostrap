@@ -29,11 +29,11 @@ describe('VendorCard', () => {
 
   test('renders correctly with all vendor data', () => {
     const { getByText, getByTestId } = render(
-      <VendorCard 
-        vendor={mockVendor} 
-        onPress={mockOnPress} 
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: mockVendor,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Verify vendor name is displayed
@@ -60,11 +60,11 @@ describe('VendorCard', () => {
     };
 
     const { getByTestId } = render(
-      <VendorCard 
-        vendor={longDescriptionVendor} 
-        onPress={mockOnPress}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: longDescriptionVendor,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Check description text (actual truncation testing would depend on implementation)
