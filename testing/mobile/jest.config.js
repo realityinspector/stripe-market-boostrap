@@ -13,10 +13,7 @@ module.exports = {
   rootDir: '../../',
   
   // The test environment that will be used for testing
-  testEnvironment: 'node',
-  
-  // Support for ES modules
-  type: 'module',
+  testEnvironment: 'jsdom',
   
   // A list of paths to directories that Jest should use to search for files in
   testMatch: [

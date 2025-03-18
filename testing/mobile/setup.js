@@ -52,15 +52,26 @@ global.fetch = jest.fn(() =>
 );
 
 // Mock react-native modules that might cause TypeScript/Flow issues
-jest.mock('react-native/Libraries/Components/Touchable/TouchableOpacity', () => 'TouchableOpacity');
-jest.mock('react-native/Libraries/Components/TextInput/TextInput', () => 'TextInput');
 jest.mock('react-native', () => {
-  const ReactNative = jest.requireActual('react-native');
-  
-  // Mock the problematic modules
-  return Object.assign({}, ReactNative, {
+  const RN = {
+    StyleSheet: {
+      create: (styles) => styles,
+    },
+    View: 'View',
+    Text: 'Text',
+    Image: 'Image',
+    TouchableOpacity: 'TouchableOpacity',
+    TextInput: 'TextInput',
+    ActivityIndicator: 'ActivityIndicator',
+    ScrollView: 'ScrollView',
+    FlatList: 'FlatList',
+    SafeAreaView: 'SafeAreaView',
+    Pressable: 'Pressable',
+    Platform: {
+      OS: 'ios',
+      select: jest.fn(obj => obj.ios),
+    },
     NativeModules: {
-      ...ReactNative.NativeModules,
       RNGestureHandlerModule: {
         attachGestureHandler: jest.fn(),
         createGestureHandler: jest.fn(),
@@ -86,12 +97,15 @@ jest.mock('react-native', () => {
       measure: jest.fn(),
       measureLayout: jest.fn(),
     },
-    StyleSheet: {
-      ...ReactNative.StyleSheet,
-      create: styles => styles,
+    Dimensions: {
+      get: jest.fn().mockReturnValue({width: 375, height: 667}),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
     },
     requireNativeComponent: jest.fn(() => 'NativeComponent'),
-  });
+  };
+  
+  return RN;
 });
 
 // Configure Jest for React Native
