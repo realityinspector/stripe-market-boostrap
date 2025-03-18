@@ -474,7 +474,7 @@ async function performApiTests(config) {
       // Create a payment intent
       const paymentData = {
         amount: 1999,
-        items: [{ id: 'test-item', quantity: 1 }]
+        items: [{ id: 9999, quantity: 1 }]
       };
       
       const paymentResponse = await authApi.post('/api/payments/create-payment-intent', paymentData);

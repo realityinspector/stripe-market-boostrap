@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-03-18T17:44:47.266Z",
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "successRate": 0
+  },
+  "results": {
+    "api": [],
+    "e2e": [],
+    "frontend": []
+  }
+}
