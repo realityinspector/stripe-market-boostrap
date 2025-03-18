@@ -63,6 +63,9 @@ function getMockBrowser() {
     goto: async (url) => { console.log(`Mock navigating to: ${url}`); },
     screenshot: async ({ path }) => { console.log(`Mock screenshot saved to: ${path}`); },
     waitForSelector: async (selector) => { console.log(`Mock waiting for selector: ${selector}`); },
+    evaluateOnNewDocument: async (fn, ...args) => { 
+      console.log(`Mock evaluateOnNewDocument: ${fn.toString().slice(0, 50)}...`);
+    },
     evaluate: async (fn, ...args) => {
       console.log('Mock evaluating JavaScript in page context');
       if (fn.toString().includes('querySelector') && fn.toString().includes('null')) {
@@ -79,6 +82,7 @@ function getMockBrowser() {
       }
       return {};
     },
+    title: () => 'Mock Page Title',
     type: async (selector, value) => { console.log(`Mock typing '${value}' into '${selector}'`); },
     click: async (selector) => { console.log(`Mock clicking '${selector}'`); },
     close: async () => { console.log('Mock page closed'); }
