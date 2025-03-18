@@ -283,28 +283,73 @@ router.delete('/:id', authenticateToken, authorizeRole(['vendor']), async (req, 
   }
 });
 
-// Get products by vendor
-router.get('/vendor/:vendorId', async (req, res) => {
+// Update product status (activate/deactivate)
+router.patch('/:id/status', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
   try {
-    const { vendorId } = req.params;
+    const { id } = req.params;
+    const { active } = req.body;
+    const userId = req.user.id;
     
+    if (typeof active !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: 'Active status must be a boolean value'
+      });
+    }
+    
+    // Get vendor ID from user ID
+    const vendorResult = await db.query(
+      'SELECT id FROM vendors WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (vendorResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor record not found'
+      });
+    }
+    
+    const vendorId = vendorResult.rows[0].id;
+    
+    // Check if product exists and belongs to the vendor
+    const productResult = await db.query(
+      'SELECT * FROM products WHERE id = $1',
+      [id]
+    );
+    
+    if (productResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+    
+    if (productResult.rows[0].vendor_id !== vendorId) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to update this product'
+      });
+    }
+    
+    // Update product status
     const result = await db.query(`
-      SELECT p.*, v.business_name as vendor_name
-      FROM products p
-      JOIN vendors v ON p.vendor_id = v.id
-      WHERE p.vendor_id = $1 AND p.active = TRUE
-      ORDER BY p.created_at DESC
-    `, [vendorId]);
+      UPDATE products
+      SET active = $1
+      WHERE id = $2
+      RETURNING *
+    `, [active, id]);
     
     res.status(200).json({
       success: true,
-      products: result.rows
+      message: `Product ${active ? 'activated' : 'deactivated'} successfully`,
+      product: result.rows[0]
     });
   } catch (err) {
-    console.error('Get vendor products error:', err);
+    console.error('Update product status error:', err);
     res.status(500).json({
       success: false,
-      message: 'Failed to get vendor products',
+      message: 'Failed to update product status',
       error: err.message
     });
   }
@@ -344,6 +389,33 @@ router.get('/vendor', authenticateToken, authorizeRole(['vendor']), async (req, 
     });
   } catch (err) {
     console.error('Get product error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get vendor products',
+      error: err.message
+    });
+  }
+});
+
+// Get products by vendor
+router.get('/vendor/:vendorId', async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+    
+    const result = await db.query(`
+      SELECT p.*, v.business_name as vendor_name
+      FROM products p
+      JOIN vendors v ON p.vendor_id = v.id
+      WHERE p.vendor_id = $1 AND p.active = TRUE
+      ORDER BY p.created_at DESC
+    `, [vendorId]);
+    
+    res.status(200).json({
+      success: true,
+      products: result.rows
+    });
+  } catch (err) {
+    console.error('Get vendor products error:', err);
     res.status(500).json({
       success: false,
       message: 'Failed to get vendor products',

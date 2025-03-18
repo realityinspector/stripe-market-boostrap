@@ -48,6 +48,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Special handling for OPTIONS requests (CORS preflight)
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.sendStatus(200);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

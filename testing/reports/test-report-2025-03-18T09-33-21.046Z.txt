@@ -1,0 +1,76 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/18/2025, 9:33:21 AM
+
+SUMMARY
+-------
+Total Tests:  22
+Passed:       9
+Failed:       13
+Success Rate: 41%
+
+API TESTS
+--------
+✓ authEndpoints.test.js - testUserRegistration
+✓ authEndpoints.test.js - testVendorRegistration
+✓ authEndpoints.test.js - testUserLogin
+✗ authEndpoints.test.js - testAuthMiddleware
+  Error: Expected status 401 for invalid token, got 403
+✗ productEndpoints.test.js - testProductCreation
+  Error: Product vendorId (undefined) does not match vendor ID (134)
+✓ productEndpoints.test.js - testProductListing
+✓ productEndpoints.test.js - testProductRetrieval
+✗ productEndpoints.test.js - testProductUpdate
+  Error: Updated product price does not match
+✗ productEndpoints.test.js - testProductDeactivation
+  Error: Product deactivation endpoint not found (404)
+✗ productEndpoints.test.js - testVendorProductListing
+  Error: Failed to create test vendor user
+
+E2E TESTS
+--------
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Failed to create test vendor user
+✗ paymentFlow.test.js - testOrderHistory
+  Error: Failed to create test vendor user
+✗ paymentFlow.test.js - testVendorOrders
+  Error: Failed to create test vendor user
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+FRONTEND TESTS
+--------------
+✗ pageRendering.test.js - testApiRootEndpoint
+  Error: connect ECONNREFUSED 127.0.0.1:8000
+✗ pageRendering.test.js - testApiResponseTimes
+  Error: connect ECONNREFUSED 127.0.0.1:8000
+✗ pageRendering.test.js - testApiCorsHeaders
+  Error: connect ECONNREFUSED 127.0.0.1:8000
+✗ pageRendering.test.js - testApiContentTypes
+  Error: connect ECONNREFUSED 127.0.0.1:8000
+✗ pageRendering.test.js - testApiErrorHandling
+  Error: connect ECONNREFUSED 127.0.0.1:8000
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- API Failures: 5
+  - authEndpoints.test.js - testAuthMiddleware
+  - productEndpoints.test.js - testProductCreation
+  - productEndpoints.test.js - testProductUpdate
+  - productEndpoints.test.js - testProductDeactivation
+  - productEndpoints.test.js - testVendorProductListing
+- E2E Failures: 3
+  - paymentFlow.test.js - testPaymentFlow
+  - paymentFlow.test.js - testOrderHistory
+  - paymentFlow.test.js - testVendorOrders
+- Frontend Failures: 5
+  - pageRendering.test.js - testApiRootEndpoint
+  - pageRendering.test.js - testApiResponseTimes
+  - pageRendering.test.js - testApiCorsHeaders
+  - pageRendering.test.js - testApiContentTypes
+  - pageRendering.test.js - testApiErrorHandling
