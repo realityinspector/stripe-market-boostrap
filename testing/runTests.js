@@ -1,35 +1,68 @@
 #!/usr/bin/env node
 
 /**
- * Test Runner Script
+ * Test Runner Script for Stripe Connect Marketplace
  * 
- * This script runs all tests and generates reports.
+ * This script runs all tests and generates reports. It's integrated with the
+ * CI/CD pipeline to provide feedback on test status and deployment readiness.
+ * 
+ * 🚨 ATTENTION AI AGENTS 🚨
+ * This file is a critical entry point for the testing infrastructure.
+ * - Read the DEVELOPER_GUIDE.md file for comprehensive testing documentation
+ * - When implementing new features, add appropriate tests to maintain coverage
+ * - Don't modify this file's core functionality without specific instructions
  * 
  * Usage:
- *   node runTests.js [category]
+ *   node runTests.js [category] [options]
  * 
+ * Categories:
+ *   api         - Run only API tests
+ *   ui          - Run only UI tests with Puppeteer
+ *   e2e         - Run only end-to-end tests
+ *   frontend    - Run frontend component tests
+ *   auto        - Run comprehensive automated testing suite
+ *   functional  - Run end-to-end user journey tests
+ *   stripe      - Run Stripe Connect integration tests
+ *   all         - Run all tests (default)
+ *   
  * Options:
- *   [category] - Optional category of tests to run (api, e2e, frontend, ui, auto, functional)
- *                If not specified, all tests will be run.
- *                Use 'ui' to run UI tests with Puppeteer.
- *                Use 'auto' to run the comprehensive automated testing suite.
- *                Use 'functional' to run end-to-end user journey tests.
+ *   --ci        - Run in CI mode (stricter validation)
+ *   --verbose   - Show detailed test output
+ *   --report    - Generate and display test reports only
  * 
- * Example:
+ * Examples:
  *   node runTests.js api           # Run only API tests
  *   node runTests.js ui            # Run only UI tests with Puppeteer
- *   node runTests.js auto          # Run automated testing suite with live rendering
- *   node runTests.js functional    # Run functional user journey tests
+ *   node runTests.js auto          # Run automated testing suite
+ *   node runTests.js stripe        # Run Stripe integration tests
+ *   node runTests.js --ci          # Run all tests in CI mode
+ *   
+ * For full CI/CD pipeline:
+ *   node testing/ci.js             # Run complete CI/CD pipeline
  */
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const { runAllTests } = require('./utils/testRunner');
-const { generateTextReport } = require('./utils/reportGenerator');
+const { generateTextReport, generateJsonReport } = require('./utils/reportGenerator');
+
+// Attempt to load the new CI/CD coordinator if available
+let ciCoordinator;
+try {
+  ciCoordinator = require('./coordinator/testCoordinator');
+} catch (error) {
+  console.log(chalk.yellow('CI/CD coordinator not available, using legacy test runner'));
+}
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const category = args[0];
+const category = args.find(arg => !arg.startsWith('--')) || 'all';
+const options = {
+  ci: args.includes('--ci'),
+  verbose: args.includes('--verbose'),
+  reportOnly: args.includes('--report')
+};
 
 async function runTests() {
   try {
