@@ -95,10 +95,13 @@ async function performE2eTests(config) {
    */
   async function createTestUser(role) {
     const username = `${role}_${Date.now()}`;
+    const email = `${username}@example.com`;
+    const name = `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`;
     const password = 'Test123!';
     
     const registerResponse = await api.post('/api/auth/register', {
-      username,
+      email,
+      name,
       password,
       role
     });
@@ -108,7 +111,7 @@ async function performE2eTests(config) {
     }
     
     const loginResponse = await api.post('/api/auth/login', {
-      username,
+      email,
       password
     });
     
@@ -362,7 +365,9 @@ async function performE2eTests(config) {
         });
         
       } finally {
-        await page.close();
+        if (page.close && typeof page.close === 'function') {
+          await page.close();
+        }
       }
       
     } catch (error) {

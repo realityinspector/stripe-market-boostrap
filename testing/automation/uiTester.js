@@ -662,9 +662,11 @@ async function performUiTests(config) {
           continue;
         }
         
-        const invisibleElements = pageResult.elementVisibility
-          .filter(el => el.exists && !el.visible)
-          .map(el => el.selector);
+        const invisibleElements = pageResult.elementVisibility && Array.isArray(pageResult.elementVisibility)
+          ? pageResult.elementVisibility
+              .filter(el => el && el.exists && !el.visible)
+              .map(el => el.selector)
+          : [];
         
         if (invisibleElements.length > 0) {
           responsiveIssues = true;
