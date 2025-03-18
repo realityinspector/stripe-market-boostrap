@@ -8,8 +8,8 @@
 const React = require('react');
 // Import testing utilities
 const { render, fireEvent } = require('@testing-library/react-native');
-// Import the component directly
-const SearchBar = require('../../../mobile/components/SearchBar');
+// Import the component - handle default export properly
+const SearchBar = require('../../../mobile/components/SearchBar').default;
 
 describe('SearchBar', () => {
   // Mock functions

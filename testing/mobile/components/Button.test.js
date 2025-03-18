@@ -8,8 +8,8 @@
 const React = require('react');
 // Import testing utilities
 const { render, fireEvent } = require('@testing-library/react-native');
-// Import the component directly (not using default)
-const Button = require('../../../mobile/components/Button');
+// Import the component - handle default export properly
+const Button = require('../../../mobile/components/Button').default;
 // Import colors
 const Colors = require('../../../mobile/constants/Colors');
 

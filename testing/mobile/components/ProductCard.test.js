@@ -8,8 +8,8 @@
 const React = require('react');
 // Import testing utilities
 const { render, fireEvent } = require('@testing-library/react-native');
-// Import the component directly
-const ProductCard = require('../../../mobile/components/ProductCard');
+// Import the component - handle default export properly
+const ProductCard = require('../../../mobile/components/ProductCard').default;
 
 describe('ProductCard', () => {
   // Mock data for testing
