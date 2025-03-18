@@ -217,7 +217,7 @@ router.get('/:id', async (req, res) => {
 // Create a new product (vendor only)
 router.post('/', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
   try {
-    const { name, description, price, imageUrl } = req.body;
+    const { name, description, price, imageUrl, vendorId: clientVendorId } = req.body;
     const userId = req.user.id;
     
     // Validate required fields
@@ -250,10 +250,16 @@ router.post('/', authenticateToken, authorizeRole(['vendor']), async (req, res) 
       RETURNING *
     `, [vendorId, name, description, price, imageUrl]);
     
+    // Add the vendorId to the response to match the test expectations
+    const product = {
+      ...result.rows[0],
+      vendorId: vendorId
+    };
+    
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
-      product: result.rows[0]
+      product: product
     });
   } catch (err) {
     console.error('Create product error:', err);
