@@ -82,11 +82,11 @@ describe('VendorCard', () => {
     };
 
     const { getByTestId } = render(
-      <VendorCard 
-        vendor={vendorWithoutImage} 
-        onPress={mockOnPress}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: vendorWithoutImage,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Find the image container
@@ -100,11 +100,11 @@ describe('VendorCard', () => {
 
   test('calls onPress with vendor data when card is pressed', () => {
     const { getByTestId } = render(
-      <VendorCard 
-        vendor={mockVendor} 
-        onPress={mockOnPress}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: mockVendor,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Find the TouchableOpacity container
@@ -122,12 +122,12 @@ describe('VendorCard', () => {
     const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };
     
     const { getByTestId } = render(
-      <VendorCard 
-        vendor={mockVendor} 
-        onPress={mockOnPress}
-        style={customStyle}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: mockVendor,
+        onPress: mockOnPress,
+        style: customStyle,
+        testID: "vendor-card"
+      })
     );
 
     // Find the container
@@ -144,11 +144,11 @@ describe('VendorCard', () => {
     };
 
     const { getByTestId } = render(
-      <VendorCard 
-        vendor={verifiedVendor} 
-        onPress={mockOnPress}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: verifiedVendor,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Check for verified badge
@@ -163,11 +163,11 @@ describe('VendorCard', () => {
     };
 
     const { getByTestId, queryByTestId } = render(
-      <VendorCard 
-        vendor={nonVerifiedVendor} 
-        onPress={mockOnPress}
-        testID="vendor-card"
-      />
+      React.createElement(VendorCard, {
+        vendor: nonVerifiedVendor,
+        onPress: mockOnPress,
+        testID: "vendor-card"
+      })
     );
 
     // Check that verified badge is not present
