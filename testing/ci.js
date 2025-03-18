@@ -15,7 +15,20 @@
  */
 
 const path = require('path');
-const chalk = require('chalk');
+// Custom coloring functions instead of chalk (which is ESM only)
+const colors = {
+  red: (text) => `\x1b[31m${text}\x1b[0m`,
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  yellow: (text) => `\x1b[33m${text}\x1b[0m`,
+  blue: (text) => `\x1b[34m${text}\x1b[0m`,
+  cyan: (text) => `\x1b[36m${text}\x1b[0m`,
+  bold: {
+    red: (text) => `\x1b[1m\x1b[31m${text}\x1b[0m`,
+    green: (text) => `\x1b[1m\x1b[32m${text}\x1b[0m`,
+    yellow: (text) => `\x1b[1m\x1b[33m${text}\x1b[0m`,
+    blue: (text) => `\x1b[1m\x1b[34m${text}\x1b[0m`
+  }
+};
 const { runTestSuite, checkDeploymentReadiness, updateDevNotes } = require('./coordinator/testCoordinator');
 
 // Process command line arguments
@@ -31,11 +44,11 @@ const options = {
  * Run the CI pipeline
  */
 async function runCIPipeline() {
-  console.log(chalk.blue.bold('==============================================='));
-  console.log(chalk.blue.bold('  Stripe Connect Marketplace CI/CD Pipeline'));
-  console.log(chalk.blue.bold('==============================================='));
+  console.log(colors.bold.blue('==============================================='));
+  console.log(colors.bold.blue('  Stripe Connect Marketplace CI/CD Pipeline'));
+  console.log(colors.bold.blue('==============================================='));
   
-  console.log(chalk.cyan(`\n[${new Date().toISOString()}] Starting CI pipeline...\n`));
+  console.log(colors.cyan(`\n[${new Date().toISOString()}] Starting CI pipeline...\n`));
   
   try {
     // Run test suite
@@ -50,22 +63,22 @@ async function runCIPipeline() {
     
     // If tests passed, check deployment readiness
     if (testResults.passedCI) {
-      console.log(chalk.green.bold('\n✅ CI tests passed, checking deployment readiness...\n'));
+      console.log(colors.bold.green('\n✅ CI tests passed, checking deployment readiness...\n'));
       
       const readiness = checkDeploymentReadiness();
       
       if (readiness.ready) {
-        console.log(chalk.green.bold('\n✅ Codebase ready for deployment'));
-        console.log(chalk.green('\nTo deploy your application, use Replit\'s deployment feature.'));
+        console.log(colors.bold.green('\n✅ Codebase ready for deployment'));
+        console.log(colors.green('\nTo deploy your application, use Replit\'s deployment feature.'));
       } else {
-        console.log(chalk.yellow.bold('\n⚠️ Codebase not ready for deployment'));
-        console.log(chalk.yellow('Issues:'));
+        console.log(colors.bold.yellow('\n⚠️ Codebase not ready for deployment'));
+        console.log(colors.yellow('Issues:'));
         readiness.issues.forEach(issue => {
-          console.log(chalk.yellow(`- ${issue}`));
+          console.log(colors.yellow(`- ${issue}`));
         });
       }
     } else {
-      console.log(chalk.red.bold('\n❌ CI tests failed, fix issues before deployment'));
+      console.log(colors.bold.red('\n❌ CI tests failed, fix issues before deployment'));
     }
     
     // Final summary
@@ -74,8 +87,8 @@ async function runCIPipeline() {
     // Exit with appropriate code
     process.exit(testResults.passedCI ? 0 : 1);
   } catch (error) {
-    console.error(chalk.red.bold('\n❌ CI pipeline error:'));
-    console.error(chalk.red(error.message));
+    console.error(colors.bold.red('\n❌ CI pipeline error:'));
+    console.error(colors.red(error.message));
     console.error(error.stack);
     process.exit(1);
   }
@@ -87,25 +100,25 @@ async function runCIPipeline() {
  * @param {Object} results - Test results
  */
 function outputCISummary(results) {
-  console.log(chalk.blue.bold('\n==============================================='));
-  console.log(chalk.blue.bold('  CI/CD Pipeline Summary'));
-  console.log(chalk.blue.bold('==============================================='));
+  console.log(colors.bold.blue('\n==============================================='));
+  console.log(colors.bold.blue('  CI/CD Pipeline Summary'));
+  console.log(colors.bold.blue('==============================================='));
   
-  console.log(chalk.blue(`Test Run: ${new Date(results.timestamp).toLocaleString()}`));
-  console.log(chalk.blue(`Success Rate: ${results.stats.successRate.toFixed(2)}%`));
+  console.log(colors.blue(`Test Run: ${new Date(results.timestamp).toLocaleString()}`));
+  console.log(colors.blue(`Success Rate: ${results.stats.successRate.toFixed(2)}%`));
   
   // Output pass/fail status
   if (results.passedCI) {
-    console.log(chalk.green.bold('\n✅ CI PASSED - Ready for deployment'));
+    console.log(colors.bold.green('\n✅ CI PASSED - Ready for deployment'));
   } else {
-    console.log(chalk.red.bold('\n❌ CI FAILED - Fix issues before deployment'));
+    console.log(colors.bold.red('\n❌ CI FAILED - Fix issues before deployment'));
   }
   
-  console.log(chalk.blue.bold('\nTest Reports:'));
-  console.log(chalk.blue(`JSON Report: ${results.reportPaths?.json || 'Not generated'}`));
-  console.log(chalk.blue(`Text Report: ${results.reportPaths?.text || 'Not generated'}`));
+  console.log(colors.bold.blue('\nTest Reports:'));
+  console.log(colors.blue(`JSON Report: ${results.reportPaths?.json || 'Not generated'}`));
+  console.log(colors.blue(`Text Report: ${results.reportPaths?.text || 'Not generated'}`));
   
-  console.log(chalk.blue.bold('\n==============================================='));
+  console.log(colors.bold.blue('\n==============================================='));
 }
 
 // If running directly (not imported), run the CI pipeline

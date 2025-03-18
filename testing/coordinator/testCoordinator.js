@@ -19,7 +19,21 @@
 
 const path = require('path');
 const fs = require('fs');
-const chalk = require('chalk');
+
+// Custom coloring functions instead of chalk (which is ESM only)
+const colors = {
+  red: (text) => `\x1b[31m${text}\x1b[0m`,
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  yellow: (text) => `\x1b[33m${text}\x1b[0m`,
+  blue: (text) => `\x1b[34m${text}\x1b[0m`,
+  cyan: (text) => `\x1b[36m${text}\x1b[0m`,
+  bold: {
+    red: (text) => `\x1b[1m\x1b[31m${text}\x1b[0m`,
+    green: (text) => `\x1b[1m\x1b[32m${text}\x1b[0m`,
+    yellow: (text) => `\x1b[1m\x1b[33m${text}\x1b[0m`,
+    blue: (text) => `\x1b[1m\x1b[34m${text}\x1b[0m`
+  }
+};
 const { runAllTests } = require('../utils/testRunner');
 const { generateJsonReport, generateTextReport } = require('../utils/reportGenerator');
 
