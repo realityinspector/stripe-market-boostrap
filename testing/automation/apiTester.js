@@ -202,14 +202,16 @@ async function performApiTests(config) {
   // Test authentication endpoints
   async function testAuthEndpoints() {
     // Test registration
-    const username = `test_user_${Date.now()}`;
+    const email = `test_user_${Date.now()}@example.com`;
+    const name = `Test User ${Date.now()}`;
     const password = 'Test123!';
     
     let userId, token;
     
     try {
       const registerResponse = await api.post('/api/auth/register', {
-        username,
+        email,
+        name,
         password,
         role: 'customer'
       });
@@ -233,7 +235,7 @@ async function performApiTests(config) {
       
       // Test login
       const loginResponse = await api.post('/api/auth/login', {
-        username,
+        email,
         password
       });
       
@@ -285,13 +287,17 @@ async function performApiTests(config) {
   async function testProductEndpoints() {
     try {
       // Register a vendor
-      const vendorUsername = `vendor_${Date.now()}`;
+      const vendorEmail = `vendor_${Date.now()}@example.com`;
+      const vendorName = `Vendor ${Date.now()}`;
       const vendorPassword = 'Vendor123!';
+      const businessName = `${vendorName}'s Shop`;
       
       const registerResponse = await api.post('/api/auth/register', {
-        username: vendorUsername,
+        email: vendorEmail,
+        name: vendorName,
         password: vendorPassword,
-        role: 'vendor'
+        role: 'vendor',
+        businessName
       });
       
       if (registerResponse.status !== 201) {
@@ -303,7 +309,7 @@ async function performApiTests(config) {
       
       // Login as vendor
       const loginResponse = await api.post('/api/auth/login', {
-        username: vendorUsername,
+        email: vendorEmail,
         password: vendorPassword
       });
       
