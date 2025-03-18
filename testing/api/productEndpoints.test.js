@@ -19,7 +19,7 @@
 const axios = require('axios');
 const { createTestUser, createTestProduct } = require('../utils/testHelpers');
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:8000';
 const testUsers = [];
 const testProducts = [];
 

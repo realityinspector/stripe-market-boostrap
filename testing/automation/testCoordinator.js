@@ -27,7 +27,7 @@ const chalk = {
 // Default testing configuration
 const config = {
   baseUrl: 'http://localhost:8000',
-  clientUrl: 'http://localhost:5000',
+  clientUrl: 'http://localhost:8000',
   timeouts: {
     apiResponse: 5000,
     pageLoad: 10000,
