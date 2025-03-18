@@ -367,7 +367,7 @@ async function performApiTests(config) {
       
       const listDetails = {
         status: listResponse.status,
-        count: listResponse.data?.length || 0
+        count: listResponse.data?.products?.length || 0
       };
       
       const listPassed = listResponse.status === 200 && listDetails.count > 0;
@@ -398,7 +398,7 @@ async function performApiTests(config) {
       
       const updateDetails = {
         status: updateResponse.status,
-        success: updateResponse.data?.id === productId
+        success: updateResponse.data?.product?.id === productId
       };
       
       const updatePassed = updateResponse.status === 200 && updateDetails.success;
@@ -411,7 +411,7 @@ async function performApiTests(config) {
       
       const vendorProductsDetails = {
         status: vendorProductsResponse.status,
-        count: vendorProductsResponse.data?.length || 0
+        count: vendorProductsResponse.data?.products?.length || 0
       };
       
       const vendorProductsPassed = vendorProductsResponse.status === 200 && vendorProductsDetails.count > 0;
@@ -437,7 +437,7 @@ async function performApiTests(config) {
       
       const paymentDetails = {
         status: paymentResponse.status,
-        success: paymentResponse.data?.clientSecret !== undefined
+        success: paymentResponse.data?.clientSecret !== undefined && paymentResponse.data?.success === true
       };
       
       const paymentPassed = paymentResponse.status === 200 && paymentDetails.success;
