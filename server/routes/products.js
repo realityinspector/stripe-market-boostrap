@@ -4,6 +4,116 @@ const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Get all vendor products (additional route for testing)
+router.get('/vendor', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get vendor ID from user ID
+    const vendorResult = await db.query(
+      'SELECT id FROM vendors WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (vendorResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor record not found'
+      });
+    }
+    
+    const vendorId = vendorResult.rows[0].id;
+    
+    const result = await db.query(`
+      SELECT p.*, v.business_name as vendor_name
+      FROM products p
+      JOIN vendors v ON p.vendor_id = v.id
+      WHERE p.vendor_id = $1
+      ORDER BY p.created_at DESC
+    `, [vendorId]);
+    
+    res.status(200).json({
+      success: true,
+      products: result.rows
+    });
+  } catch (err) {
+    console.error('Get product error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get vendor products',
+      error: err.message
+    });
+  }
+});
+
+// Get products by vendor
+router.get('/vendor/:vendorId', async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+    
+    const result = await db.query(`
+      SELECT p.*, v.business_name as vendor_name
+      FROM products p
+      JOIN vendors v ON p.vendor_id = v.id
+      WHERE p.vendor_id = $1 AND p.active = TRUE
+      ORDER BY p.created_at DESC
+    `, [vendorId]);
+    
+    res.status(200).json({
+      success: true,
+      products: result.rows
+    });
+  } catch (err) {
+    console.error('Get vendor products error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get vendor products',
+      error: err.message
+    });
+  }
+});
+
+// Get vendor products (for vendor dashboard)
+router.get('/my-products', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get vendor ID from user ID
+    const vendorResult = await db.query(
+      'SELECT id FROM vendors WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (vendorResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor record not found'
+      });
+    }
+    
+    const vendorId = vendorResult.rows[0].id;
+    
+    const result = await db.query(`
+      SELECT *
+      FROM products
+      WHERE vendor_id = $1
+      ORDER BY created_at DESC
+    `, [vendorId]);
+    
+    res.status(200).json({
+      success: true,
+      products: result.rows
+    });
+  } catch (err) {
+    console.error('Get my products error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get products',
+      error: err.message
+    });
+  }
+});
+
 // Get all products (with optional filters)
 router.get('/', async (req, res) => {
   try {
@@ -350,116 +460,6 @@ router.patch('/:id/status', authenticateToken, authorizeRole(['vendor']), async 
     res.status(500).json({
       success: false,
       message: 'Failed to update product status',
-      error: err.message
-    });
-  }
-});
-
-// Get all vendor products (additional route for testing)
-router.get('/vendor', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    // Get vendor ID from user ID
-    const vendorResult = await db.query(
-      'SELECT id FROM vendors WHERE user_id = $1',
-      [userId]
-    );
-    
-    if (vendorResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vendor record not found'
-      });
-    }
-    
-    const vendorId = vendorResult.rows[0].id;
-    
-    const result = await db.query(`
-      SELECT p.*, v.business_name as vendor_name
-      FROM products p
-      JOIN vendors v ON p.vendor_id = v.id
-      WHERE p.vendor_id = $1
-      ORDER BY p.created_at DESC
-    `, [vendorId]);
-    
-    res.status(200).json({
-      success: true,
-      products: result.rows
-    });
-  } catch (err) {
-    console.error('Get product error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get vendor products',
-      error: err.message
-    });
-  }
-});
-
-// Get products by vendor
-router.get('/vendor/:vendorId', async (req, res) => {
-  try {
-    const { vendorId } = req.params;
-    
-    const result = await db.query(`
-      SELECT p.*, v.business_name as vendor_name
-      FROM products p
-      JOIN vendors v ON p.vendor_id = v.id
-      WHERE p.vendor_id = $1 AND p.active = TRUE
-      ORDER BY p.created_at DESC
-    `, [vendorId]);
-    
-    res.status(200).json({
-      success: true,
-      products: result.rows
-    });
-  } catch (err) {
-    console.error('Get vendor products error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get vendor products',
-      error: err.message
-    });
-  }
-});
-
-// Get vendor products (for vendor dashboard)
-router.get('/my-products', authenticateToken, authorizeRole(['vendor']), async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    // Get vendor ID from user ID
-    const vendorResult = await db.query(
-      'SELECT id FROM vendors WHERE user_id = $1',
-      [userId]
-    );
-    
-    if (vendorResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vendor record not found'
-      });
-    }
-    
-    const vendorId = vendorResult.rows[0].id;
-    
-    const result = await db.query(`
-      SELECT *
-      FROM products
-      WHERE vendor_id = $1
-      ORDER BY created_at DESC
-    `, [vendorId]);
-    
-    res.status(200).json({
-      success: true,
-      products: result.rows
-    });
-  } catch (err) {
-    console.error('Get my products error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get products',
       error: err.message
     });
   }
