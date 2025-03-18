@@ -282,7 +282,10 @@ async function performUiTests(config) {
     } catch (error) {
       recordTest(`Page Rendering - ${name}`, false, error, { url: fullUrl });
     } finally {
-      await page.close();
+      // Check if we're using a real browser or mock browser and handle accordingly
+      if (page.close && typeof page.close === 'function') {
+        await page.close();
+      }
     }
   }
   
@@ -364,7 +367,9 @@ async function performUiTests(config) {
     } catch (error) {
       recordTest('Authentication Flow', false, error);
     } finally {
-      await page.close();
+      if (page.close && typeof page.close === 'function') {
+        await page.close();
+      }
     }
   }
   
@@ -451,7 +456,9 @@ async function performUiTests(config) {
     } catch (error) {
       recordTest('Product Pages', false, error);
     } finally {
-      await page.close();
+      if (page.close && typeof page.close === 'function') {
+        await page.close();
+      }
     }
   }
   
@@ -547,7 +554,9 @@ async function performUiTests(config) {
         recordTest('Checkout Process', false, error);
       }
     } finally {
-      await page.close();
+      if (page.close && typeof page.close === 'function') {
+        await page.close();
+      }
     }
   }
   
@@ -613,7 +622,9 @@ async function performUiTests(config) {
           };
           
           // Close page
-          await page.close();
+          if (page.close && typeof page.close === 'function') {
+            await page.close();
+          }
           
         } catch (error) {
           results[viewport.name][pagePath] = {
@@ -622,7 +633,9 @@ async function performUiTests(config) {
             error: error.message
           };
           
-          await page.close();
+          if (page.close && typeof page.close === 'function') {
+            await page.close();
+          }
         }
       }
     }

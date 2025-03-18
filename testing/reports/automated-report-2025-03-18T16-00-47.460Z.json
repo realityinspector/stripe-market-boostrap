@@ -1,0 +1,304 @@
+{
+  "timestamp": "2025-03-18T16:00:47.460Z",
+  "summary": {
+    "totalTests": 23,
+    "totalPassed": 13,
+    "totalFailed": 10,
+    "totalWarnings": 0,
+    "successRate": 57,
+    "api": {
+      "total": 13,
+      "passed": 10,
+      "failed": 3,
+      "warnings": 0
+    },
+    "ui": {
+      "total": 7,
+      "passed": 3,
+      "failed": 4,
+      "warnings": 0
+    },
+    "e2e": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3,
+      "warnings": 0
+    }
+  },
+  "environment": {
+    "apiServer": "http://localhost:8000",
+    "clientUrl": "http://localhost:5000",
+    "timeouts": {
+      "apiResponse": 5000,
+      "pageLoad": 10000,
+      "elementAppear": 5000
+    },
+    "browserVersion": "Mock Browser"
+  },
+  "results": {
+    "api": {
+      "passed": [
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-18T16:00:45.023Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "80ms"
+          }
+        },
+        {
+          "name": "User Registration",
+          "timestamp": "2025-03-18T16:00:45.203Z",
+          "details": {
+            "status": 201,
+            "success": true,
+            "userId": 401
+          }
+        },
+        {
+          "name": "User Login",
+          "timestamp": "2025-03-18T16:00:45.438Z",
+          "details": {
+            "status": 200,
+            "success": true,
+            "hasToken": true
+          }
+        },
+        {
+          "name": "CORS Headers",
+          "timestamp": "2025-03-18T16:00:46.136Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/auth/login": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/products": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/payments/create-payment-intent": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-18T16:00:46.138Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/login",
+          "timestamp": "2025-03-18T16:00:46.142Z",
+          "details": {
+            "endpoint": "/api/auth/login",
+            "status": 404,
+            "time": "4ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/register",
+          "timestamp": "2025-03-18T16:00:46.144Z",
+          "details": {
+            "endpoint": "/api/auth/register",
+            "status": 404,
+            "time": "1ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/products",
+          "timestamp": "2025-03-18T16:00:46.248Z",
+          "details": {
+            "endpoint": "/api/products",
+            "status": 200,
+            "time": "104ms"
+          }
+        },
+        {
+          "name": "API Response Times",
+          "timestamp": "2025-03-18T16:00:46.248Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "passed": true,
+                "time": 2,
+                "status": 200
+              },
+              "/api/auth/login": {
+                "passed": true,
+                "time": 4,
+                "status": 404
+              },
+              "/api/auth/register": {
+                "passed": true,
+                "time": 1,
+                "status": 404
+              },
+              "/api/products": {
+                "passed": true,
+                "time": 104,
+                "status": 200
+              }
+            }
+          }
+        },
+        {
+          "name": "404 Error Handling",
+          "timestamp": "2025-03-18T16:00:46.250Z",
+          "details": {
+            "status": 404,
+            "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/non-existent-endpoint</pre>\n</body>\n</html>\n"
+          }
+        }
+      ],
+      "failed": [
+        {
+          "name": "Authenticated Route",
+          "timestamp": "2025-03-18T16:00:45.479Z",
+          "details": {
+            "status": 200,
+            "hasUser": false
+          },
+          "error": "Failed to access authenticated route"
+        },
+        {
+          "name": "Product Creation",
+          "timestamp": "2025-03-18T16:00:46.124Z",
+          "details": {
+            "status": 201,
+            "success": false
+          },
+          "error": "Failed to create product"
+        },
+        {
+          "name": "Create Payment Intent",
+          "timestamp": "2025-03-18T16:00:46.127Z",
+          "details": {
+            "status": 401,
+            "success": false
+          },
+          "error": "Failed to create payment intent"
+        }
+      ],
+      "warnings": []
+    },
+    "ui": {
+      "passed": [
+        {
+          "name": "Page Rendering - Home Page",
+          "timestamp": "2025-03-18T16:00:46.270Z",
+          "details": {
+            "url": "http://localhost:5000/",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              "header": true,
+              "main": true,
+              "footer": true
+            }
+          }
+        },
+        {
+          "name": "Page Rendering - Products Page",
+          "timestamp": "2025-03-18T16:00:46.270Z",
+          "details": {
+            "url": "http://localhost:5000/products",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              ".product-list": true,
+              ".product-item": true
+            }
+          }
+        },
+        {
+          "name": "Product Listing",
+          "timestamp": "2025-03-18T16:00:46.272Z",
+          "details": {
+            "productCount": true
+          }
+        }
+      ],
+      "failed": [
+        {
+          "name": "Authentication Flow",
+          "timestamp": "2025-03-18T16:00:46.271Z",
+          "details": {},
+          "error": "page.url is not a function"
+        },
+        {
+          "name": "Product Pages",
+          "timestamp": "2025-03-18T16:00:46.272Z",
+          "details": {},
+          "error": "page.url is not a function"
+        },
+        {
+          "name": "Payment Process",
+          "timestamp": "2025-03-18T16:00:46.273Z",
+          "details": {
+            "confirmation": "Mock Text Content"
+          },
+          "error": "Payment confirmation message not as expected"
+        },
+        {
+          "name": "UI Testing Suite",
+          "timestamp": "2025-03-18T16:00:46.278Z",
+          "details": {},
+          "error": "Cannot read properties of undefined (reading 'filter')"
+        }
+      ],
+      "warnings": []
+    },
+    "e2e": {
+      "passed": [],
+      "failed": [
+        {
+          "name": "Vendor Flow",
+          "timestamp": "2025-03-18T16:00:46.541Z",
+          "details": {},
+          "error": "Failed to create vendor user: 500"
+        },
+        {
+          "name": "Customer Flow",
+          "timestamp": "2025-03-18T16:00:47.058Z",
+          "details": {},
+          "error": "Failed to create customer user: 500"
+        },
+        {
+          "name": "Full Purchase Flow",
+          "timestamp": "2025-03-18T16:00:47.460Z",
+          "details": {},
+          "error": "page.close is not a function"
+        }
+      ],
+      "warnings": []
+    }
+  }
+}
