@@ -6,7 +6,7 @@
 
 const React = require('react');
 const { render, fireEvent } = require('@testing-library/react-native');
-const ProductCard = require('../../../mobile/components/ProductCard');
+const ProductCard = require('../../../mobile/components/ProductCard').default;
 
 describe('ProductCard', () => {
   // Mock data for testing

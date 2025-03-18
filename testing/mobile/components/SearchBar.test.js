@@ -6,7 +6,7 @@
 
 const React = require('react');
 const { render, fireEvent } = require('@testing-library/react-native');
-const SearchBar = require('../../../mobile/components/SearchBar');
+const SearchBar = require('../../../mobile/components/SearchBar').default;
 
 describe('SearchBar', () => {
   // Mock functions

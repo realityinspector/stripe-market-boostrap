@@ -6,7 +6,7 @@
 
 const React = require('react');
 const { render, fireEvent } = require('@testing-library/react-native');
-const Button = require('../../../mobile/components/Button');
+const Button = require('../../../mobile/components/Button').default;
 const Colors = require('../../../mobile/constants/Colors');
 
 describe('Button', () => {

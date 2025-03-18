@@ -55,8 +55,7 @@ module.exports = {
   
   // Transform files with babel-jest
   transform: {
-    '^.+\\.(js|jsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}],
-    '^.+\\.(ts|tsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}]
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', {configFile: './testing/mobile/babel.config.js'}]
   },
   
   // Automatically clear mock calls and instances between every test
