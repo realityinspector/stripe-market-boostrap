@@ -130,11 +130,27 @@ Due to compatibility issues with JSX parsing in the test environment, we've impl
 
 This approach eliminates the JSX parsing dependency issues without changing the actual test logic or coverage.
 
+## Import Syntax Standardization
+
+To ensure consistency and compatibility across the mobile testing infrastructure, we've standardized on CommonJS import syntax for all test files:
+
+1. **Consistent Module Loading**
+   - Using CommonJS `require()` syntax uniformly across test files
+   - Properly handling default exports with `.default` accessor
+   - Maintaining consistent import structure across all component tests
+
+2. **ES6 to CommonJS Migration**
+   - Systematically converted ES6 imports to CommonJS requires
+   - Ensured proper handling of default exports from React Native components
+   - Maintained consistent import structure for testing utilities
+
+This standardization eliminates module system compatibility issues and ensures tests run reliably across different environments.
+
 ## Next Steps
 
 - Expand test coverage to screen components
 - Add navigation testing
 - Implement context provider tests
 - Add snapshot tests for visual regression testing
-- Resolve remaining Babel configuration issues
-- Ensure Jest properly processes all test files
+- Further improve Jest configuration for better test performance
+- Ensure all new test files follow the CommonJS import pattern

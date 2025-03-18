@@ -4,12 +4,12 @@
  * This file contains tests for the ProductCard component in the React Native mobile app.
  */
 
-// Import dependencies
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-
-// Import the ProductCard component directly
-import ProductCard from '../../../mobile/components/ProductCard';
+// Import React
+const React = require('react');
+// Import testing utilities
+const { render, fireEvent } = require('@testing-library/react-native');
+// Import the component
+const ProductCard = require('../../../mobile/components/ProductCard').default;
 
 describe('ProductCard', () => {
   // Mock data for testing
