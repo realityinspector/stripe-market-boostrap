@@ -28,7 +28,7 @@ if (!fs.existsSync(screenshotsDir)) {
 }
 
 // Base URL for the application
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:8000';
 const API_URL = 'http://localhost:8000';
 
 /**
