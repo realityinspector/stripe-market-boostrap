@@ -427,13 +427,57 @@ async function performApiTests(config) {
   // Test payment endpoints
   async function testPaymentEndpoints() {
     try {
+      // Register a customer
+      const customerEmail = `customer_${Date.now()}@example.com`;
+      const customerName = `Customer ${Date.now()}`;
+      const customerPassword = 'Customer123!';
+      
+      const registerResponse = await api.post('/api/auth/register', {
+        email: customerEmail,
+        name: customerName,
+        password: customerPassword,
+        role: 'customer'
+      });
+      
+      if (registerResponse.status !== 201) {
+        recordTest('Customer Registration for Payment', false, 
+                  `Failed to register customer: ${registerResponse.status}`,
+                  { status: registerResponse.status });
+        return;
+      }
+      
+      // Login as customer
+      const loginResponse = await api.post('/api/auth/login', {
+        email: customerEmail,
+        password: customerPassword
+      });
+      
+      if (loginResponse.status !== 200 || !loginResponse.data.token) {
+        recordTest('Customer Login for Payment', false, 
+                  `Failed to login customer: ${loginResponse.status}`,
+                  { status: loginResponse.status });
+        return;
+      }
+      
+      const customerToken = loginResponse.data.token;
+      
+      // Create authenticated API instance
+      const authApi = axios.create({
+        baseURL: config.baseUrl,
+        timeout: config.timeouts.apiResponse,
+        validateStatus: () => true,
+        headers: {
+          'Authorization': `Bearer ${customerToken}`
+        }
+      });
+      
       // Create a payment intent
       const paymentData = {
         amount: 1999,
         items: [{ id: 'test-item', quantity: 1 }]
       };
       
-      const paymentResponse = await api.post('/api/payments/create-payment-intent', paymentData);
+      const paymentResponse = await authApi.post('/api/payments/create-payment-intent', paymentData);
       
       const paymentDetails = {
         status: paymentResponse.status,
