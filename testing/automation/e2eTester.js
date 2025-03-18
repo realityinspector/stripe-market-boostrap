@@ -297,19 +297,25 @@ async function performE2eTests(config) {
                 detailsSuccess ? null : `Failed to view product details: ${productDetailsResponse.status}`,
                 { productId: product.id });
       
-      // Initiate payment with Stripe
+      // Initiate payment with Stripe - using a simpler endpoint for testing
       const paymentData = {
         amount: product.price * 100, // Convert to cents
         items: [{ id: product.id, quantity: 1 }]
       };
       
-      const paymentResponse = await customerApi.post('/api/payments/create-payment-intent', paymentData);
-      
-      const paymentSuccess = paymentResponse.status === 200 && paymentResponse.data.clientSecret;
-      
-      recordTest('Payment Initiation', paymentSuccess,
-                paymentSuccess ? null : `Failed to initiate payment: ${paymentResponse.status}`,
-                { productId: product.id });
+      try {
+        const paymentResponse = await customerApi.post('/api/payments/create-payment-intent', paymentData);
+        
+        const paymentSuccess = paymentResponse.status === 200 && paymentResponse.data.clientSecret;
+        
+        recordTest('Payment Initiation', paymentSuccess,
+                  paymentSuccess ? null : `Failed to initiate payment: ${paymentResponse.status}`,
+                  { productId: product.id });
+      } catch (paymentError) {
+        recordTest('Payment Initiation', false, 
+                  `Failed to initiate payment: ${paymentError.response?.status || paymentError.message}`,
+                  { productId: product.id });
+      }
       
     } catch (error) {
       recordTest('Customer Flow', false, error);
@@ -360,24 +366,29 @@ async function performE2eTests(config) {
           items: [{ id: product.id, quantity: 1 }]
         };
         
-        const paymentResponse = await customerApi.post('/api/payments/create-payment-intent', 
-                                                    paymentData);
-        
-        const paymentSuccess = paymentResponse.status === 200 && paymentResponse.data.clientSecret;
-        
-        if (!paymentSuccess) {
-          throw new Error(`Failed to create payment intent: ${paymentResponse.status}`);
+        try {
+          const paymentResponse = await customerApi.post('/api/payments/create-payment-intent', paymentData);
+          
+          const paymentSuccess = paymentResponse.status === 200 && paymentResponse.data.clientSecret;
+          
+          if (!paymentSuccess) {
+            throw new Error(`Failed to create payment intent: ${paymentResponse.status}`);
+          }
+          
+          // 6. In a real test with a real browser, we'd simulate completing the Stripe payment
+          // For now, we'll assume payment was successful for E2E validation
+          
+          recordTest('Full Purchase Flow', true, null, {
+            vendorId: vendor.id,
+            customerId: customer.id,
+            productId: product.id,
+            paymentInitiated: true
+          });
+        } catch (paymentError) {
+          recordTest('Full Purchase Flow', false, 
+                    `Failed to create payment intent: ${paymentError.response?.status || paymentError.message}`,
+                    { productId: product.id });
         }
-        
-        // 6. In a real test with a real browser, we'd simulate completing the Stripe payment
-        // For now, we'll assume payment was successful for E2E validation
-        
-        recordTest('Full Purchase Flow', true, null, {
-          vendorId: vendor.id,
-          customerId: customer.id,
-          productId: product.id,
-          paymentInitiated: true
-        });
         
       } finally {
         if (page.close && typeof page.close === 'function') {
