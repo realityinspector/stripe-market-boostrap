@@ -1,195 +1,113 @@
 # Failure Log
 
 ## ATTENTION AI AGENTS
-This log tracks failures encountered during development of the Stripe Connect Marketplace project. Use this log to document issues, track their status, and record resolutions.
+This document tracks significant failures, errors, and issues encountered during development, along with resolution approaches.
 
-## Active Failures
+## Current Issues
 
-### FL-001: Stripe Connect Vendor Onboarding
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: STRIPE-001  
-**Description**: Vendor onboarding with Stripe Connect is failing, preventing payment processing through connected accounts. Tests are failing with "Vendor has not completed Stripe onboarding" errors.
+### FAIL-001: Authentication Middleware Fails With 403 Instead of 401
+**Date Identified**: March 18, 2025  
+**Related Tasks**: AUTH-001  
+**Status**: Unresolved  
+**Priority**: High
+
+**Description**:  
+The authentication middleware returns a 403 Forbidden status instead of the expected 401 Unauthorized status when an invalid token is provided. This is causing test failures and potentially misleading error messages to clients.
 
 **Error Details**:
 ```
-Payment flow failed: Vendor has not completed Stripe onboarding
-Order history test failed: Vendor has not completed Stripe onboarding
+Test: Authentication Middleware
+Expected status: 401 Unauthorized
+Actual status: 403 Forbidden
+Error: Expected 401 but received 403
 ```
 
-**Investigation Notes**:
-- The issue appears in the payment flow tests when attempting to create payment intents
-- Vendors need a valid Stripe Connect account before accepting payments
-- Current implementation doesn't properly handle the Stripe Connect onboarding process
-- We need to ensure vendors complete the Connect onboarding before allowing them to receive payments
-- Both TEST and LIVE modes need to be supported
+**Root Cause Analysis**:  
+Initial investigation suggests the middleware is checking token validity but using incorrect HTTP status codes for different failure scenarios.
 
 **Resolution Plan**:
-1. Update vendor registration to create a Stripe Connect account
-2. Generate onboarding links for vendors to complete their Connect account setup
-3. Handle onboarding completion webhook from Stripe
-4. Modify payment flow to verify vendor onboarding status
-5. Update tests to properly mock Stripe Connect account status
+1. Update authentication middleware to use correct HTTP status codes
+2. 401 for missing/invalid tokens (authentication failure)
+3. 403 for valid tokens but insufficient permissions (authorization failure)
+4. Update tests to verify correct status codes
 
-### FL-002: Authentication Route Issues
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: AUTH-001  
-**Description**: Authentication middleware is returning incorrect status codes for invalid tokens, causing test failures.
+### FAIL-002: Stripe Connect Onboarding Failure
+**Date Identified**: March 18, 2025  
+**Related Tasks**: STRIPE-001  
+**Status**: Unresolved  
+**Priority**: Critical
+
+**Description**:  
+Vendors cannot complete Stripe Connect onboarding, causing payment intent creation to fail. This is a critical issue affecting the core payment flow.
 
 **Error Details**:
 ```
-Failed to access authenticated route
+Test: Create Payment Intent
+Error: No such Stripe account: acct_xxxxx
+Status: 400 Bad Request
 ```
 
-**Investigation Notes**:
-- Tests expect a 401 Unauthorized status for invalid tokens, but are receiving 403 Forbidden
-- The authentication middleware needs to be reviewed and fixed
-- Need to distinguish between unauthenticated (401) and unauthorized (403) responses
-- Error messages need to be more descriptive for debugging
+**Root Cause Analysis**:  
+The system is not properly creating and storing Stripe Connect account IDs for vendors. The onboarding flow appears to be incomplete or improperly implemented.
 
 **Resolution Plan**:
-1. Review authentication middleware implementation
-2. Fix token validation and status code handling
-3. Update tests to verify correct behavior
-4. Add comprehensive error messages
+1. Implement proper Stripe Connect account creation flow
+2. Add validation to ensure vendors have completed onboarding
+3. Store connected account IDs securely
+4. Update tests to verify onboarding flow
 
-### FL-003: Payment Intent Creation
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: PAYMENT-001  
-**Description**: Creating payment intents with Stripe is failing, causing payment processing tests to fail.
+### FAIL-003: User Registration UI Fails
+**Date Identified**: March 18, 2025  
+**Related Tasks**: UI-001  
+**Status**: Unresolved  
+**Priority**: Medium
+
+**Description**:  
+The user registration UI test is failing with an unexpected redirection or response.
 
 **Error Details**:
 ```
-Failed to create payment intent
+Test: User Registration
+Expected: Registration confirmation
+Actual: Unexpected redirect or response
 ```
 
-**Investigation Notes**:
-- The payment intent creation API call is failing
-- This could be related to the vendor onboarding issue
-- Need to ensure Stripe API calls are properly formed
-- Soft failure handling needs to be implemented for API errors
+**Root Cause Analysis**:  
+The UI tests indicate issues with form submission or response handling on the registration page.
 
 **Resolution Plan**:
-1. Review payment intent creation logic
-2. Fix Stripe API integration
-3. Improve error handling for graceful degradation
-4. Update tests to properly validate behavior
+1. Investigate form submission process
+2. Fix client-side validation if necessary
+3. Ensure proper error messages are displayed
+4. Verify proper redirect after successful registration
 
-### FL-004: User Registration UI Tests
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: UI-001  
-**Description**: UI tests for user registration are failing due to unexpected redirects or form submission issues.
+## Resolved Issues
+
+<!-- No resolved issues yet -->
+
+## Template for New Issues
+
+### FAIL-XXX: [Brief Issue Title]
+**Date Identified**: [Date]  
+**Related Tasks**: [Related task IDs]  
+**Status**: [Unresolved/Resolved]  
+**Priority**: [Critical/High/Medium/Low]
+
+**Description**:  
+[Detailed description of the issue]
 
 **Error Details**:
 ```
-Registration failed or unexpected redirect
+[Error logs, stack traces, or error messages]
 ```
 
-**Investigation Notes**:
-- The registration form may not be submitting correctly
-- Redirect logic after successful registration might not match test expectations
-- Error handling on the registration form needs to be improved
-- Need to ensure consistent behavior between test and production environments
+**Root Cause Analysis**:  
+[Analysis of what caused the issue]
 
 **Resolution Plan**:
-1. Review registration form implementation
-2. Fix form submission and redirect logic
-3. Update tests to match expected behavior
-4. Improve error handling and user feedback
+1. [Step 1 to resolve]
+2. [Step 2 to resolve]
+3. [Step 3 to resolve]
 
-### FL-005: User Login UI Tests
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: UI-002  
-**Description**: UI tests for user login are failing due to unexpected redirects or authentication issues.
-
-**Error Details**:
-```
-Login failed or unexpected redirect
-```
-
-**Investigation Notes**:
-- The login form may not be submitting correctly
-- Authentication flow might have timing or logic issues
-- Redirect after successful login might not match test expectations
-- Error handling for failed logins needs improvement
-
-**Resolution Plan**:
-1. Review login form implementation
-2. Fix authentication flow and redirect logic
-3. Update tests to match expected behavior
-4. Improve error handling and user feedback
-
-### FL-006: Payment Process UI Tests
-**Status**: Active  
-**First Observed**: March 18, 2025  
-**Related Task**: To be created  
-**Description**: UI tests for payment processing are failing due to unexpected confirmation messages.
-
-**Error Details**:
-```
-Payment confirmation message not as expected
-```
-
-**Investigation Notes**:
-- The payment confirmation message displayed to users doesn't match test expectations
-- This could be related to the Stripe integration issues
-- Need to ensure consistent payment confirmation messages
-- Might need to improve the payment flow UI
-
-**Resolution Plan**:
-1. Review payment confirmation message implementation
-2. Update message to match test expectations or update tests
-3. Ensure consistent behavior across test and production environments
-4. Improve user feedback during payment processing
-
-## Resolved Failures
-
-<!-- Template for resolved failures -->
-<!-- 
-### FL-XXX: [Failure Title]
-**Status**: Resolved on [DATE]  
-**First Observed**: [DATE]  
-**Related Task**: [TASK-ID]  
-**Description**: [Brief description of the failure]
-
-**Error Details**:
-```
-[Error message or log]
-```
-
-**Investigation Notes**:
-- [Investigation details]
-- [Root cause analysis]
-
-**Resolution**:
-- [How the issue was fixed]
-- [Changes made]
-- [Lessons learned]
--->
-
-## Template for New Failures
-
-### FL-XXX: [Failure Title]
-**Status**: Active  
-**First Observed**: [DATE]  
-**Related Task**: [TASK-ID]  
-**Description**: [Brief description of the failure]
-
-**Error Details**:
-```
-[Error message or log]
-```
-
-**Investigation Notes**:
-- [Initial investigation notes]
-- [Suspected causes]
-- [Components involved]
-
-**Resolution Plan**:
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+**Resolution Details**: *(Only for resolved issues)*  
+[How the issue was resolved, including code changes, configuration updates, etc.]

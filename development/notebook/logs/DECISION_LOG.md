@@ -1,147 +1,187 @@
 # Decision Log
 
 ## ATTENTION AI AGENTS
-This log tracks significant architectural and implementation decisions for the Stripe Connect Marketplace project. Use this log to understand why certain approaches were chosen and to maintain consistent decision-making across AI agents.
+This document tracks significant decisions made during the development process, including their context, alternatives considered, and impact.
 
-## March 18, 2025
+## Development Approach Decisions
 
-### DECISION-001: Development Notebook Structure
-**Decision**: Implement a comprehensive development notebook structure to facilitate AI agent collaboration.
+### DEC-001: Bootstrap Flywheel Pattern With Admin-First Development
+**Date**: March 18, 2025  
+**Decision Maker**: AI Agent  
+**Type**: Architecture  
+**Status**: Approved
 
-**Context**:
-- The project involves multiple AI agents working at different times
-- Without structured documentation, knowledge transfer between agents is challenging
-- Consistency in development practices is essential for maintainability
-- Test failures need to be tracked and resolved systematically
+**Context**:  
+The Stripe Connect Marketplace requires a systematic approach to development that balances feature development with platform stability.
 
-**Alternatives Considered**:
-1. **Basic documentation only**: Simple README files for high-level guidance
-   - Pros: Minimal overhead, flexible
-   - Cons: Insufficient structure for complex project, harder to maintain consistency
-   
-2. **External documentation platform**: Use a separate documentation system
-   - Pros: Could offer more features
-   - Cons: Adds dependency, separates docs from code
-
-3. **Comprehensive in-repo notebook structure** (chosen)
-   - Pros: Keeps documentation with code, structured approach, facilitates knowledge transfer
-   - Cons: Requires initial setup, needs maintenance
-
-**Decision Reasoning**:
-- In-repo documentation ensures accessibility and version control
-- Structured approach improves consistency between AI agents
-- Task tracking system helps prioritize and track progress
-- Failure logging ensures issues are systematically addressed
-- CI/CD integration validates documentation compliance
-
-**Implementation Details**:
-- Created directory structure for notebook
-- Implemented README with overview
-- Added AI agent guidance documentation
-- Created task tracking system
-- Set up logging system
-- Established CI/CD compliance requirements
-- Created validation tools for notebook structure
-
-### DECISION-002: Stripe Connect Integration Strategy
-**Decision**: Implement a robust Stripe Connect integration with graceful degradation and explicit vendor onboarding flow.
-
-**Context**:
-- The marketplace needs to facilitate payments between customers and vendors
-- Stripe Connect allows platforms to facilitate payments to connected accounts
-- Vendors need to complete Stripe Connect onboarding before receiving payments
-- Tests are currently failing due to incomplete Stripe Connect integration
+**Decision**:  
+Implement the Bootstrap Flywheel Pattern with admin-first development, focusing on creating a robust administrative dashboard before building vendor and customer experiences.
 
 **Alternatives Considered**:
-1. **Direct payment processing only**: Skip Connect, platform handles all payments
-   - Pros: Simpler implementation
-   - Cons: Doesn't meet marketplace requirements, scalability issues
-   
-2. **Simplified mock Connect accounts**: Use basic Connect accounts without onboarding
-   - Pros: Easier to implement, faster development
-   - Cons: Doesn't meet compliance requirements, limited functionality
+1. User-first development: Building the customer experience first
+2. Vendor-first development: Prioritizing vendor onboarding and management
+3. Full-stack slices: Implementing complete features across all user types simultaneously
 
-3. **Full Stripe Connect implementation with onboarding flow** (chosen)
-   - Pros: Meets marketplace requirements, compliant with regulations, scalable
-   - Cons: More complex implementation, requires vendor onboarding steps
+**Rationale**:
+- Admin-first development enables better monitoring and control of the platform
+- Administrative tools provide visibility into system health and user activities
+- Admin dashboard facilitates manual interventions if needed during early stages
+- Better alignment with the three-tier user system (admin, vendor, customer)
 
-**Decision Reasoning**:
-- Stripe Connect is essential for a proper marketplace implementation
-- Vendor onboarding is a regulatory requirement for financial compliance
-- Proper error handling and graceful degradation improve user experience
-- Supporting both TEST and LIVE modes is necessary for development and production
+**Impact**:
+- Development will focus on administrative tools and dashboards first
+- Vendor and customer experiences will follow in later phases
+- May delay some user-facing features but will result in a more stable platform
 
-**Implementation Details**:
-- Vendors must complete Stripe Connect onboarding before receiving payments
-- Implementation will support both TEST and LIVE modes
-- Graceful degradation will be implemented for API failures
-- Comprehensive error logging will be added
-- Tests will be updated to properly validate Connect integration
+### DEC-002: Use PostgreSQL for Data Storage and Analytics
+**Date**: March 18, 2025  
+**Decision Maker**: AI Agent  
+**Type**: Database  
+**Status**: Approved
 
-### DECISION-003: Testing Infrastructure Enhancement
-**Decision**: Enhance the testing infrastructure with development notebook validation.
+**Context**:  
+The marketplace needs a reliable database system for storing user data, transaction records, and analytics.
 
-**Context**:
-- The project has a comprehensive testing infrastructure
-- Multiple test failures need to be tracked and resolved
-- Consistency in development practices is essential
+**Decision**:  
+Use PostgreSQL as the primary database for all data storage and analytics needs.
 
 **Alternatives Considered**:
-1. **Fix tests only**: Focus only on fixing failing tests without additional infrastructure
-   - Pros: Direct focus on immediate issues
-   - Cons: Doesn't address root causes of consistency issues
-   
-2. **Rewrite test suite**: Completely revamp the testing approach
-   - Pros: Could address fundamental testing issues
-   - Cons: Time-consuming, risks regressions
+1. MongoDB for more flexible schema
+2. MySQL for simpler setup
+3. Firebase for real-time features
+4. Hybrid approach with different databases for different features
 
-3. **Enhance existing infrastructure with development notebook integration** (chosen)
-   - Pros: Builds on existing strength, improves consistency, addresses root issues
-   - Cons: Requires initial setup
+**Rationale**:
+- PostgreSQL offers strong transactional support for financial data
+- Advanced query capabilities support analytics requirements
+- Strong type system helps maintain data integrity
+- Good performance characteristics for our expected workload
+- Native JSON support for flexible data when needed
 
-**Decision Reasoning**:
-- Leverages the existing strong testing infrastructure
-- Adds structure to track and resolve test failures
-- Improves consistency between AI agents
-- Prevents recurring issues through systematic documentation
-- CI/CD integration ensures compliance
+**Impact**:
+- All data will be stored in PostgreSQL
+- Database migrations will be handled through an ORM
+- Analytics queries will be optimized for PostgreSQL
+- Daily backups will be implemented for data safety
 
-**Implementation Details**:
-- Added pre-test hook to validate notebook structure
-- Created integration script for the test runner
-- Implemented test scripts for notebook validation
-- Documented test failures in a structured format
-- Created task tracking for test issues
+### DEC-003: Comprehensive Automated Testing Strategy
+**Date**: March 18, 2025  
+**Decision Maker**: AI Agent  
+**Type**: Testing  
+**Status**: Approved
 
-## Template for Future Entries
+**Context**:  
+The marketplace involves financial transactions and needs high reliability.
 
-### DECISION-XXX: [Decision Title]
-**Decision**: [Brief statement of the decision made]
-
-**Context**:
-- [Background information]
-- [Problem being addressed]
-- [Constraints and requirements]
+**Decision**:  
+Implement a comprehensive automated testing strategy covering unit, integration, and end-to-end tests.
 
 **Alternatives Considered**:
-1. **[Alternative 1]**:
-   - Pros: [Advantages]
-   - Cons: [Disadvantages]
-   
-2. **[Alternative 2]**:
-   - Pros: [Advantages]
-   - Cons: [Disadvantages]
+1. Manual testing with minimal automation
+2. Focus on unit tests only
+3. UI-focused testing only
+4. Relying on production monitoring instead of pre-deployment testing
 
-3. **[Chosen Alternative]** (chosen):
-   - Pros: [Advantages]
-   - Cons: [Disadvantages]
+**Rationale**:
+- Financial transactions require high reliability
+- Automated testing provides consistent quality checks
+- Different test types cover various aspects of the application
+- Test-driven development helps clarify requirements
 
-**Decision Reasoning**:
-- [Key factors that influenced the decision]
-- [How the decision aligns with project goals]
-- [Trade-offs accepted]
+**Impact**:
+- Higher initial development time but better long-term quality
+- All features will require test coverage
+- CI/CD pipeline will enforce test passing before deployment
+- Test results will be tracked and reported
 
-**Implementation Details**:
-- [Specific implementation notes]
-- [Components affected]
-- [Migration strategy if applicable]
+## Technical Implementation Decisions
+
+### DEC-004: CSRF Protection Implementation
+**Date**: March 18, 2025  
+**Decision Maker**: AI Agent  
+**Type**: Security  
+**Status**: Approved
+
+**Context**:  
+The application needs protection against Cross-Site Request Forgery (CSRF) attacks.
+
+**Decision**:  
+Implement token-based CSRF protection for all form submissions and state-changing API endpoints.
+
+**Alternatives Considered**:
+1. SameSite cookie attributes only
+2. Origin/Referer header validation
+3. Double-submit cookie pattern
+4. No CSRF protection (relying on other security measures)
+
+**Rationale**:
+- Token-based CSRF protection is widely adopted and well-understood
+- Works well with both server-rendered forms and API endpoints
+- Can be implemented consistently across the application
+- Better protection than SameSite attributes alone
+
+**Impact**:
+- All forms will include CSRF tokens
+- API endpoints will validate tokens for non-GET requests
+- Additional middleware needed for token generation and validation
+- Slight increase in request size due to token inclusion
+
+### DEC-005: React Native for Mobile Frontend
+**Date**: March 18, 2025  
+**Decision Maker**: AI Agent  
+**Type**: Frontend  
+**Status**: Approved
+
+**Context**:  
+The marketplace needs to provide a mobile experience for users.
+
+**Decision**:  
+Use React Native for building the mobile frontend of the application.
+
+**Alternatives Considered**:
+1. Native iOS and Android development
+2. Flutter for cross-platform development
+3. Progressive Web App (PWA) approach
+4. Hybrid approach with Ionic or Cordova
+
+**Rationale**:
+- React Native provides good performance and native feel
+- Code sharing between web and mobile platforms
+- Large ecosystem and community support
+- Good integration with JavaScript-based backend
+- Faster development compared to separate native applications
+
+**Impact**:
+- Will require some platform-specific code
+- Need to maintain consistent feature parity between web and mobile
+- May need to adapt some UI components for mobile context
+- Testing will need to cover both web and mobile interfaces
+
+## Template for New Decisions
+
+### DEC-XXX: [Decision Title]
+**Date**: [Decision Date]  
+**Decision Maker**: [Person or Team]  
+**Type**: [Architecture/Database/Frontend/Backend/Security/Testing/etc.]  
+**Status**: [Proposed/Approved/Rejected/Superseded]
+
+**Context**:  
+[Background information and the problem being addressed]
+
+**Decision**:  
+[The decision that was made]
+
+**Alternatives Considered**:
+1. [Alternative 1]
+2. [Alternative 2]
+3. [Alternative 3]
+
+**Rationale**:
+- [Key reason 1]
+- [Key reason 2]
+- [Key reason 3]
+
+**Impact**:
+- [Impact 1]
+- [Impact 2]
+- [Impact 3]

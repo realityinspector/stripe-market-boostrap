@@ -37,8 +37,9 @@ This document tracks completed tasks for the Stripe Connect Marketplace project.
 
 ### INFRA-002: Implement CI/CD Compliance Requirements
 **Priority**: High  
-**Status**: Completed on March 18, 2025  
+**Status**: Completed  
 **Assigned**: AI Agent  
+**Completed**: March 18, 2025  
 **Description**: Define comprehensive CI/CD compliance requirements for the project, with a focus on data integrity, security, and API integration.
 
 **Implementation Details**:
@@ -60,8 +61,9 @@ This document tracks completed tasks for the Stripe Connect Marketplace project.
 
 ### INFRA-003: Document Development Standards
 **Priority**: High  
-**Status**: Completed on March 18, 2025  
+**Status**: Completed  
 **Assigned**: AI Agent  
+**Completed**: March 18, 2025  
 **Description**: Document development standards for the project, covering all aspects of the system from coding standards to deployment.
 
 **Implementation Details**:
@@ -84,8 +86,9 @@ This document tracks completed tasks for the Stripe Connect Marketplace project.
 
 ### INFRA-004: Create Task Tracking System
 **Priority**: Medium  
-**Status**: Completed on March 18, 2025  
+**Status**: Completed  
 **Assigned**: AI Agent  
+**Completed**: March 18, 2025  
 **Description**: Create a task tracking system to manage current, backlog, completed, and blocked tasks.
 
 **Implementation Details**:
@@ -107,8 +110,9 @@ This document tracks completed tasks for the Stripe Connect Marketplace project.
 
 ### TASK-XXX: [Task Title]
 **Priority**: [High/Medium/Low]  
-**Status**: Completed on [DATE]  
+**Status**: Completed  
 **Assigned**: [Assignee]  
+**Completed**: [DATE]  
 **Description**: [Brief description of the task]
 
 **Implementation Details**:
