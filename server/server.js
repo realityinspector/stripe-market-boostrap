@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { createTables } = require('./schema');
+const { createTables, updateTableSchemas } = require('./schema');
 const authRoutes = require('./routes/auth');
 const vendorRoutes = require('./routes/vendors');
 const productRoutes = require('./routes/products');
@@ -143,6 +143,9 @@ const startServer = async () => {
   try {
     // Create database tables if they don't exist
     await createTables();
+    
+    // Update existing tables with new schema changes
+    await updateTableSchemas();
     
     // Start the server
     app.listen(PORT, '0.0.0.0', () => {

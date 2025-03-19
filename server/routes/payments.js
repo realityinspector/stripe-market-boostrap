@@ -148,7 +148,7 @@ router.post('/create-payment-intent', authenticateToken, async (req, res) => {
         // If we have a real Stripe account ID, try to create a real payment intent
         const paymentIntent = await createPaymentIntent(
           Math.round(orderAmount * 100), // Convert to cents
-          'usd',
+          currency.toLowerCase(),
           stripeAccountId,
           Math.round(commissionAmount * 100), // Convert to cents
           {
@@ -307,11 +307,12 @@ router.post('/orders', authenticateToken, async (req, res) => {
         total_amount, 
         commission_amount,
         status,
-        stripe_payment_intent_id
+        stripe_payment_intent_id,
+        currency
       )
-      VALUES ($1, $2, $3, $4, $5, $6)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
-    `, [userId, product.vendor_id, orderAmount, commissionAmount, 'paid', paymentIntentId]);
+    `, [userId, product.vendor_id, orderAmount, commissionAmount, 'paid', paymentIntentId, 'usd']);
     
     const order = orderResult.rows[0];
     
@@ -628,7 +629,7 @@ router.post('/refund', authenticateToken, async (req, res) => {
       reason: reason || 'requested_by_customer',
       reverse_transfer: true, // Pull funds back from the connected account
       refund_application_fee: true, // Refund the application fee as well
-      currency: 'usd' // Default currency
+      currency: order.currency || 'usd' // Use order currency or default to USD
     };
     
     try {
