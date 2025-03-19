@@ -1,6 +1,7 @@
 // Script to test adding a product using the storage layer
 require('dotenv').config();
-const { productStorage } = require('./storage');
+// Using the JS version of storage functions
+const { productStorage } = require('./product-storage');
 
 async function testAddProduct() {
   try {
