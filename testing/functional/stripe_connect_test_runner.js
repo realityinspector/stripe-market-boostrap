@@ -16,7 +16,13 @@
  *   --detailed       - Show detailed test output
  */
 
-const chalk = require('chalk');
+// Import custom colorize instead of chalk for ESM compatibility
+const colorize = {
+  red: (text) => `\x1b[31m${text}\x1b[0m`, 
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  blue: (text) => `\x1b[34m${text}\x1b[0m`,
+  yellow: (text) => `\x1b[33m${text}\x1b[0m`
+};
 const fs = require('fs');
 const path = require('path');
 const { runBuyerTests } = require('./stripe_connect_buyer_tests');
@@ -33,15 +39,15 @@ if (!fs.existsSync(reportsDir)) {
  * This combines both buyer and vendor tests to validate the complete flow
  */
 async function testCompleteTransactionFlow() {
-  console.log(chalk.green('\n===== STRIPE CONNECT TRANSACTION FLOW TESTS ====='));
+  console.log(colorize.green('\n===== STRIPE CONNECT TRANSACTION FLOW TESTS ====='));
   
   try {
     // Run buyer tests first
-    console.log(chalk.blue('Running buyer tests...'));
+    console.log(colorize.blue('Running buyer tests...'));
     const buyerResults = await runBuyerTests();
     
     // Then run vendor tests
-    console.log(chalk.blue('\nRunning vendor tests...'));
+    console.log(colorize.blue('\nRunning vendor tests...'));
     const vendorResults = await runVendorTests();
     
     // Calculate overall success
@@ -49,7 +55,7 @@ async function testCompleteTransactionFlow() {
     const totalTests = buyerResults.total + vendorResults.total;
     const passedTests = buyerResults.passed + vendorResults.passed;
     
-    console.log(chalk.green(`\n===== OVERALL TEST SUMMARY =====`));
+    console.log(colorize.green(`\n===== OVERALL TEST SUMMARY =====`));
     console.log(`Buyer tests: ${buyerResults.passed}/${buyerResults.total} passed`);
     console.log(`Vendor tests: ${vendorResults.passed}/${vendorResults.total} passed`);
     console.log(`Total: ${passedTests}/${totalTests} passed (${Math.round((passedTests / totalTests) * 100)}%)`);
@@ -62,7 +68,7 @@ async function testCompleteTransactionFlow() {
       passed: passedTests
     };
   } catch (error) {
-    console.error(chalk.red('Error in transaction flow tests:'), error);
+    console.error(colorize.red('Error in transaction flow tests:'), error);
     return {
       success: false,
       error: error.message

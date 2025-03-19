@@ -16,7 +16,12 @@
  */
 
 const axios = require('axios');
-const chalk = require('chalk');
+// Use console colors instead of chalk to avoid ESM import issues
+const colorize = {
+  blue: (text) => `\x1b[34m${text}\x1b[0m`, 
+  green: (text) => `\x1b[32m${text}\x1b[0m`,
+  red: (text) => `\x1b[31m${text}\x1b[0m`
+};
 const puppeteerHelper = require('../utils/puppeteerHelper');
 const { generateRandomData, createTestUser, createTestProduct } = require('../utils/testHelpers');
 
@@ -34,7 +39,7 @@ const BASE_URL = 'http://localhost:8000';
  * This test validates the vendor registration flow and onboarding to Stripe Connect
  */
 async function testVendorRegistrationAndOnboarding() {
-  console.log(chalk.blue('Testing vendor registration and Stripe Connect onboarding...'));
+  console.log(colorize.blue('Testing vendor registration and Stripe Connect onboarding...'));
   
   try {
     // Create a test vendor
@@ -69,7 +74,7 @@ async function testVendorRegistrationAndOnboarding() {
       vendor: vendorData
     };
   } catch (error) {
-    console.error(chalk.red('❌ Vendor registration and onboarding test failed:'), error.message);
+    console.error(colorize.red('❌ Vendor registration and onboarding test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -84,7 +89,7 @@ async function testVendorRegistrationAndOnboarding() {
  * with the right amount after platform fees
  */
 async function testVendorPaymentReceipt() {
-  console.log(chalk.blue('Testing vendor payment receipt via Stripe Connect...'));
+  console.log(colorize.blue('Testing vendor payment receipt via Stripe Connect...'));
   
   try {
     // 1. Create a test vendor
@@ -178,7 +183,7 @@ async function testVendorPaymentReceipt() {
       product: product
     };
   } catch (error) {
-    console.error(chalk.red('❌ Vendor payment receipt test failed:'), error.message);
+    console.error(colorize.red('❌ Vendor payment receipt test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -193,7 +198,7 @@ async function testVendorPaymentReceipt() {
  * and that payouts are properly scheduled
  */
 async function testVendorBalanceAndPayouts() {
-  console.log(chalk.blue('Testing vendor balance and payouts...'));
+  console.log(colorize.blue('Testing vendor balance and payouts...'));
   
   try {
     // Create a test vendor and a product, and simulate a purchase
@@ -241,7 +246,7 @@ async function testVendorBalanceAndPayouts() {
       order: order
     };
   } catch (error) {
-    console.error(chalk.red('❌ Vendor balance and payouts test failed:'), error.message);
+    console.error(colorize.red('❌ Vendor balance and payouts test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -253,7 +258,7 @@ async function testVendorBalanceAndPayouts() {
  * Test Vendor Analytics and Transaction History
  */
 async function testVendorAnalytics() {
-  console.log(chalk.blue('Testing vendor analytics and transaction history...'));
+  console.log(colorize.blue('Testing vendor analytics and transaction history...'));
   
   try {
     // Create multiple test scenarios for analytics
@@ -345,7 +350,7 @@ async function testVendorAnalytics() {
       orderCount: vendorOrders.length
     };
   } catch (error) {
-    console.error(chalk.red('❌ Vendor analytics test failed:'), error.message);
+    console.error(colorize.red('❌ Vendor analytics test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -358,7 +363,7 @@ async function testVendorAnalytics() {
  */
 async function runVendorTests() {
   try {
-    console.log(chalk.green('\n===== STRIPE CONNECT VENDOR TESTS ====='));
+    console.log(colorize.green('\n===== STRIPE CONNECT VENDOR TESTS ====='));
     
     const onboardingResult = await testVendorRegistrationAndOnboarding();
     const paymentReceiptResult = await testVendorPaymentReceipt();
@@ -376,7 +381,7 @@ async function runVendorTests() {
     const passedTests = allTests.filter(test => test.passed).length;
     const totalTests = allTests.length;
     
-    console.log(chalk.green(`\n===== VENDOR TESTS SUMMARY =====`));
+    console.log(colorize.green(`\n===== VENDOR TESTS SUMMARY =====`));
     console.log(`Tests passed: ${passedTests}/${totalTests}`);
     console.log(`Success rate: ${Math.round((passedTests / totalTests) * 100)}%`);
     
@@ -392,7 +397,7 @@ async function runVendorTests() {
       total: totalTests
     };
   } catch (error) {
-    console.error(chalk.red('Error running vendor tests:'), error);
+    console.error(colorize.red('Error running vendor tests:'), error);
     return {
       success: false,
       error: error.message
