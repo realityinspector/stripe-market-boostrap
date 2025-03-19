@@ -146,6 +146,18 @@ async function loadVendors() {
       }
       
       recentVendors.forEach(vendor => {
+        // Determine currency display
+        let currencyDisplay = '';
+        const primaryCurrency = (vendor.primary_currency || 'usd').toLowerCase();
+        
+        if (vendor.multiple_currencies) {
+          // If vendor has multiple currencies, show USD equivalent with asterisk
+          currencyDisplay = `${formatCurrency(vendor.total_sales || 0, 'usd')} *`;
+        } else {
+          // Otherwise show in the vendor's primary currency
+          currencyDisplay = `${formatCurrency(vendor.total_sales || 0, primaryCurrency)} <span class="currency-code">${primaryCurrency.toUpperCase()}</span>`;
+        }
+        
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>
@@ -154,7 +166,7 @@ async function loadVendors() {
           </td>
           <td><span class="status status-${vendor.status}">${capitalizeFirstLetter(vendor.status)}</span></td>
           <td>${vendor.product_count || 0}</td>
-          <td>${formatCurrency(vendor.total_sales || 0)}</td>
+          <td>${currencyDisplay}</td>
           <td><button class="btn-action" data-vendor-id="${vendor.id}">View Details</button></td>
         `;
         
@@ -208,7 +220,7 @@ async function loadTransactions() {
           <td>#${transaction.id}</td>
           <td>${transaction.customer_name}</td>
           <td>${transaction.vendor_name}</td>
-          <td>${formatCurrency(transaction.total_amount || 0)}</td>
+          <td>${formatCurrency(transaction.total_amount || 0, transaction.currency || 'usd')} <span class="currency-code">${(transaction.currency || 'USD').toUpperCase()}</span></td>
           <td>${formatDate(transaction.created_at)}</td>
           <td><span class="status status-active">${transaction.status || 'Completed'}</span></td>
         `;
@@ -252,7 +264,8 @@ async function initCharts() {
           beginAtZero: true,
           ticks: {
             callback: function(value) {
-              return '$' + value;
+              // Display as USD with proper formatting
+              return formatCurrency(value, 'usd');
             }
           }
         }
@@ -261,7 +274,8 @@ async function initCharts() {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return '$' + context.parsed.y;
+              // Display as USD with proper formatting in tooltip
+              return `Revenue: ${formatCurrency(context.parsed.y, 'usd')} (USD)`;
             }
           }
         }
@@ -336,7 +350,17 @@ function openVendorModal(vendorId, vendors) {
   document.getElementById('modalJoined').textContent = formatDate(vendor.created_at);
   document.getElementById('modalProducts').textContent = vendor.product_count || 0;
   document.getElementById('modalOrders').textContent = vendor.order_count || 0;
-  document.getElementById('modalSales').textContent = formatCurrency(vendor.total_sales || 0);
+  
+  // Format sales with proper currency handling
+  const currencies = vendor.currencies || ['usd'];
+  if (currencies.length === 1) {
+    // Single currency case
+    document.getElementById('modalSales').textContent = formatCurrency(vendor.total_sales || 0, currencies[0]);
+  } else {
+    // Multi-currency case - show USD equivalent with a note
+    document.getElementById('modalSales').textContent = 
+      formatCurrency(vendor.total_sales || 0, 'usd') + ' (equivalent in USD)';
+  }
   
   // Set current status in select dropdown
   document.getElementById('statusUpdate').value = vendor.status;
@@ -423,8 +447,25 @@ function getToken() {
 }
 
 // Format currency values
-function formatCurrency(value) {
-  return '$' + parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function formatCurrency(value, currency = 'usd') {
+  // Currency symbols for supported currencies
+  const currencySymbols = {
+    usd: '$',
+    eur: '€',
+    gbp: '£',
+    cad: 'C$',
+    aud: 'A$',
+    jpy: '¥'
+  };
+  
+  const symbol = currencySymbols[currency.toLowerCase()] || '$';
+  
+  // Japanese Yen doesn't use decimal places
+  if (currency.toLowerCase() === 'jpy') {
+    return `${symbol}${Math.round(parseFloat(value)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  }
+  
+  return `${symbol}${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 }
 
 // Format date strings
