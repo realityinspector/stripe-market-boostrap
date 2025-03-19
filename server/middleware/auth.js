@@ -60,7 +60,7 @@ const authorizeAdmin = (req, res, next) => {
     });
   }
   
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && !req.user.isAdmin) {
     return res.status(403).json({
       success: false,
       message: 'Access denied. Admin permissions required'
