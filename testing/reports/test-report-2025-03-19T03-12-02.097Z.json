@@ -1,0 +1,198 @@
+{
+  "timestamp": "2025-03-19T03:12:02.097Z",
+  "summary": {
+    "total": 30,
+    "passed": 29,
+    "failed": 1,
+    "successRate": 97
+  },
+  "results": {
+    "api": [
+      {
+        "name": "adminEndpoints.test.js - testAdminAuthRequirements",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminAnalytics",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminVendorsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminProductsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminCommissionManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminTransactionsViewing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthMiddleware",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "e2e": [
+      {
+        "name": "adminJourney.test.js - testAdminJourney",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminJourney.test.js - testAdminAuthorization",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "passed": false,
+        "error": "Order details show incorrect product ID",
+        "stack": "Error: Order details show incorrect product ID\n    at exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:118:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testOrderHistory",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrders",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testHomePageRendering",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testLoginFlow",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testProductDetailsPage",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testCheckoutProcess",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ]
+  }
+}
