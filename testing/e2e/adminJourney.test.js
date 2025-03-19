@@ -16,9 +16,9 @@ const baseURL = process.env.API_URL || 'http://localhost:8000/api';
 
 // Test data
 const adminUser = {
-  email: 'admin@marketplace.com',
-  password: 'AdminPass123!',
-  name: 'Admin User',
+  email: 'realityinspector@marketplace.com',
+  password: 'Stripe_Marketplace_2025!',
+  name: 'Reality Inspector',
   role: 'admin'
 };
 

@@ -1,6 +1,35 @@
 const Stripe = require('stripe');
+const db = require('../db');
 
-// Get Stripe API key from environment variables
+// Gets the Stripe mode from platform settings or environment
+async function getStripeMode() {
+  try {
+    // Check database settings first
+    const result = await db.query(
+      'SELECT value FROM platform_settings WHERE key = $1',
+      ['stripe_mode']
+    );
+    
+    if (result.rows.length > 0) {
+      return result.rows[0].value;
+    }
+  } catch (err) {
+    console.warn('Could not get stripe_mode from database, using environment variable');
+  }
+  
+  // Fall back to environment check
+  const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+  return STRIPE_SECRET_KEY.startsWith('sk_test_') ? 'test' : 'live';
+}
+
+// Get the appropriate Stripe API key based on mode
+function getStripeKey(mode) {
+  return mode === 'test' 
+    ? process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY
+    : process.env.STRIPE_LIVE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+}
+
+// Set initial stripe instance using the available keys
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 
 if (!STRIPE_SECRET_KEY) {
@@ -341,5 +370,7 @@ module.exports = {
   createPaymentIntent,
   createTransfer,
   retrievePaymentIntent,
-  createRefund
+  createRefund,
+  getStripeMode,
+  getStripeKey
 };
