@@ -185,28 +185,44 @@ async function testConnectPaymentFlow() {
     
     let transfer;
     try {
-      transfer = await stripeService.createTransfer(
-        transferAmount, 
-        stripeAccount.id,
-        { 
-          orderId: order.id.toString(),
-          productId: product.id.toString() 
-        },
-        { description: `Order #${order.id} payment` }
-      );
+      // First, check if the vendor's Stripe account has the required capabilities
+      const accountStatus = await stripeService.getStripeAccountStatus(stripeAccount.id);
       
-      if (transfer.id.startsWith('tr_mock_')) {
-        console.log('ℹ️ Using mock transfer because vendor has not completed onboarding');
-        console.log('ℹ️ This is expected in test mode for new Connect accounts');
+      if (!accountStatus.payouts_enabled || !accountStatus.charges_enabled) {
+        console.log('ℹ️ Vendor account does not have required capabilities for transfers yet');
+        console.log('ℹ️ This is expected for new Connect accounts that have not completed onboarding');
+        
+        // Create a mock transfer for testing since we can't transfer to uncompleted accounts
+        transfer = {
+          id: `tr_mock_${Date.now()}`,
+          amount: transferAmount,
+          destination: stripeAccount.id,
+          metadata: {
+            orderId: order.id.toString(),
+            productId: product.id.toString(),
+            is_mock: 'true',
+            reason: 'account_incomplete'
+          }
+        };
+        
+        console.log(`ℹ️ Using simulated transfer: ${transfer.id}`);
+      } else {
+        // Attempt a real transfer if account has required capabilities
+        transfer = await stripeService.createTransfer(
+          transferAmount, 
+          stripeAccount.id,
+          { 
+            orderId: order.id.toString(),
+            productId: product.id.toString() 
+          },
+          { description: `Order #${order.id} payment` }
+        );
+        
+        console.log(`✅ Created transfer: ${transfer.id}`);
+        console.log(`✅ Transfer amount: $${transferAmount/100}`);
       }
-      
-      console.log(`✅ Created transfer: ${transfer.id}`);
-      console.log(`✅ Transfer amount: $${transferAmount/100}`);
     } catch (transferError) {
-      // Handle the expected error for new Connect accounts
-      console.log('ℹ️ Transfer failed because vendor has not completed Connect onboarding');
-      console.log('ℹ️ Message: ' + transferError.message);
-      console.log('ℹ️ This is expected behavior for test mode with new Connect accounts');
+      console.log('ℹ️ Transfer failed: ' + transferError.message);
       
       // Create a mock transfer for testing purposes since we can't actually transfer
       // to a Connect account that hasn't completed onboarding
@@ -216,11 +232,14 @@ async function testConnectPaymentFlow() {
         destination: stripeAccount.id,
         metadata: {
           orderId: order.id.toString(),
-          productId: product.id.toString()
+          productId: product.id.toString(),
+          is_mock: 'true',
+          reason: 'transfer_error'
         }
       };
       
       console.log(`ℹ️ Using simulated transfer: ${transfer.id}`);
+      console.log('ℹ️ This is expected behavior for test mode with new Connect accounts');
     }
     
     // Log transaction summary
