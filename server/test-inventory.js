@@ -70,7 +70,10 @@ async function runInventoryTests() {
     
     // Step 5: Check for low inventory products
     console.log('\n---- Step 5: Checking for low inventory products ----');
-    const lowInventoryProducts = await productStorage.getLowInventoryProducts();
+    const lowInventoryProducts = await productStorage.getLowInventoryProducts({
+      vendorId: TEST_VENDOR_ID,
+      categoryId: TEST_CATEGORY_ID
+    });
     console.log(`Found ${lowInventoryProducts.length} products with low inventory:`);
     lowInventoryProducts.forEach(product => {
       console.log(`- ${product.name} (ID: ${product.id}): ${product.inventory} in stock`);
@@ -78,7 +81,9 @@ async function runInventoryTests() {
     
     // Step 6: Check inventory alerts
     console.log('\n---- Step 6: Checking inventory alerts ----');
-    const alerts = await productStorage.getInventoryAlerts();
+    const alerts = await productStorage.getInventoryAlerts({
+      vendorId: TEST_VENDOR_ID
+    });
     console.log(`Found ${alerts.length} active inventory alerts:`);
     alerts.forEach(alert => {
       console.log(`- ${alert.product_name} (ID: ${alert.product_id}): ${alert.quantity} in stock, Alert level: ${alert.alert_level}`);
@@ -94,7 +99,8 @@ async function runInventoryTests() {
     // Step 8: Check alerts again
     console.log('\n---- Step 8: Checking alerts after critical reduction ----');
     const criticalAlerts = await productStorage.getInventoryAlerts({ 
-      alertLevel: 'critical' 
+      alertLevel: 'critical',
+      vendorId: TEST_VENDOR_ID
     });
     console.log(`Found ${criticalAlerts.length} critical inventory alerts:`);
     criticalAlerts.forEach(alert => {

@@ -324,7 +324,7 @@ const productStorage = {
       const threshold = options.threshold || INVENTORY_LOW_THRESHOLD;
       
       let query = `
-        SELECT p.*, pc.name as category_name, v.name as vendor_name
+        SELECT p.*, pc.name as category_name, v.business_name as vendor_name
         FROM products p
         LEFT JOIN product_categories pc ON p.category_id = pc.id
         LEFT JOIN vendors v ON p.vendor_id = v.id
@@ -365,7 +365,7 @@ const productStorage = {
     try {
       let query = `
         SELECT a.*, p.name as product_name, p.sku as product_sku, 
-               v.name as vendor_name, p.inventory as current_inventory
+               v.business_name as vendor_name, p.inventory as current_inventory
         FROM inventory_alerts a
         JOIN products p ON a.product_id = p.id
         JOIN vendors v ON p.vendor_id = v.id
