@@ -1,0 +1,58 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/19/2025, 2:52:13 AM
+
+SUMMARY
+-------
+Total Tests:  30
+Passed:       29
+Failed:       1
+Success Rate: 97%
+
+API TESTS
+--------
+✓ adminEndpoints.test.js - testAdminAuthRequirements
+✓ adminEndpoints.test.js - testAdminAnalytics
+✓ adminEndpoints.test.js - testAdminVendorsManagement
+✓ adminEndpoints.test.js - testAdminProductsManagement
+✓ adminEndpoints.test.js - testAdminCommissionManagement
+✓ adminEndpoints.test.js - testAdminTransactionsViewing
+✓ authEndpoints.test.js - testUserRegistration
+✓ authEndpoints.test.js - testVendorRegistration
+✓ authEndpoints.test.js - testUserLogin
+✓ authEndpoints.test.js - testAuthMiddleware
+✓ productEndpoints.test.js - testProductCreation
+✓ productEndpoints.test.js - testProductListing
+✓ productEndpoints.test.js - testProductRetrieval
+✓ productEndpoints.test.js - testProductUpdate
+✓ productEndpoints.test.js - testProductDeactivation
+✓ productEndpoints.test.js - testVendorProductListing
+
+E2E TESTS
+--------
+✓ adminJourney.test.js - testAdminJourney
+✓ adminJourney.test.js - testAdminAuthorization
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Order details show incorrect product ID
+✓ paymentFlow.test.js - testOrderHistory
+✓ paymentFlow.test.js - testVendorOrders
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+FRONTEND TESTS
+--------------
+✓ pageRendering.test.js - testApiRootEndpoint
+✓ pageRendering.test.js - testApiResponseTimes
+✓ pageRendering.test.js - testApiCorsHeaders
+✓ pageRendering.test.js - testApiContentTypes
+✓ pageRendering.test.js - testApiErrorHandling
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- E2E Failures: 1
+  - paymentFlow.test.js - testPaymentFlow

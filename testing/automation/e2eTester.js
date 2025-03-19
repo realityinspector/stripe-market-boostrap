@@ -417,9 +417,9 @@ async function performE2eTests(config) {
       // Try to create an admin user first
       try {
         await api.post('/api/auth/register', {
-          email: 'admin@marketplace.com',
+          email: 'newadmin@marketplace.com',
           password: 'Admin123!',
-          name: 'Admin User',
+          name: 'New Admin',
           role: 'admin'
         });
       } catch (error) {
@@ -429,7 +429,7 @@ async function performE2eTests(config) {
       
       // Admin credentials
       const admin = {
-        email: 'admin@marketplace.com',
+        email: 'newadmin@marketplace.com',
         password: 'Admin123!',
         role: 'admin'
       };
