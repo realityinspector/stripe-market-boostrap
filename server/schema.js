@@ -24,6 +24,23 @@ const updateTableSchemas = async () => {
       console.log('Currency column added successfully');
     }
     
+    // Check if featured column exists in products table
+    const checkFeaturedColumn = await db.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'products' AND column_name = 'featured'
+    `);
+    
+    // Add featured column if it doesn't exist
+    if (checkFeaturedColumn.rows.length === 0) {
+      console.log('Adding featured column to products table...');
+      await db.query(`
+        ALTER TABLE products 
+        ADD COLUMN featured BOOLEAN NOT NULL DEFAULT FALSE
+      `);
+      console.log('Featured column added successfully');
+    }
+    
     // Check if status constraint includes refund states
     const checkOrderStatusValues = await db.query(`
       SELECT pg_get_constraintdef(oid) as constraint_def
