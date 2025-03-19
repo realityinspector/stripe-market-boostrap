@@ -1,873 +1,971 @@
-import { db } from './db';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { and, asc, count, desc, eq, gt, gte, ilike, inArray, lt, lte, or, sql } from 'drizzle-orm';
+import { Pool } from 'pg';
 import * as schema from '../shared/schema';
-import { eq, and, gte, lte, like, inArray } from 'drizzle-orm';
+import { PgInsertValue } from 'drizzle-orm/pg-core';
 
-/**
- * Server-side data access layer for the content classes
- * Provides methods to interact with the database using Drizzle ORM
- */
+// Initialize the database connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-// ================ USER & VENDOR FUNCTIONS ================
+const db = drizzle(pool, { schema });
 
-export async function createUser(userData) {
-  return db.insert(schema.users).values(userData).returning();
+// Define interface for pagination parameters
+interface PaginationParams {
+  page?: number;
+  limit?: number;
 }
 
-export async function getUserById(id) {
-  return db.query.users.findFirst({
-    where: eq(schema.users.id, id),
-    with: {
-      vendorProfile: true
-    }
-  });
+// Helper function to calculate offset from page and limit
+function getOffset(page: number = 1, limit: number = 10): number {
+  return (page - 1) * limit;
 }
 
-export async function getUserByEmail(email) {
-  return db.query.users.findFirst({
-    where: eq(schema.users.email, email),
-    with: {
-      vendorProfile: true
-    }
-  });
-}
+// Product Storage Functions
+export const productStorage = {
+  /**
+   * Create a new product
+   */
+  async createProduct(product: PgInsertValue<typeof schema.products>) {
+    return await db.insert(schema.products).values(product).returning();
+  },
 
-export async function createVendor(vendorData) {
-  return db.insert(schema.vendors).values(vendorData).returning();
-}
-
-export async function getVendorById(id) {
-  return db.query.vendors.findFirst({
-    where: eq(schema.vendors.id, id),
-    with: {
-      user: true
-    }
-  });
-}
-
-export async function updateVendorStatus(id, status) {
-  return db.update(schema.vendors)
-    .set({ status })
-    .where(eq(schema.vendors.id, id))
-    .returning();
-}
-
-// ================ PRODUCT FUNCTIONS ================
-
-export async function createProduct(productData) {
-  const product = await db.insert(schema.products).values(productData).returning();
-  
-  // If inventory is specified, create inventory record
-  if (productData.inventory !== undefined && product.length > 0) {
-    await db.insert(schema.productInventory).values({
-      productId: product[0].id,
-      quantity: productData.inventory
-    });
-  }
-  
-  return product;
-}
-
-export async function getProductById(id) {
-  return db.query.products.findFirst({
-    where: eq(schema.products.id, id),
-    with: {
-      vendor: {
-        with: {
-          user: true
-        }
-      },
-      category: true,
-      inventory: true
-    }
-  });
-}
-
-export async function getProducts(options = {}) {
-  const {
-    page = 1,
-    limit = 20,
-    vendorId = null,
-    categoryId = null,
-    featured = null,
-    active = true,
-    minPrice = null,
-    maxPrice = null,
-    search = null
-  } = options;
-
-  const offset = (page - 1) * limit;
-  
-  const conditions = [];
-  
-  if (active !== null) {
-    conditions.push(eq(schema.products.active, active));
-  }
-  
-  if (vendorId) {
-    conditions.push(eq(schema.products.vendorId, vendorId));
-  }
-  
-  if (categoryId) {
-    conditions.push(eq(schema.products.categoryId, categoryId));
-  }
-  
-  if (featured !== null) {
-    conditions.push(eq(schema.products.featured, featured));
-  }
-  
-  if (minPrice !== null) {
-    conditions.push(gte(schema.products.price, minPrice));
-  }
-  
-  if (maxPrice !== null) {
-    conditions.push(lte(schema.products.price, maxPrice));
-  }
-  
-  if (search) {
-    conditions.push(like(schema.products.name, `%${search}%`));
-  }
-  
-  const query = conditions.length > 0 
-    ? and(...conditions) 
-    : undefined;
-  
-  const [products, count] = await Promise.all([
-    db.query.products.findMany({
-      where: query,
-      with: {
-        vendor: {
-          with: {
-            user: {
-              columns: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        },
-        category: true,
-        inventory: true
-      },
-      limit,
-      offset
-    }),
-    db.select({ count: db.fn.count() })
+  /**
+   * Get a product by ID
+   */
+  async getProductById(id: number) {
+    const [product] = await db
+      .select()
       .from(schema.products)
-      .where(query)
-  ]);
+      .where(eq(schema.products.id, id));
+    return product;
+  },
 
-  return {
-    products,
-    pagination: {
-      page,
-      limit,
-      totalItems: Number(count[0].count),
-      totalPages: Math.ceil(Number(count[0].count) / limit)
-    }
-  };
-}
-
-export async function updateProduct(id, productData) {
-  const product = await db.update(schema.products)
-    .set(productData)
-    .where(eq(schema.products.id, id))
-    .returning();
-  
-  // Update inventory if provided
-  if (productData.inventory !== undefined && product.length > 0) {
-    const inventory = await db.query.productInventory.findFirst({
-      where: eq(schema.productInventory.productId, id)
-    });
+  /**
+   * Get products with optional filtering and pagination
+   */
+  async getProducts(params: {
+    page?: number;
+    limit?: number;
+    vendorId?: number;
+    categoryId?: number;
+    featured?: boolean;
+    active?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+  } = {}) {
+    const query = db.select().from(schema.products);
     
-    if (inventory) {
-      await db.update(schema.productInventory)
-        .set({ 
-          quantity: productData.inventory,
-          updatedAt: new Date()
-        })
-        .where(eq(schema.productInventory.productId, id));
-    } else {
-      await db.insert(schema.productInventory).values({
-        productId: id,
-        quantity: productData.inventory
-      });
+    // Apply filters if provided
+    const conditions = [];
+    
+    if (params.vendorId) {
+      conditions.push(eq(schema.products.vendorId, params.vendorId));
     }
     
-    // Log inventory history
-    await db.insert(schema.inventoryHistory).values({
-      productId: id,
-      quantityChange: inventory 
-        ? productData.inventory - inventory.quantity 
-        : productData.inventory,
-      newQuantity: productData.inventory,
-      reason: 'manual_update'
-    });
-  }
-  
-  return product;
-}
-
-export async function updateProductStatus(id, active) {
-  return db.update(schema.products)
-    .set({ active })
-    .where(eq(schema.products.id, id))
-    .returning();
-}
-
-export async function updateProductFeatureStatus(id, featured) {
-  return db.update(schema.products)
-    .set({ featured })
-    .where(eq(schema.products.id, id))
-    .returning();
-}
-
-// ================ PRODUCT CATEGORY FUNCTIONS ================
-
-export async function createProductCategory(categoryData) {
-  return db.insert(schema.productCategories).values(categoryData).returning();
-}
-
-export async function getProductCategories() {
-  return db.query.productCategories.findMany({
-    with: {
-      parent: true
+    if (params.categoryId) {
+      conditions.push(eq(schema.products.categoryId, params.categoryId));
     }
-  });
-}
-
-export async function assignProductToCategories(productId, categoryIds) {
-  // Delete existing mappings
-  await db.delete(schema.productCategoryMappings)
-    .where(eq(schema.productCategoryMappings.productId, productId));
-  
-  // Create new mappings
-  const mappings = categoryIds.map(categoryId => ({
-    productId,
-    categoryId
-  }));
-  
-  return db.insert(schema.productCategoryMappings)
-    .values(mappings)
-    .returning();
-}
-
-// ================ EVENT FUNCTIONS ================
-
-export async function createEvent(eventData) {
-  return db.insert(schema.events).values(eventData).returning();
-}
-
-export async function getEventById(id) {
-  return db.query.events.findFirst({
-    where: eq(schema.events.id, id),
-    with: {
-      vendor: true,
-      addOns: true
+    
+    if (params.featured !== undefined) {
+      conditions.push(eq(schema.products.featured, params.featured));
     }
-  });
-}
+    
+    if (params.active !== undefined) {
+      conditions.push(eq(schema.products.active, params.active));
+    }
+    
+    if (params.minPrice !== undefined) {
+      conditions.push(gte(schema.products.price, params.minPrice));
+    }
+    
+    if (params.maxPrice !== undefined) {
+      conditions.push(lte(schema.products.price, params.maxPrice));
+    }
+    
+    if (params.search) {
+      conditions.push(
+        or(
+          ilike(schema.products.name, `%${params.search}%`),
+          ilike(schema.products.description || '', `%${params.search}%`)
+        )
+      );
+    }
+    
+    // Apply conditions if any
+    if (conditions.length > 0) {
+      query.where(and(...conditions));
+    }
+    
+    // Calculate total count for pagination
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.products)
+      .where(and(...conditions));
+    
+    // Apply pagination
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    query.limit(limit).offset(offset).orderBy(desc(schema.products.createdAt));
+    
+    const products = await query;
+    
+    return {
+      products,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
+    };
+  },
 
-export async function getEvents(options = {}) {
-  const {
-    page = 1,
-    limit = 20,
-    vendorId = null,
-    active = true,
-    featured = null,
-    upcoming = false,
-    search = null
-  } = options;
+  /**
+   * Update a product
+   */
+  async updateProduct(id: number, product: Partial<PgInsertValue<typeof schema.products>>) {
+    const [updatedProduct] = await db
+      .update(schema.products)
+      .set({ ...product, updatedAt: new Date() })
+      .where(eq(schema.products.id, id))
+      .returning();
+    return updatedProduct;
+  },
 
-  const offset = (page - 1) * limit;
-  
-  const conditions = [];
-  
-  if (active !== null) {
-    conditions.push(eq(schema.events.active, active));
+  /**
+   * Delete a product
+   */
+  async deleteProduct(id: number) {
+    return await db
+      .delete(schema.products)
+      .where(eq(schema.products.id, id))
+      .returning();
+  },
+
+  /**
+   * Get product categories
+   */
+  async getProductCategories() {
+    const categories = await db
+      .select()
+      .from(schema.productCategories)
+      .where(eq(schema.productCategories.active, true))
+      .orderBy(asc(schema.productCategories.name));
+    
+    return categories;
+  },
+
+  /**
+   * Create product category
+   */
+  async createProductCategory(category: PgInsertValue<typeof schema.productCategories>) {
+    return await db
+      .insert(schema.productCategories)
+      .values(category)
+      .returning();
   }
-  
-  if (vendorId) {
-    conditions.push(eq(schema.events.vendorId, vendorId));
-  }
-  
-  if (featured !== null) {
-    conditions.push(eq(schema.events.featured, featured));
-  }
-  
-  if (upcoming) {
-    conditions.push(gte(schema.events.startDate, new Date()));
-  }
-  
-  if (search) {
-    conditions.push(like(schema.events.name, `%${search}%`));
-  }
-  
-  const query = conditions.length > 0 
-    ? and(...conditions) 
-    : undefined;
-  
-  const [events, count] = await Promise.all([
-    db.query.events.findMany({
-      where: query,
-      with: {
-        vendor: true
-      },
-      limit,
-      offset
-    }),
-    db.select({ count: db.fn.count() })
+};
+
+// Event Storage Functions
+export const eventStorage = {
+  /**
+   * Create a new event
+   */
+  async createEvent(event: PgInsertValue<typeof schema.events>) {
+    return await db.insert(schema.events).values(event).returning();
+  },
+
+  /**
+   * Get an event by ID
+   */
+  async getEventById(id: number) {
+    const [event] = await db
+      .select()
       .from(schema.events)
-      .where(query)
-  ]);
+      .where(eq(schema.events.id, id));
+    return event;
+  },
 
-  return {
-    events,
-    pagination: {
-      page,
-      limit,
-      totalItems: Number(count[0].count),
-      totalPages: Math.ceil(Number(count[0].count) / limit)
-    }
-  };
-}
-
-export async function createEventAddOn(addOnData) {
-  return db.insert(schema.eventAddOns).values(addOnData).returning();
-}
-
-export async function getEventAddOns(eventId) {
-  return db.query.eventAddOns.findMany({
-    where: eq(schema.eventAddOns.eventId, eventId)
-  });
-}
-
-export async function createEventRegistration(registrationData) {
-  const registration = await db.insert(schema.eventRegistrations)
-    .values(registrationData)
-    .returning();
-  
-  if (registrationData.addOns && registration.length > 0) {
-    const addOnEntries = registrationData.addOns.map(addOn => ({
-      registrationId: registration[0].id,
-      addOnId: addOn.id,
-      quantity: addOn.quantity,
-      price: addOn.price
-    }));
+  /**
+   * Get events with optional filtering and pagination
+   */
+  async getEvents(params: {
+    page?: number;
+    limit?: number;
+    vendorId?: number;
+    active?: boolean;
+    featured?: boolean;
+    upcoming?: boolean;
+    search?: string;
+  } = {}) {
+    const query = db.select().from(schema.events);
     
-    await db.insert(schema.registrationAddOns)
-      .values(addOnEntries);
-  }
-  
-  return registration;
-}
+    // Apply filters if provided
+    const conditions = [];
+    
+    if (params.vendorId) {
+      conditions.push(eq(schema.events.vendorId, params.vendorId));
+    }
+    
+    if (params.active !== undefined) {
+      conditions.push(eq(schema.events.active, params.active));
+    }
+    
+    if (params.featured !== undefined) {
+      conditions.push(eq(schema.events.featured, params.featured));
+    }
+    
+    if (params.upcoming === true) {
+      const now = new Date();
+      conditions.push(gte(schema.events.startDate, now));
+    }
+    
+    if (params.search) {
+      conditions.push(
+        or(
+          ilike(schema.events.name, `%${params.search}%`),
+          ilike(schema.events.description || '', `%${params.search}%`),
+          ilike(schema.events.location || '', `%${params.search}%`)
+        )
+      );
+    }
+    
+    // Apply conditions if any
+    if (conditions.length > 0) {
+      query.where(and(...conditions));
+    }
+    
+    // Calculate total count for pagination
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.events)
+      .where(and(...conditions));
+    
+    // Apply pagination
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    query.limit(limit).offset(offset).orderBy(asc(schema.events.startDate));
+    
+    const events = await query;
+    
+    return {
+      events,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
+    };
+  },
 
-export async function getEventRegistration(id) {
-  return db.query.eventRegistrations.findFirst({
-    where: eq(schema.eventRegistrations.id, id),
-    with: {
-      event: true,
-      user: true,
-      addOns: {
-        with: {
-          addOn: true
+  /**
+   * Update an event
+   */
+  async updateEvent(id: number, event: Partial<PgInsertValue<typeof schema.events>>) {
+    const [updatedEvent] = await db
+      .update(schema.events)
+      .set({ ...event, updatedAt: new Date() })
+      .where(eq(schema.events.id, id))
+      .returning();
+    return updatedEvent;
+  },
+
+  /**
+   * Delete an event
+   */
+  async deleteEvent(id: number) {
+    return await db
+      .delete(schema.events)
+      .where(eq(schema.events.id, id))
+      .returning();
+  },
+
+  /**
+   * Register for an event
+   */
+  async registerForEvent(registration: PgInsertValue<typeof schema.eventRegistrations>) {
+    // Check if event has reached maximum attendees
+    const [event] = await db
+      .select({
+        id: schema.events.id,
+        maxAttendees: schema.events.maxAttendees,
+        currentRegistrations: sql<number>`
+          (SELECT COALESCE(SUM(number_of_tickets), 0) 
+           FROM event_registrations 
+           WHERE event_id = ${registration.eventId})
+        `
+      })
+      .from(schema.events)
+      .where(eq(schema.events.id, registration.eventId));
+    
+    if (event.maxAttendees !== null && event.currentRegistrations >= event.maxAttendees) {
+      throw new Error('Event has reached maximum capacity');
+    }
+    
+    return await db
+      .insert(schema.eventRegistrations)
+      .values(registration)
+      .returning();
+  },
+
+  /**
+   * Create event add-on
+   */
+  async createEventAddOn(addOn: PgInsertValue<typeof schema.eventAddOns>) {
+    return await db
+      .insert(schema.eventAddOns)
+      .values(addOn)
+      .returning();
+  },
+
+  /**
+   * Get event add-ons
+   */
+  async getEventAddOns(eventId: number) {
+    return await db
+      .select()
+      .from(schema.eventAddOns)
+      .where(
+        and(
+          eq(schema.eventAddOns.eventId, eventId),
+          eq(schema.eventAddOns.active, true)
+        )
+      );
+  }
+};
+
+// Discount Storage Functions
+export const discountStorage = {
+  /**
+   * Create a new discount code
+   */
+  async createDiscountCode(discount: PgInsertValue<typeof schema.discountCodes>) {
+    return await db
+      .insert(schema.discountCodes)
+      .values(discount)
+      .returning();
+  },
+
+  /**
+   * Get a discount code by code
+   */
+  async getDiscountCodeByCode(code: string) {
+    const [discountCode] = await db
+      .select()
+      .from(schema.discountCodes)
+      .where(
+        and(
+          eq(schema.discountCodes.code, code),
+          eq(schema.discountCodes.active, true)
+        )
+      );
+    return discountCode;
+  },
+
+  /**
+   * Validate discount code for usage
+   */
+  async validateDiscountCode(params: {
+    userId?: number;
+    vendorId?: number;
+    productIds?: number[];
+    categoryIds?: number[];
+    eventId?: number;
+    orderAmount?: number;
+  }) {
+    const { code } = params;
+    if (!code) return null;
+    
+    const [discountCode] = await db
+      .select()
+      .from(schema.discountCodes)
+      .where(
+        and(
+          eq(schema.discountCodes.code, code),
+          eq(schema.discountCodes.active, true)
+        )
+      );
+    
+    if (!discountCode) return null;
+    
+    // Check if code is expired
+    const now = new Date();
+    if (discountCode.startDate && discountCode.startDate > now) {
+      return { valid: false, message: 'Discount code is not yet active' };
+    }
+    
+    if (discountCode.endDate && discountCode.endDate < now) {
+      return { valid: false, message: 'Discount code has expired' };
+    }
+    
+    // Check usage limit
+    if (discountCode.usageLimit && discountCode.usageCount >= discountCode.usageLimit) {
+      return { valid: false, message: 'Discount code has reached maximum usage' };
+    }
+    
+    // Check minimum order amount
+    if (discountCode.minOrderAmount && params.orderAmount && params.orderAmount < discountCode.minOrderAmount) {
+      return { 
+        valid: false, 
+        message: `Discount code requires a minimum order of ${discountCode.minOrderAmount}` 
+      };
+    }
+    
+    // Check if the discount is applicable to all products
+    if (!discountCode.applicableToAll) {
+      // For product-specific discounts
+      if (params.productIds && params.productIds.length > 0) {
+        const productDiscounts = await db
+          .select()
+          .from(schema.discountCodeProducts)
+          .where(
+            and(
+              eq(schema.discountCodeProducts.discountCodeId, discountCode.id),
+              inArray(schema.discountCodeProducts.productId, params.productIds)
+            )
+          );
+        
+        if (productDiscounts.length === 0) {
+          // Check if discount applies to category
+          if (params.categoryIds && params.categoryIds.length > 0) {
+            const categoryDiscounts = await db
+              .select()
+              .from(schema.discountCodeCategories)
+              .where(
+                and(
+                  eq(schema.discountCodeCategories.discountCodeId, discountCode.id),
+                  inArray(schema.discountCodeCategories.categoryId, params.categoryIds)
+                )
+              );
+            
+            if (categoryDiscounts.length === 0) {
+              return { valid: false, message: 'Discount code is not applicable to selected products' };
+            }
+          } else {
+            return { valid: false, message: 'Discount code is not applicable to selected products' };
+          }
+        }
+      }
+      
+      // For event-specific discounts
+      if (params.eventId) {
+        const eventDiscounts = await db
+          .select()
+          .from(schema.discountCodeEvents)
+          .where(
+            and(
+              eq(schema.discountCodeEvents.discountCodeId, discountCode.id),
+              eq(schema.discountCodeEvents.eventId, params.eventId)
+            )
+          );
+        
+        if (eventDiscounts.length === 0) {
+          return { valid: false, message: 'Discount code is not applicable to this event' };
         }
       }
     }
-  });
-}
-
-// ================ DISCOUNT FUNCTIONS ================
-
-export async function createDiscountCode(discountData) {
-  return db.insert(schema.discountCodes).values(discountData).returning();
-}
-
-export async function getDiscountCode(code) {
-  return db.query.discountCodes.findFirst({
-    where: eq(schema.discountCodes.code, code)
-  });
-}
-
-export async function validateDiscountCode(code, options = {}) {
-  const {
-    userId = null,
-    vendorId = null,
-    productIds = [],
-    categoryIds = [],
-    eventId = null,
-    orderAmount = 0
-  } = options;
-  
-  const now = new Date();
-  
-  const discount = await db.query.discountCodes.findFirst({
-    where: and(
-      eq(schema.discountCodes.code, code),
-      eq(schema.discountCodes.active, true),
-      lte(schema.discountCodes.startDate || now, now),
-      gte(schema.discountCodes.endDate || now, now)
-    )
-  });
-  
-  if (!discount) {
-    return { valid: false, message: 'Invalid or expired discount code' };
-  }
-  
-  // Check usage limit
-  if (discount.usageLimit && discount.usageCount >= discount.usageLimit) {
-    return { valid: false, message: 'Discount code usage limit reached' };
-  }
-  
-  // Check minimum order amount
-  if (discount.minOrderAmount && orderAmount < discount.minOrderAmount) {
+    
+    // Check vendor-specific discounts
+    if (discountCode.vendorId && params.vendorId && discountCode.vendorId !== params.vendorId) {
+      return { valid: false, message: 'Discount code is not applicable to this vendor' };
+    }
+    
+    // Check first-time customer discounts
+    if (discountCode.isFirstTimeOnly && params.userId) {
+      const previousOrders = await db
+        .select({ count: count() })
+        .from(schema.orders)
+        .where(eq(schema.orders.customerId, params.userId));
+      
+      if (previousOrders[0].count > 0) {
+        return { valid: false, message: 'Discount code is only valid for first-time customers' };
+      }
+    }
+    
     return { 
-      valid: false, 
-      message: `Minimum order amount of ${discount.minOrderAmount} required` 
+      valid: true, 
+      discountCode 
+    };
+  },
+
+  /**
+   * Increment usage count for a discount code
+   */
+  async incrementDiscountUsage(discountCodeId: number) {
+    return await db
+      .update(schema.discountCodes)
+      .set({ 
+        usageCount: sql`${schema.discountCodes.usageCount} + 1` 
+      })
+      .where(eq(schema.discountCodes.id, discountCodeId))
+      .returning();
+  },
+
+  /**
+   * Get all discount codes
+   */
+  async getDiscountCodes(params: PaginationParams = {}) {
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    const discountCodes = await db
+      .select()
+      .from(schema.discountCodes)
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(schema.discountCodes.createdAt));
+    
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.discountCodes);
+    
+    return {
+      discountCodes,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
     };
   }
-  
-  // If vendor-specific, check vendor
-  if (discount.vendorId && vendorId && discount.vendorId !== vendorId) {
-    return { valid: false, message: 'Discount code not valid for this vendor' };
-  }
-  
-  // Check if first-time customer restriction applies
-  if (discount.isFirstTimeOnly && userId) {
-    const previousOrders = await db.query.orders.findFirst({
-      where: eq(schema.orders.customerId, userId)
-    });
-    
-    if (previousOrders) {
-      return { valid: false, message: 'Discount code valid for first-time customers only' };
-    }
-  }
-  
-  // Check product/category/event applicability if not applicable to all
-  if (!discount.applicableToAll) {
-    let isApplicable = false;
-    
-    // Check for product applicability
-    if (productIds.length > 0) {
-      const productDiscounts = await db.query.discountCodeProducts.findMany({
-        where: and(
-          eq(schema.discountCodeProducts.discountCodeId, discount.id),
-          inArray(schema.discountCodeProducts.productId, productIds)
-        )
-      });
-      
-      if (productDiscounts.length > 0) {
-        isApplicable = true;
-      }
-    }
-    
-    // Check for category applicability
-    if (!isApplicable && categoryIds.length > 0) {
-      const categoryDiscounts = await db.query.discountCodeCategories.findMany({
-        where: and(
-          eq(schema.discountCodeCategories.discountCodeId, discount.id),
-          inArray(schema.discountCodeCategories.categoryId, categoryIds)
-        )
-      });
-      
-      if (categoryDiscounts.length > 0) {
-        isApplicable = true;
-      }
-    }
-    
-    // Check for event applicability
-    if (!isApplicable && eventId) {
-      const eventDiscount = await db.query.discountCodeEvents.findFirst({
-        where: and(
-          eq(schema.discountCodeEvents.discountCodeId, discount.id),
-          eq(schema.discountCodeEvents.eventId, eventId)
-        )
-      });
-      
-      if (eventDiscount) {
-        isApplicable = true;
-      }
-    }
-    
-    if (!isApplicable) {
-      return { valid: false, message: 'Discount code not applicable to selected items' };
-    }
-  }
-  
-  return { 
-    valid: true, 
-    discount 
-  };
-}
+};
 
-export async function incrementDiscountUsage(id) {
-  return db.update(schema.discountCodes)
-    .set({ 
-      usageCount: db.sql`${schema.discountCodes.usageCount} + 1` 
-    })
-    .where(eq(schema.discountCodes.id, id))
-    .returning();
-}
-
-// ================ ORDER & PAYMENT FUNCTIONS ================
-
-export async function createOrder(orderData) {
-  const order = await db.insert(schema.orders).values(orderData).returning();
-  
-  if (orderData.items && order.length > 0) {
-    const orderItems = orderData.items.map(item => ({
-      orderId: order[0].id,
-      productId: item.productId,
-      productName: item.productName,
-      quantity: item.quantity,
-      price: item.price,
-      discountedPrice: item.discountedPrice
-    }));
-    
-    await db.insert(schema.orderItems).values(orderItems);
-    
-    // Update inventory
-    for (const item of orderData.items) {
-      const inventory = await db.query.productInventory.findFirst({
-        where: eq(schema.productInventory.productId, item.productId)
-      });
+// Order Storage Functions
+export const orderStorage = {
+  /**
+   * Create a new order
+   */
+  async createOrder(order: PgInsertValue<typeof schema.orders>, orderItems: PgInsertValue<typeof schema.orderItems>[]) {
+    // Start a transaction
+    return await db.transaction(async (tx) => {
+      // Insert order
+      const [newOrder] = await tx
+        .insert(schema.orders)
+        .values(order)
+        .returning();
       
-      if (inventory) {
-        const newQuantity = Math.max(0, inventory.quantity - item.quantity);
+      // Insert order items
+      if (orderItems.length > 0) {
+        const items = orderItems.map(item => ({
+          ...item,
+          orderId: newOrder.id
+        }));
         
-        await db.update(schema.productInventory)
+        await tx
+          .insert(schema.orderItems)
+          .values(items);
+        
+        // Update inventory if needed
+        for (const item of items) {
+          if (item.productId) {
+            // Get current inventory
+            const [product] = await tx
+              .select({ inventory: schema.products.inventory })
+              .from(schema.products)
+              .where(eq(schema.products.id, item.productId));
+            
+            // Update inventory
+            if (product && product.inventory !== null) {
+              const newInventory = Math.max(0, product.inventory - item.quantity);
+              
+              await tx
+                .update(schema.products)
+                .set({ inventory: newInventory })
+                .where(eq(schema.products.id, item.productId));
+              
+              // Record inventory change
+              await tx
+                .insert(schema.inventoryHistory)
+                .values({
+                  productId: item.productId,
+                  quantityChange: -item.quantity,
+                  newQuantity: newInventory,
+                  reason: 'order',
+                  reference: `order-${newOrder.id}`
+                });
+            }
+          }
+        }
+      }
+      
+      // If using a discount code, increment usage
+      if (order.discountCodeId) {
+        await tx
+          .update(schema.discountCodes)
           .set({ 
-            quantity: newQuantity,
-            updatedAt: new Date()
+            usageCount: sql`${schema.discountCodes.usageCount} + 1` 
           })
-          .where(eq(schema.productInventory.productId, item.productId));
-        
-        // Log inventory change
-        await db.insert(schema.inventoryHistory).values({
-          productId: item.productId,
-          quantityChange: -item.quantity,
-          newQuantity,
-          reason: 'order_placed',
-          reference: `order_${order[0].id}`
-        });
+          .where(eq(schema.discountCodes.id, order.discountCodeId));
       }
-    }
-    
-    // Apply discount if a code was used
-    if (orderData.discountCodeId) {
-      await incrementDiscountUsage(orderData.discountCodeId);
-    }
-  }
-  
-  return order;
-}
-
-export async function getOrderById(id) {
-  return db.query.orders.findFirst({
-    where: eq(schema.orders.id, id),
-    with: {
-      customer: true,
-      vendor: true,
-      items: true,
-      discountCode: true
-    }
-  });
-}
-
-export async function getOrdersByCustomer(customerId, options = {}) {
-  const { page = 1, limit = 20 } = options;
-  const offset = (page - 1) * limit;
-  
-  const [orders, count] = await Promise.all([
-    db.query.orders.findMany({
-      where: eq(schema.orders.customerId, customerId),
-      with: {
-        vendor: true,
-        items: true
-      },
-      limit,
-      offset,
-      orderBy: db.sql`${schema.orders.createdAt} desc`
-    }),
-    db.select({ count: db.fn.count() })
-      .from(schema.orders)
-      .where(eq(schema.orders.customerId, customerId))
-  ]);
-  
-  return {
-    orders,
-    pagination: {
-      page,
-      limit,
-      totalItems: Number(count[0].count),
-      totalPages: Math.ceil(Number(count[0].count) / limit)
-    }
-  };
-}
-
-export async function getOrdersByVendor(vendorId, options = {}) {
-  const { page = 1, limit = 20, status = null } = options;
-  const offset = (page - 1) * limit;
-  
-  const conditions = [eq(schema.orders.vendorId, vendorId)];
-  
-  if (status) {
-    conditions.push(eq(schema.orders.status, status));
-  }
-  
-  const query = and(...conditions);
-  
-  const [orders, count] = await Promise.all([
-    db.query.orders.findMany({
-      where: query,
-      with: {
-        customer: true,
-        items: true
-      },
-      limit,
-      offset,
-      orderBy: db.sql`${schema.orders.createdAt} desc`
-    }),
-    db.select({ count: db.fn.count() })
-      .from(schema.orders)
-      .where(query)
-  ]);
-  
-  return {
-    orders,
-    pagination: {
-      page,
-      limit,
-      totalItems: Number(count[0].count),
-      totalPages: Math.ceil(Number(count[0].count) / limit)
-    }
-  };
-}
-
-export async function updateOrderStatus(id, status) {
-  return db.update(schema.orders)
-    .set({ 
-      status,
-      updatedAt: new Date()
-    })
-    .where(eq(schema.orders.id, id))
-    .returning();
-}
-
-export async function updateOrderFulfillment(id, fulfillmentData) {
-  const order = await db.update(schema.orders)
-    .set({ 
-      fulfillmentStatus: fulfillmentData.status,
-      trackingNumber: fulfillmentData.trackingNumber,
-      updatedAt: new Date()
-    })
-    .where(eq(schema.orders.id, id))
-    .returning();
-  
-  if (order.length > 0) {
-    await db.insert(schema.fulfillments).values({
-      orderId: id,
-      status: fulfillmentData.status,
-      trackingCompany: fulfillmentData.trackingCompany,
-      trackingNumber: fulfillmentData.trackingNumber,
-      trackingUrl: fulfillmentData.trackingUrl,
-      shippedAt: fulfillmentData.status === 'shipped' ? new Date() : null,
-      deliveredAt: fulfillmentData.status === 'delivered' ? new Date() : null,
-      notes: fulfillmentData.notes
+      
+      return newOrder;
     });
-  }
-  
-  return order;
-}
+  },
 
-// ================ REFUND FUNCTIONS ================
-
-export async function createRefund(refundData) {
-  const refund = await db.insert(schema.refunds).values(refundData).returning();
-  
-  if (refund.length > 0 && refundData.status === 'completed') {
-    const order = await getOrderById(refundData.orderId);
+  /**
+   * Get an order by ID
+   */
+  async getOrderById(id: number) {
+    const [order] = await db
+      .select()
+      .from(schema.orders)
+      .where(eq(schema.orders.id, id));
     
     if (order) {
-      // Check if this is a full or partial refund
-      const newStatus = refundData.amount >= order.totalAmount 
-        ? 'refunded' 
-        : 'partially_refunded';
+      const orderItems = await db
+        .select()
+        .from(schema.orderItems)
+        .where(eq(schema.orderItems.orderId, id));
       
-      await updateOrderStatus(order.id, newStatus);
+      return { ...order, items: orderItems };
     }
-  }
-  
-  return refund;
-}
-
-export async function getRefundsByOrder(orderId) {
-  return db.query.refunds.findMany({
-    where: eq(schema.refunds.orderId, orderId),
-    orderBy: db.sql`${schema.refunds.createdAt} desc`
-  });
-}
-
-export async function updateRefundStatus(id, status) {
-  const refund = await db.update(schema.refunds)
-    .set({ 
-      status,
-      processedAt: status === 'completed' ? new Date() : null
-    })
-    .where(eq(schema.refunds.id, id))
-    .returning();
-  
-  if (refund.length > 0 && status === 'completed') {
-    const allRefunds = await getRefundsByOrder(refund[0].orderId);
-    const order = await getOrderById(refund[0].orderId);
     
-    if (order) {
-      const totalRefunded = allRefunds
-        .filter(r => r.status === 'completed')
-        .reduce((sum, r) => sum + Number(r.amount), 0);
-      
-      // Check if this is a full or partial refund
-      const newStatus = totalRefunded >= order.totalAmount 
-        ? 'refunded' 
-        : 'partially_refunded';
-      
-      await updateOrderStatus(order.id, newStatus);
+    return null;
+  },
+
+  /**
+   * Get orders for a customer
+   */
+  async getCustomerOrders(customerId: number, params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  } = {}) {
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    const query = db
+      .select()
+      .from(schema.orders)
+      .where(eq(schema.orders.customerId, customerId));
+    
+    if (params.status) {
+      query.where(eq(schema.orders.status, params.status));
     }
-  }
-  
-  return refund;
-}
-
-// ================ POSTS (NON-PRODUCT CONTENT) ================
-
-export async function createPost(postData) {
-  return db.insert(schema.posts).values(postData).returning();
-}
-
-export async function getPostById(id) {
-  return db.query.posts.findFirst({
-    where: eq(schema.posts.id, id),
-    with: {
-      author: true,
-      categoryMappings: {
-        with: {
-          category: true
-        }
-      }
-    }
-  });
-}
-
-export async function getPostBySlug(slug) {
-  return db.query.posts.findFirst({
-    where: eq(schema.posts.slug, slug),
-    with: {
-      author: true,
-      categoryMappings: {
-        with: {
-          category: true
-        }
-      }
-    }
-  });
-}
-
-export async function getPosts(options = {}) {
-  const { 
-    page = 1, 
-    limit = 20, 
-    status = 'published',
-    featured = null,
-    authorId = null,
-    categoryId = null,
-    search = null
-  } = options;
-  
-  const offset = (page - 1) * limit;
-  
-  const conditions = [];
-  
-  if (status) {
-    conditions.push(eq(schema.posts.status, status));
-  }
-  
-  if (featured !== null) {
-    conditions.push(eq(schema.posts.featured, featured));
-  }
-  
-  if (authorId) {
-    conditions.push(eq(schema.posts.authorId, authorId));
-  }
-  
-  if (search) {
-    conditions.push(like(schema.posts.title, `%${search}%`));
-  }
-  
-  const query = conditions.length > 0 
-    ? and(...conditions) 
-    : undefined;
-  
-  let posts = await db.query.posts.findMany({
-    where: query,
-    with: {
-      author: true,
-      categoryMappings: {
-        with: {
-          category: true
-        }
-      }
-    },
-    limit,
-    offset,
-    orderBy: [
-      { column: schema.posts.featured, direction: 'desc' },
-      { column: schema.posts.publishedAt, direction: 'desc' }
-    ]
-  });
-  
-  // Filter by category if needed (doing this after fetch since it requires a join condition)
-  if (categoryId) {
-    posts = posts.filter(post => 
-      post.categoryMappings.some(mapping => mapping.category.id === categoryId)
+    
+    const orders = await query
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(schema.orders.createdAt));
+    
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.orders)
+      .where(eq(schema.orders.customerId, customerId));
+    
+    // Get order items for each order
+    const orderWithItems = await Promise.all(
+      orders.map(async (order) => {
+        const items = await db
+          .select()
+          .from(schema.orderItems)
+          .where(eq(schema.orderItems.orderId, order.id));
+        
+        return { ...order, items };
+      })
     );
-  }
-  
-  const count = await db.select({ count: db.fn.count() })
-    .from(schema.posts)
-    .where(query);
-  
-  return {
-    posts,
-    pagination: {
-      page,
-      limit,
-      totalItems: Number(count[0].count),
-      totalPages: Math.ceil(Number(count[0].count) / limit)
+    
+    return {
+      orders: orderWithItems,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
+    };
+  },
+
+  /**
+   * Get orders for a vendor
+   */
+  async getVendorOrders(vendorId: number, params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  } = {}) {
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    const query = db
+      .select()
+      .from(schema.orders)
+      .where(eq(schema.orders.vendorId, vendorId));
+    
+    if (params.status) {
+      query.where(eq(schema.orders.status, params.status));
     }
-  };
-}
+    
+    const orders = await query
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(schema.orders.createdAt));
+    
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.orders)
+      .where(eq(schema.orders.vendorId, vendorId));
+    
+    // Get order items for each order
+    const orderWithItems = await Promise.all(
+      orders.map(async (order) => {
+        const items = await db
+          .select()
+          .from(schema.orderItems)
+          .where(eq(schema.orderItems.orderId, order.id));
+        
+        return { ...order, items };
+      })
+    );
+    
+    return {
+      orders: orderWithItems,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
+    };
+  },
 
-export async function updatePost(id, postData) {
-  return db.update(schema.posts)
-    .set({
-      ...postData,
-      updatedAt: new Date()
-    })
-    .where(eq(schema.posts.id, id))
-    .returning();
-}
+  /**
+   * Update order status
+   */
+  async updateOrderStatus(id: number, status: string) {
+    const [updatedOrder] = await db
+      .update(schema.orders)
+      .set({ 
+        status: status as any, 
+        updatedAt: new Date() 
+      })
+      .where(eq(schema.orders.id, id))
+      .returning();
+    
+    return updatedOrder;
+  },
 
-export async function assignPostToCategories(postId, categoryIds) {
-  // Delete existing mappings
-  await db.delete(schema.postCategoryMappings)
-    .where(eq(schema.postCategoryMappings.postId, postId));
-  
-  // Create new mappings
-  const mappings = categoryIds.map(categoryId => ({
-    postId,
-    categoryId
-  }));
-  
-  return db.insert(schema.postCategoryMappings)
-    .values(mappings)
-    .returning();
-}
+  /**
+   * Update fulfillment status
+   */
+  async updateFulfillmentStatus(id: number, status: string, trackingInfo?: { 
+    trackingNumber?: string;
+    trackingCompany?: string;
+    trackingUrl?: string;
+  }) {
+    const [updatedOrder] = await db
+      .update(schema.orders)
+      .set({ 
+        fulfillmentStatus: status as any,
+        ...trackingInfo,
+        updatedAt: new Date() 
+      })
+      .where(eq(schema.orders.id, id))
+      .returning();
+    
+    // Create fulfillment record
+    const now = new Date();
+    await db
+      .insert(schema.fulfillments)
+      .values({
+        orderId: id,
+        status: status as any,
+        trackingCompany: trackingInfo?.trackingCompany,
+        trackingNumber: trackingInfo?.trackingNumber,
+        trackingUrl: trackingInfo?.trackingUrl,
+        shippedAt: status === 'shipped' ? now : undefined,
+        deliveredAt: status === 'delivered' ? now : undefined
+      });
+    
+    return updatedOrder;
+  }
+};
+
+// Content Management Functions
+export const contentStorage = {
+  /**
+   * Create a new blog post
+   */
+  async createPost(post: PgInsertValue<typeof schema.posts>) {
+    return await db.insert(schema.posts).values(post).returning();
+  },
+
+  /**
+   * Get a post by ID or slug
+   */
+  async getPostByIdOrSlug(idOrSlug: number | string) {
+    let query;
+    
+    if (typeof idOrSlug === 'number') {
+      query = eq(schema.posts.id, idOrSlug);
+    } else {
+      query = eq(schema.posts.slug, idOrSlug);
+    }
+    
+    const [post] = await db
+      .select()
+      .from(schema.posts)
+      .where(query);
+    
+    return post;
+  },
+
+  /**
+   * Get posts with pagination and filtering
+   */
+  async getPosts(params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    featured?: boolean;
+    authorId?: number;
+    categoryId?: number;
+    search?: string;
+  } = {}) {
+    const query = db.select().from(schema.posts);
+    
+    // Apply filters if provided
+    const conditions = [];
+    
+    if (params.status) {
+      conditions.push(eq(schema.posts.status, params.status));
+    }
+    
+    if (params.featured !== undefined) {
+      conditions.push(eq(schema.posts.featured, params.featured));
+    }
+    
+    if (params.authorId) {
+      conditions.push(eq(schema.posts.authorId, params.authorId));
+    }
+    
+    if (params.categoryId) {
+      const postIds = await db
+        .select({ postId: schema.postCategoryMappings.postId })
+        .from(schema.postCategoryMappings)
+        .where(eq(schema.postCategoryMappings.categoryId, params.categoryId));
+      
+      if (postIds.length > 0) {
+        conditions.push(inArray(schema.posts.id, postIds.map(p => p.postId)));
+      } else {
+        // No posts in this category
+        return {
+          posts: [],
+          pagination: {
+            total: 0,
+            page: params.page || 1,
+            limit: params.limit || 10,
+            pages: 0
+          }
+        };
+      }
+    }
+    
+    if (params.search) {
+      conditions.push(
+        or(
+          ilike(schema.posts.title, `%${params.search}%`),
+          ilike(schema.posts.content, `%${params.search}%`),
+          ilike(schema.posts.excerpt || '', `%${params.search}%`)
+        )
+      );
+    }
+    
+    // Apply conditions if any
+    if (conditions.length > 0) {
+      query.where(and(...conditions));
+    }
+    
+    // Calculate total count for pagination
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(schema.posts)
+      .where(and(...conditions));
+    
+    // Apply pagination
+    const limit = params.limit || 10;
+    const offset = getOffset(params.page || 1, limit);
+    
+    query.limit(limit).offset(offset).orderBy(desc(schema.posts.createdAt));
+    
+    const posts = await query;
+    
+    // Get categories for each post
+    const postsWithCategories = await Promise.all(
+      posts.map(async (post) => {
+        const categories = await db
+          .select({ 
+            id: schema.postCategories.id,
+            name: schema.postCategories.name,
+            slug: schema.postCategories.slug
+          })
+          .from(schema.postCategoryMappings)
+          .innerJoin(
+            schema.postCategories,
+            eq(schema.postCategoryMappings.categoryId, schema.postCategories.id)
+          )
+          .where(eq(schema.postCategoryMappings.postId, post.id));
+        
+        return { ...post, categories };
+      })
+    );
+    
+    return {
+      posts: postsWithCategories,
+      pagination: {
+        total: Number(total),
+        page: params.page || 1,
+        limit,
+        pages: Math.ceil(Number(total) / limit)
+      }
+    };
+  },
+
+  /**
+   * Update a post
+   */
+  async updatePost(id: number, post: Partial<PgInsertValue<typeof schema.posts>>) {
+    const [updatedPost] = await db
+      .update(schema.posts)
+      .set({ ...post, updatedAt: new Date() })
+      .where(eq(schema.posts.id, id))
+      .returning();
+    
+    return updatedPost;
+  },
+
+  /**
+   * Delete a post
+   */
+  async deletePost(id: number) {
+    return await db
+      .delete(schema.posts)
+      .where(eq(schema.posts.id, id))
+      .returning();
+  },
+
+  /**
+   * Get post categories
+   */
+  async getPostCategories() {
+    return await db
+      .select()
+      .from(schema.postCategories)
+      .orderBy(asc(schema.postCategories.name));
+  }
+};
+
+export default {
+  productStorage,
+  eventStorage,
+  discountStorage,
+  orderStorage,
+  contentStorage
+};

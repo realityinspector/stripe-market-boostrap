@@ -366,7 +366,13 @@ CREATE TABLE IF NOT EXISTS fulfillments (
 
 -- Create indexes for frequently queried columns
 CREATE INDEX IF NOT EXISTS idx_products_vendor_id ON products(vendor_id);
-CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+-- Only create index on category_id if the table was created with this column
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'category_id') THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id)';
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
 CREATE INDEX IF NOT EXISTS idx_products_featured ON products(featured);
 CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON orders(customer_id);
