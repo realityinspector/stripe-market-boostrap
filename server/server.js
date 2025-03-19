@@ -156,6 +156,12 @@ const startServer = async () => {
     // Update existing tables with new schema changes
     await updateTableSchemas();
     
+    // Set the FRONTEND_URL environment variable if not already set
+    if (!process.env.FRONTEND_URL) {
+      process.env.FRONTEND_URL = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+      console.log(`Setting FRONTEND_URL to ${process.env.FRONTEND_URL}`);
+    }
+    
     // Start the server
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on http://0.0.0.0:${PORT}`);

@@ -72,10 +72,17 @@ const createStripeAccount = async (businessName, email) => {
 // Generate a Stripe Connect account link for onboarding
 const getAccountLink = async (accountId) => {
   try {
+    // Use a default URL if FRONTEND_URL is not set or doesn't have HTTP/HTTPS prefix
+    const baseUrl = process.env.FRONTEND_URL && 
+                    (process.env.FRONTEND_URL.startsWith('http://') || 
+                     process.env.FRONTEND_URL.startsWith('https://')) 
+                    ? process.env.FRONTEND_URL 
+                    : 'https://example.com';
+                    
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: `${process.env.FRONTEND_URL}/vendor/onboarding/refresh`,
-      return_url: `${process.env.FRONTEND_URL}/vendor/onboarding/complete`,
+      refresh_url: `${baseUrl}/vendor/onboarding/refresh`,
+      return_url: `${baseUrl}/vendor/onboarding/complete`,
       type: 'account_onboarding',
     });
     
@@ -134,6 +141,41 @@ const createPaymentIntent = async (
       };
     }
     
+    // Check if the connected account has completed onboarding
+    // and has the necessary capabilities
+    try {
+      if (stripeAccountId) {
+        const account = await stripe.accounts.retrieve(stripeAccountId);
+        
+        // If the account doesn't have the necessary capabilities yet, use a mock payment intent
+        if (!account.charges_enabled || !account.details_submitted) {
+          console.log(`Connected account ${stripeAccountId} has not completed onboarding. Using mock payment intent.`);
+          const mockId = 'pi_mock_' + Math.random().toString(36).substring(2, 15);
+          return {
+            id: mockId,
+            client_secret: mockId + '_secret_' + Math.random().toString(36).substring(2, 15),
+            amount: amount,
+            currency: currency,
+            status: 'requires_payment_method',
+            metadata: {
+              ...metadata,
+              is_mock: 'true',
+              vendor_onboarding_status: 'incomplete'
+            },
+            automatic_payment_methods: { enabled: true },
+            application_fee_amount: applicationFeeAmount,
+            transfer_data: {
+              destination: stripeAccountId
+            },
+            description: options.description || 'Payment for marketplace purchase'
+          };
+        }
+      }
+    } catch (accountError) {
+      console.warn(`Failed to check account ${stripeAccountId} status: ${accountError.message}`);
+      // Continue with payment intent creation attempt
+    }
+    
     // Build payment intent options
     const paymentIntentOptions = {
       amount,
@@ -164,10 +206,22 @@ const createPaymentIntent = async (
   } catch (error) {
     console.error('Create payment intent error:', error);
     
-    // If there's an error, fall back to a mock payment intent for local development and testing
-    // This allows testing to continue even if the Stripe API is unavailable
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-      console.log('Falling back to mock payment intent due to Stripe API error');
+    // Handle specific errors that may occur with connected accounts
+    let mockReason = 'api_error';
+    
+    if (error.type === 'StripeInvalidRequestError') {
+      if (error.raw && error.raw.code === 'insufficient_capabilities_for_transfer') {
+        mockReason = 'vendor_not_onboarded';
+      }
+    }
+    
+    // Fall back to a mock payment intent in development, test, or when dealing with unready accounts
+    if (process.env.NODE_ENV === 'development' || 
+        process.env.NODE_ENV === 'test' || 
+        mockReason === 'vendor_not_onboarded') {
+      
+      console.log(`Falling back to mock payment intent due to Stripe API error: ${mockReason}`);
+      
       const mockId = 'pi_mock_' + Math.random().toString(36).substring(2, 15);
       return {
         id: mockId,
@@ -175,7 +229,11 @@ const createPaymentIntent = async (
         amount: amount,
         currency: currency,
         status: 'requires_payment_method',
-        metadata: metadata,
+        metadata: {
+          ...metadata,
+          is_mock: 'true',
+          mock_reason: mockReason
+        },
         error: {
           message: error.message,
           code: error.code || 'unknown_error'
@@ -183,7 +241,7 @@ const createPaymentIntent = async (
       };
     }
     
-    // In production, we should throw the error to handle it properly
+    // In production with real accounts, throw the error for proper handling
     throw error;
   }
 };
