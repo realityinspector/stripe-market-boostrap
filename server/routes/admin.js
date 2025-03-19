@@ -450,4 +450,375 @@ router.post('/stripe-connect', async (req, res) => {
   }
 });
 
+/**
+ * Get available Stripe Connect webhook events
+ */
+router.get('/webhook-events', async (req, res) => {
+  try {
+    // Categorized list of available webhook events for Stripe Connect
+    const webhookEvents = {
+      account: [
+        'account.updated',
+        'account.application.authorized',
+        'account.application.deauthorized',
+        'account.external_account.created',
+        'account.external_account.deleted',
+        'account.external_account.updated'
+      ],
+      payment: [
+        'payment_intent.created',
+        'payment_intent.succeeded',
+        'payment_intent.payment_failed',
+        'payment_intent.canceled',
+        'payment_method.attached',
+        'payment_method.detached',
+        'payment_method.updated',
+        'charge.succeeded',
+        'charge.failed',
+        'charge.refunded',
+        'charge.dispute.created',
+        'charge.dispute.updated',
+        'charge.dispute.closed'
+      ],
+      customer: [
+        'customer.created',
+        'customer.updated',
+        'customer.deleted',
+        'customer.source.created',
+        'customer.source.updated',
+        'customer.source.deleted'
+      ],
+      transfers: [
+        'transfer.created',
+        'transfer.updated',
+        'transfer.reversed',
+        'transfer.failed'
+      ],
+      payouts: [
+        'payout.created',
+        'payout.updated',
+        'payout.paid',
+        'payout.failed'
+      ],
+      checkout: [
+        'checkout.session.completed',
+        'checkout.session.async_payment_succeeded',
+        'checkout.session.async_payment_failed'
+      ],
+      products: [
+        'product.created',
+        'product.updated',
+        'product.deleted',
+        'price.created',
+        'price.updated',
+        'price.deleted'
+      ],
+      subscriptions: [
+        'subscription.created',
+        'subscription.updated',
+        'subscription.deleted',
+        'subscription.trial_will_end',
+        'invoice.created',
+        'invoice.updated',
+        'invoice.paid',
+        'invoice.payment_failed'
+      ]
+    };
+    
+    res.status(200).json({
+      success: true,
+      webhookEvents
+    });
+  } catch (err) {
+    console.error('Get webhook events error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to get webhook events',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Get all registered webhook endpoints
+ */
+router.get('/webhooks', async (req, res) => {
+  try {
+    // Get all webhook endpoints from database
+    const result = await db.query(
+      'SELECT * FROM webhook_endpoints ORDER BY created_at DESC'
+    );
+    
+    // Use the webhooks endpoints API to get the latest status
+    const mode = req.query.mode || 'test';
+    let stripeKey;
+    
+    // Determine which Stripe key to use based on mode
+    if (mode === 'test') {
+      stripeKey = process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else if (mode === 'live') {
+      stripeKey = process.env.STRIPE_LIVE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else {
+      // Default to the main secret key
+      stripeKey = process.env.STRIPE_SECRET_KEY;
+    }
+    
+    // Initialize Stripe with the appropriate key
+    const stripe = require('stripe')(stripeKey);
+    
+    // Get all webhooks from Stripe API
+    const stripeWebhooks = await stripe.webhookEndpoints.list({ limit: 100 });
+    
+    // Match database webhooks with Stripe webhooks for status
+    const webhooks = result.rows.map(webhook => {
+      const stripeWebhook = stripeWebhooks.data.find(sw => sw.id === webhook.stripe_webhook_id);
+      
+      return {
+        ...webhook,
+        // If we found a matching Stripe webhook, use its status
+        active: stripeWebhook ? stripeWebhook.status === 'enabled' : false,
+        events: stripeWebhook ? stripeWebhook.enabled_events : [],
+        last_checked: new Date().toISOString()
+      };
+    });
+    
+    res.status(200).json({
+      success: true,
+      webhooks,
+      mode
+    });
+  } catch (err) {
+    console.error('Get admin webhooks error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to get webhooks data',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Register a new webhook endpoint
+ */
+router.post('/webhooks', async (req, res) => {
+  try {
+    const { url, mode, events } = req.body;
+    
+    // Validate URL
+    if (!url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Webhook URL is required'
+      });
+    }
+    
+    // Validate events
+    if (!events || !Array.isArray(events) || events.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'At least one webhook event is required'
+      });
+    }
+    
+    // Validate mode
+    if (!mode || !['test', 'live'].includes(mode)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mode must be test or live'
+      });
+    }
+    
+    // Determine which Stripe key to use based on mode
+    let stripeKey;
+    if (mode === 'test') {
+      stripeKey = process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else if (mode === 'live') {
+      stripeKey = process.env.STRIPE_LIVE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else {
+      // Default to the main secret key
+      stripeKey = process.env.STRIPE_SECRET_KEY;
+    }
+    
+    // Initialize Stripe with the appropriate key
+    const stripe = require('stripe')(stripeKey);
+    
+    // Register the webhook endpoint with Stripe
+    const webhook = await stripe.webhookEndpoints.create({
+      url: url,
+      enabled_events: events,
+      description: `Marketplace webhook endpoint (${mode} mode)`
+    });
+    
+    // Save the webhook to database
+    const result = await db.query(
+      'INSERT INTO webhook_endpoints (stripe_webhook_id, url, mode, secret, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [webhook.id, url, mode, webhook.secret, new Date()]
+    );
+    
+    res.status(201).json({
+      success: true,
+      message: 'Webhook endpoint registered successfully',
+      webhook: {
+        ...result.rows[0],
+        events: webhook.enabled_events
+      }
+    });
+  } catch (err) {
+    console.error('Register webhook error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to register webhook endpoint',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Update a webhook endpoint
+ */
+router.put('/webhooks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { events, status } = req.body;
+    
+    // Get webhook from database
+    const dbResult = await db.query(
+      'SELECT * FROM webhook_endpoints WHERE id = $1',
+      [id]
+    );
+    
+    if (dbResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Webhook endpoint not found'
+      });
+    }
+    
+    const webhook = dbResult.rows[0];
+    
+    // Determine which Stripe key to use based on webhook mode
+    let stripeKey;
+    if (webhook.mode === 'test') {
+      stripeKey = process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else if (webhook.mode === 'live') {
+      stripeKey = process.env.STRIPE_LIVE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else {
+      // Default to the main secret key
+      stripeKey = process.env.STRIPE_SECRET_KEY;
+    }
+    
+    // Initialize Stripe with the appropriate key
+    const stripe = require('stripe')(stripeKey);
+    
+    // Update webhook in Stripe
+    const updateParams = {};
+    
+    if (events && Array.isArray(events) && events.length > 0) {
+      updateParams.enabled_events = events;
+    }
+    
+    if (status && ['active', 'disabled'].includes(status)) {
+      updateParams.disabled = status === 'disabled';
+    }
+    
+    // Only update if we have parameters to update
+    if (Object.keys(updateParams).length > 0) {
+      await stripe.webhookEndpoints.update(webhook.stripe_webhook_id, updateParams);
+      
+      // Update status in database if provided
+      if (status) {
+        await db.query(
+          'UPDATE webhook_endpoints SET status = $1, updated_at = $2 WHERE id = $3',
+          [status, new Date(), id]
+        );
+      }
+    }
+    
+    // Get updated webhook from database
+    const updatedResult = await db.query(
+      'SELECT * FROM webhook_endpoints WHERE id = $1',
+      [id]
+    );
+    
+    // Get webhook from Stripe for latest info
+    const stripeWebhook = await stripe.webhookEndpoints.retrieve(webhook.stripe_webhook_id);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Webhook endpoint updated successfully',
+      webhook: {
+        ...updatedResult.rows[0],
+        events: stripeWebhook.enabled_events,
+        active: stripeWebhook.status === 'enabled'
+      }
+    });
+  } catch (err) {
+    console.error('Update webhook error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update webhook endpoint',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Delete a webhook endpoint
+ */
+router.delete('/webhooks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Get webhook from database
+    const result = await db.query(
+      'SELECT * FROM webhook_endpoints WHERE id = $1',
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Webhook endpoint not found'
+      });
+    }
+    
+    const webhook = result.rows[0];
+    
+    // Determine which Stripe key to use based on webhook mode
+    let stripeKey;
+    if (webhook.mode === 'test') {
+      stripeKey = process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else if (webhook.mode === 'live') {
+      stripeKey = process.env.STRIPE_LIVE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    } else {
+      // Default to the main secret key
+      stripeKey = process.env.STRIPE_SECRET_KEY;
+    }
+    
+    // Initialize Stripe with the appropriate key
+    const stripe = require('stripe')(stripeKey);
+    
+    // Delete webhook from Stripe
+    await stripe.webhookEndpoints.del(webhook.stripe_webhook_id);
+    
+    // Delete webhook from database
+    await db.query(
+      'DELETE FROM webhook_endpoints WHERE id = $1',
+      [id]
+    );
+    
+    res.status(200).json({
+      success: true,
+      message: 'Webhook endpoint deleted successfully'
+    });
+  } catch (err) {
+    console.error('Delete webhook error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete webhook endpoint',
+      error: err.message
+    });
+  }
+});
+
 module.exports = router;
