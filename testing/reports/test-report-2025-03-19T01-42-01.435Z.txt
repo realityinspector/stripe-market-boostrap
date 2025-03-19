@@ -1,0 +1,62 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/19/2025, 1:42:01 AM
+
+SUMMARY
+-------
+Total Tests:  30
+Passed:       27
+Failed:       3
+Success Rate: 90%
+
+API TESTS
+--------
+✓ adminEndpoints.test.js - testAdminAuthRequirements
+✓ adminEndpoints.test.js - testAdminAnalytics
+✓ adminEndpoints.test.js - testAdminVendorsManagement
+✓ adminEndpoints.test.js - testAdminProductsManagement
+✓ adminEndpoints.test.js - testAdminCommissionManagement
+✓ adminEndpoints.test.js - testAdminTransactionsViewing
+✓ authEndpoints.test.js - testUserRegistration
+✓ authEndpoints.test.js - testVendorRegistration
+✓ authEndpoints.test.js - testUserLogin
+✓ authEndpoints.test.js - testAuthMiddleware
+✓ productEndpoints.test.js - testProductCreation
+✓ productEndpoints.test.js - testProductListing
+✓ productEndpoints.test.js - testProductRetrieval
+✓ productEndpoints.test.js - testProductUpdate
+✓ productEndpoints.test.js - testProductDeactivation
+✓ productEndpoints.test.js - testVendorProductListing
+
+E2E TESTS
+--------
+✓ adminJourney.test.js - testAdminJourney
+✓ adminJourney.test.js - testAdminAuthorization
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Request failed with status code 404
+✗ paymentFlow.test.js - testOrderHistory
+  Error: Request failed with status code 404
+✗ paymentFlow.test.js - testVendorOrders
+  Error: Request failed with status code 404
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+FRONTEND TESTS
+--------------
+✓ pageRendering.test.js - testApiRootEndpoint
+✓ pageRendering.test.js - testApiResponseTimes
+✓ pageRendering.test.js - testApiCorsHeaders
+✓ pageRendering.test.js - testApiContentTypes
+✓ pageRendering.test.js - testApiErrorHandling
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- E2E Failures: 3
+  - paymentFlow.test.js - testPaymentFlow
+  - paymentFlow.test.js - testOrderHistory
+  - paymentFlow.test.js - testVendorOrders
