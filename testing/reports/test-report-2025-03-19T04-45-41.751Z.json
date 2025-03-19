@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-03-19T04:45:41.751Z",
+  "summary": {
+    "total": 9,
+    "passed": 8,
+    "failed": 1,
+    "successRate": 89
+  },
+  "results": {
+    "api": [],
+    "e2e": [
+      {
+        "name": "adminJourney.test.js - testAdminJourney",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminJourney.test.js - testAdminAuthorization",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "passed": false,
+        "error": "Order status is paid, expected 'completed'",
+        "stack": "Error: Order status is paid, expected 'completed'\n    at exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:128:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:136:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testOrderHistory",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrders",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testHomePageRendering",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testLoginFlow",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testProductDetailsPage",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testCheckoutProcess",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "frontend": []
+  }
+}

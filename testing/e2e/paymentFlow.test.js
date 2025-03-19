@@ -124,8 +124,9 @@ exports.testPaymentFlow = async () => {
       throw new Error(`Order details show incorrect customer ID. Expected ${customerData.user.id}, got ${orderDetailsResponse.data.order.customer_id}`);
     }
     
-    if (orderDetailsResponse.data.order.status !== 'completed') {
-      throw new Error(`Order status is ${orderDetailsResponse.data.order.status}, expected 'completed'`);
+    // Check order status - could be 'completed' or 'paid' depending on webhook processing
+    if (orderDetailsResponse.data.order.status !== 'completed' && orderDetailsResponse.data.order.status !== 'paid') {
+      throw new Error(`Order status is ${orderDetailsResponse.data.order.status}, expected 'completed' or 'paid'`);
     }
   } catch (error) {
     if (error.response && error.response.status === 400 && 

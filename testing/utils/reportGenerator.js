@@ -1,7 +1,8 @@
 /**
  * Report Generator
  * 
- * Utility to generate test reports in various formats.
+ * Utility to generate test reports in various formats with enhanced error reporting
+ * and detailed failure analysis for CI/CD pipeline integration.
  */
 
 const fs = require('fs');
@@ -24,7 +25,26 @@ function generateJsonReport(results, outputPath) {
       failed: 0,
       successRate: 0
     },
-    results: results
+    categories: {
+      api: {
+        total: results.api ? results.api.length : 0,
+        passed: results.api ? results.api.filter(t => t.passed).length : 0
+      },
+      e2e: {
+        total: results.e2e ? results.e2e.length : 0,
+        passed: results.e2e ? results.e2e.filter(t => t.passed).length : 0
+      },
+      ui: {
+        total: results.ui ? results.ui.length : 0,
+        passed: results.ui ? results.ui.filter(t => t.passed).length : 0
+      },
+      frontend: {
+        total: results.frontend ? results.frontend.length : 0,
+        passed: results.frontend ? results.frontend.filter(t => t.passed).length : 0
+      }
+    },
+    results: results,
+    timestamp_readable: new Date().toLocaleString()
   };
   
   // Calculate summary statistics
@@ -90,10 +110,23 @@ function generateTextReport(report, outputPath) {
   if (!report.results.api || report.results.api.length === 0) {
     lines.push('No API tests run');
   } else {
+    const apiPassed = report.results.api.filter(t => t.passed).length;
+    const apiTotal = report.results.api.length;
+    lines.push(`Results: ${apiPassed}/${apiTotal} (${Math.round((apiPassed/apiTotal) * 100)}% success rate)`);
+    lines.push('');
+    
     report.results.api.forEach(test => {
       lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
       if (!test.passed) {
         lines.push(`  Error: ${test.error}`);
+        if (test.details) {
+          lines.push(`  Details: ${JSON.stringify(test.details, null, 2)}`);
+        }
+        if (test.stack) {
+          const stackLines = test.stack.split('\n').slice(0, 3);
+          lines.push('  Stack trace (first 3 lines):');
+          stackLines.forEach(line => lines.push(`    ${line.trim()}`));
+        }
       }
     });
   }
@@ -105,10 +138,51 @@ function generateTextReport(report, outputPath) {
   if (!report.results.e2e || report.results.e2e.length === 0) {
     lines.push('No E2E tests run');
   } else {
+    const e2ePassed = report.results.e2e.filter(t => t.passed).length;
+    const e2eTotal = report.results.e2e.length;
+    lines.push(`Results: ${e2ePassed}/${e2eTotal} (${Math.round((e2ePassed/e2eTotal) * 100)}% success rate)`);
+    lines.push('');
+    
     report.results.e2e.forEach(test => {
       lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
       if (!test.passed) {
         lines.push(`  Error: ${test.error}`);
+        if (test.details) {
+          lines.push(`  Details: ${JSON.stringify(test.details, null, 2)}`);
+        }
+        if (test.stack) {
+          const stackLines = test.stack.split('\n').slice(0, 3);
+          lines.push('  Stack trace (first 3 lines):');
+          stackLines.forEach(line => lines.push(`    ${line.trim()}`));
+        }
+      }
+    });
+  }
+  lines.push('');
+  
+  // Add UI test results
+  lines.push('UI TESTS');
+  lines.push('--------');
+  if (!report.results.ui || report.results.ui.length === 0) {
+    lines.push('No UI tests run');
+  } else {
+    const uiPassed = report.results.ui.filter(t => t.passed).length;
+    const uiTotal = report.results.ui.length;
+    lines.push(`Results: ${uiPassed}/${uiTotal} (${Math.round((uiPassed/uiTotal) * 100)}% success rate)`);
+    lines.push('');
+    
+    report.results.ui.forEach(test => {
+      lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
+      if (!test.passed) {
+        lines.push(`  Error: ${test.error}`);
+        if (test.details) {
+          lines.push(`  Details: ${JSON.stringify(test.details, null, 2)}`);
+        }
+        if (test.stack) {
+          const stackLines = test.stack.split('\n').slice(0, 3);
+          lines.push('  Stack trace (first 3 lines):');
+          stackLines.forEach(line => lines.push(`    ${line.trim()}`));
+        }
       }
     });
   }
@@ -120,10 +194,23 @@ function generateTextReport(report, outputPath) {
   if (!report.results.frontend || report.results.frontend.length === 0) {
     lines.push('No Frontend tests run');
   } else {
+    const frontendPassed = report.results.frontend.filter(t => t.passed).length;
+    const frontendTotal = report.results.frontend.length;
+    lines.push(`Results: ${frontendPassed}/${frontendTotal} (${Math.round((frontendPassed/frontendTotal) * 100)}% success rate)`);
+    lines.push('');
+    
     report.results.frontend.forEach(test => {
       lines.push(`${test.passed ? '✓' : '✗'} ${test.name}`);
       if (!test.passed) {
         lines.push(`  Error: ${test.error}`);
+        if (test.details) {
+          lines.push(`  Details: ${JSON.stringify(test.details, null, 2)}`);
+        }
+        if (test.stack) {
+          const stackLines = test.stack.split('\n').slice(0, 3);
+          lines.push('  Stack trace (first 3 lines):');
+          stackLines.forEach(line => lines.push(`    ${line.trim()}`));
+        }
       }
     });
   }
@@ -136,6 +223,7 @@ function generateTextReport(report, outputPath) {
     // Group failures by category
     const apiFailures = report.results.api ? report.results.api.filter(t => !t.passed) : [];
     const e2eFailures = report.results.e2e ? report.results.e2e.filter(t => !t.passed) : [];
+    const uiFailures = report.results.ui ? report.results.ui.filter(t => !t.passed) : [];
     const frontendFailures = report.results.frontend ? report.results.frontend.filter(t => !t.passed) : [];
     
     lines.push('');
@@ -143,17 +231,39 @@ function generateTextReport(report, outputPath) {
     
     if (apiFailures.length > 0) {
       lines.push(`- API Failures: ${apiFailures.length}`);
-      apiFailures.forEach(f => lines.push(`  - ${f.name}`));
+      apiFailures.forEach(f => lines.push(`  - ${f.name}: ${f.error}`));
     }
     
     if (e2eFailures.length > 0) {
       lines.push(`- E2E Failures: ${e2eFailures.length}`);
-      e2eFailures.forEach(f => lines.push(`  - ${f.name}`));
+      e2eFailures.forEach(f => lines.push(`  - ${f.name}: ${f.error}`));
+    }
+    
+    if (uiFailures.length > 0) {
+      lines.push(`- UI Failures: ${uiFailures.length}`);
+      uiFailures.forEach(f => lines.push(`  - ${f.name}: ${f.error}`));
     }
     
     if (frontendFailures.length > 0) {
       lines.push(`- Frontend Failures: ${frontendFailures.length}`);
-      frontendFailures.forEach(f => lines.push(`  - ${f.name}`));
+      frontendFailures.forEach(f => lines.push(`  - ${f.name}: ${f.error}`));
+    }
+    
+    // Add recommendations for fixing the issues
+    lines.push('');
+    lines.push('RECOMMENDATIONS:');
+    
+    if (apiFailures.length > 0) {
+      lines.push('- For API failures, check server routes and authentication');
+    }
+    if (e2eFailures.length > 0) {
+      lines.push('- For E2E failures, review complete user flows and cross-component interactions');
+    }
+    if (uiFailures.length > 0) {
+      lines.push('- For UI failures, check component rendering and user interactions');
+    }
+    if (frontendFailures.length > 0) {
+      lines.push('- For Frontend failures, verify page rendering and API connections');
     }
   } else {
     lines.push('CONCLUSION: All tests passed successfully!');

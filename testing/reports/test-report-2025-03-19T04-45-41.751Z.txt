@@ -1,0 +1,52 @@
+====================================
+  STRIPE MARKETPLACE TEST REPORT
+====================================
+
+Date: 3/19/2025, 4:45:41 AM
+
+SUMMARY
+-------
+Total Tests:  9
+Passed:       8
+Failed:       1
+Success Rate: 89%
+
+API TESTS
+--------
+No API tests run
+
+E2E TESTS
+--------
+Results: 8/9 (89% success rate)
+
+✓ adminJourney.test.js - testAdminJourney
+✓ adminJourney.test.js - testAdminAuthorization
+✗ paymentFlow.test.js - testPaymentFlow
+  Error: Order status is paid, expected 'completed'
+  Stack trace (first 3 lines):
+    Error: Order status is paid, expected 'completed'
+    at exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:128:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+✓ paymentFlow.test.js - testOrderHistory
+✓ paymentFlow.test.js - testVendorOrders
+✓ uiTesting.test.js - testHomePageRendering
+✓ uiTesting.test.js - testLoginFlow
+✓ uiTesting.test.js - testProductDetailsPage
+✓ uiTesting.test.js - testCheckoutProcess
+
+UI TESTS
+--------
+No UI tests run
+
+FRONTEND TESTS
+--------------
+No Frontend tests run
+
+CONCLUSION: Some tests are failing. Please check the failures above.
+
+FAILURE SUMMARY:
+- E2E Failures: 1
+  - paymentFlow.test.js - testPaymentFlow: Order status is paid, expected 'completed'
+
+RECOMMENDATIONS:
+- For E2E failures, review complete user flows and cross-component interactions
