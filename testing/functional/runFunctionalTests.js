@@ -9,14 +9,18 @@
  * 
  * Options:
  *   [test-name] - Optional name of specific test to run (customer, vendor, admin, 
- *                 edge-cases, stripe, connect, admin-onboarding)
+ *                 edge-cases, stripe, connect, connect-buyer, connect-vendor,
+ *                 connect-transactions, admin-onboarding)
  *                 If not specified, all functional tests will be run.
  * 
  * Example:
- *   node runFunctionalTests.js customer         # Run only customer journey tests
- *   node runFunctionalTests.js admin            # Run only admin journey tests
- *   node runFunctionalTests.js edge-cases       # Run only customer edge cases tests
- *   node runFunctionalTests.js admin-onboarding # Run only admin onboarding tests
+ *   node runFunctionalTests.js customer             # Run only customer journey tests
+ *   node runFunctionalTests.js admin                # Run only admin journey tests
+ *   node runFunctionalTests.js edge-cases           # Run only customer edge cases tests
+ *   node runFunctionalTests.js admin-onboarding     # Run only admin onboarding tests
+ *   node runFunctionalTests.js connect-buyer        # Run only Stripe Connect buyer tests
+ *   node runFunctionalTests.js connect-vendor       # Run only Stripe Connect vendor tests
+ *   node runFunctionalTests.js connect-transactions # Run full Connect transaction tests
  */
 
 const { testCustomerJourney } = require('./customer_journey.test');
@@ -26,6 +30,9 @@ const { testCustomerEdgeCases } = require('./customer_edge_cases.test');
 const { testStripeIntegration } = require('./stripe_integration.test');
 const { runConnectTests } = require('./stripe_connect_onboarding.test');
 const { runAdminOnboardingTests } = require('./admin_onboarding.test');
+const { runBuyerTests } = require('./stripe_connect_buyer_tests');
+const { runVendorTests } = require('./stripe_connect_vendor_tests');
+const { testCompleteTransactionFlow } = require('./stripe_connect_test_runner');
 const fs = require('fs');
 const path = require('path');
 
@@ -134,6 +141,28 @@ async function runAllTests(specificTest = null) {
     testsToRun.push({
       name: 'Admin Onboarding',
       fn: runAdminOnboardingTests
+    });
+  }
+  
+  // New Stripe Connect test options
+  if (!specificTest || specificTest === 'connect-buyer') {
+    testsToRun.push({
+      name: 'Stripe Connect Buyer Tests',
+      fn: runBuyerTests
+    });
+  }
+  
+  if (!specificTest || specificTest === 'connect-vendor') {
+    testsToRun.push({
+      name: 'Stripe Connect Vendor Tests',
+      fn: runVendorTests
+    });
+  }
+  
+  if (!specificTest || specificTest === 'connect-transactions') {
+    testsToRun.push({
+      name: 'Stripe Connect Transaction Flow',
+      fn: testCompleteTransactionFlow
     });
   }
   
