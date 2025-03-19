@@ -1,0 +1,205 @@
+{
+  "timestamp": "2025-03-19T02:08:56.317Z",
+  "summary": {
+    "total": 30,
+    "passed": 22,
+    "failed": 8,
+    "successRate": 73
+  },
+  "results": {
+    "api": [
+      {
+        "name": "adminEndpoints.test.js - testAdminAuthRequirements",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminAnalytics",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminVendorsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminProductsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminCommissionManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminTransactionsViewing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthMiddleware",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "e2e": [
+      {
+        "name": "adminJourney.test.js - testAdminJourney",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminJourney.test.js - testAdminAuthorization",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "passed": false,
+        "error": "Failed to create test vendor user",
+        "stack": "Error: Failed to create test vendor user\n    at createTestUser (/home/runner/workspace/testing/utils/testHelpers.js:63:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:37:22)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testOrderHistory",
+        "passed": false,
+        "error": "Failed to create test vendor user",
+        "stack": "Error: Failed to create test vendor user\n    at createTestUser (/home/runner/workspace/testing/utils/testHelpers.js:63:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testOrderHistory (/home/runner/workspace/testing/e2e/paymentFlow.test.js:144:22)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrders",
+        "passed": false,
+        "error": "Failed to create test vendor user",
+        "stack": "Error: Failed to create test vendor user\n    at createTestUser (/home/runner/workspace/testing/utils/testHelpers.js:63:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testVendorOrders (/home/runner/workspace/testing/e2e/paymentFlow.test.js:222:22)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testHomePageRendering",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testLoginFlow",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testProductDetailsPage",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testCheckoutProcess",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "passed": false,
+        "error": "connect ECONNREFUSED 127.0.0.1:8000",
+        "stack": "Error: connect ECONNREFUSED 127.0.0.1:8000\n    at AxiosError.from (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:857:14)\n    at RedirectableRequest.handleRequestError (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3169:25)\n    at RedirectableRequest.emit (node:events:518:28)\n    at eventHandlers.<computed> (/home/runner/workspace/node_modules/follow-redirects/index.js:49:24)\n    at ClientRequest.emit (node:events:518:28)\n    at emitErrorEvent (node:_http_client:101:11)\n    at Socket.socketErrorListener (node:_http_client:504:5)\n    at Socket.emit (node:events:518:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async simulatePageLoad (/home/runner/workspace/testing/utils/testHelpers.js:233:18)\n    at async exports.testApiRootEndpoint (/home/runner/workspace/testing/frontend/pageRendering.test.js:25:18)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:28)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "passed": false,
+        "error": "connect ECONNREFUSED 127.0.0.1:8000",
+        "stack": "Error: connect ECONNREFUSED 127.0.0.1:8000\n    at AxiosError.from (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:857:14)\n    at RedirectableRequest.handleRequestError (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3169:25)\n    at RedirectableRequest.emit (node:events:518:28)\n    at eventHandlers.<computed> (/home/runner/workspace/node_modules/follow-redirects/index.js:49:24)\n    at ClientRequest.emit (node:events:518:28)\n    at emitErrorEvent (node:_http_client:101:11)\n    at Socket.socketErrorListener (node:_http_client:504:5)\n    at Socket.emit (node:events:518:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async simulatePageLoad (/home/runner/workspace/testing/utils/testHelpers.js:233:18)\n    at async exports.testApiResponseTimes (/home/runner/workspace/testing/frontend/pageRendering.test.js:47:20)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:28)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "passed": false,
+        "error": "connect ECONNREFUSED 127.0.0.1:8000",
+        "stack": "Error: connect ECONNREFUSED 127.0.0.1:8000\n    at AxiosError.from (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:857:14)\n    at RedirectableRequest.handleRequestError (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3169:25)\n    at RedirectableRequest.emit (node:events:518:28)\n    at eventHandlers.<computed> (/home/runner/workspace/node_modules/follow-redirects/index.js:49:24)\n    at ClientRequest.emit (node:events:518:28)\n    at emitErrorEvent (node:_http_client:101:11)\n    at Socket.socketErrorListener (node:_http_client:504:5)\n    at Socket.emit (node:events:518:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async simulatePageLoad (/home/runner/workspace/testing/utils/testHelpers.js:224:18)\n    at async exports.testApiCorsHeaders (/home/runner/workspace/testing/frontend/pageRendering.test.js:70:20)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:28)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "passed": false,
+        "error": "connect ECONNREFUSED 127.0.0.1:8000",
+        "stack": "Error: connect ECONNREFUSED 127.0.0.1:8000\n    at AxiosError.from (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:857:14)\n    at RedirectableRequest.handleRequestError (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3169:25)\n    at RedirectableRequest.emit (node:events:518:28)\n    at eventHandlers.<computed> (/home/runner/workspace/node_modules/follow-redirects/index.js:49:24)\n    at ClientRequest.emit (node:events:518:28)\n    at emitErrorEvent (node:_http_client:101:11)\n    at Socket.socketErrorListener (node:_http_client:504:5)\n    at Socket.emit (node:events:518:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async simulatePageLoad (/home/runner/workspace/testing/utils/testHelpers.js:233:18)\n    at async exports.testApiContentTypes (/home/runner/workspace/testing/frontend/pageRendering.test.js:91:18)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:28)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "passed": false,
+        "error": "connect ECONNREFUSED 127.0.0.1:8000",
+        "stack": "Error: connect ECONNREFUSED 127.0.0.1:8000\n    at AxiosError.from (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:857:14)\n    at RedirectableRequest.handleRequestError (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3169:25)\n    at RedirectableRequest.emit (node:events:518:28)\n    at eventHandlers.<computed> (/home/runner/workspace/node_modules/follow-redirects/index.js:49:24)\n    at ClientRequest.emit (node:events:518:28)\n    at emitErrorEvent (node:_http_client:101:11)\n    at Socket.socketErrorListener (node:_http_client:504:5)\n    at Socket.emit (node:events:518:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async simulatePageLoad (/home/runner/workspace/testing/utils/testHelpers.js:233:18)\n    at async exports.testApiErrorHandling (/home/runner/workspace/testing/frontend/pageRendering.test.js:102:18)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:151:28)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      }
+    ]
+  }
+}

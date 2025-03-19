@@ -177,7 +177,7 @@ async function createTestOrder(customer, customerToken, product) {
     
     // Step 3: Create the order (this would normally happen after payment confirmation)
     const orderResponse = await axios.post(
-      `${BASE_URL}/api/orders`,
+      `${BASE_URL}/api/payments/orders`,
       {
         productId: product.id,
         paymentIntentId: clientSecret.split('_secret_')[0], // Extract payment intent ID from client secret
