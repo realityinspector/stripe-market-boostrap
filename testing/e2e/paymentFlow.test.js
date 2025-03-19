@@ -114,12 +114,14 @@ exports.testPaymentFlow = async () => {
       throw new Error(`Expected status 200 for order details, got ${orderDetailsResponse.status}`);
     }
     
-    if (orderDetailsResponse.data.order.productId !== product.id) {
-      throw new Error('Order details show incorrect product ID');
+    // Get the product ID from order items
+    const orderItemProductIds = orderDetailsResponse.data.order.items.map(item => item.product_id);
+    if (!orderItemProductIds.includes(product.id)) {
+      throw new Error(`Order details show incorrect product ID. Expected item with product ID ${product.id}, got ${JSON.stringify(orderItemProductIds)}`);
     }
     
-    if (orderDetailsResponse.data.order.customerId !== customerData.user.id) {
-      throw new Error('Order details show incorrect customer ID');
+    if (orderDetailsResponse.data.order.customer_id !== customerData.user.id) {
+      throw new Error(`Order details show incorrect customer ID. Expected ${customerData.user.id}, got ${orderDetailsResponse.data.order.customer_id}`);
     }
     
     if (orderDetailsResponse.data.order.status !== 'completed') {
