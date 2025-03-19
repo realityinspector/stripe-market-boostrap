@@ -43,7 +43,7 @@ console.log(`Stripe initialized in ${isTestMode ? 'TEST' : 'LIVE'} mode`);
 
 // Initialize Stripe with the secret key
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-01',
+  apiVersion: '2023-10-16',
 });
 
 // Create a Stripe Connect account for a vendor

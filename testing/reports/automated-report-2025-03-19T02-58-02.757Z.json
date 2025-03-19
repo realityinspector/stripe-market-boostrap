@@ -1,0 +1,380 @@
+{
+  "timestamp": "2025-03-19T02:58:02.757Z",
+  "summary": {
+    "totalTests": 30,
+    "totalPassed": 14,
+    "totalFailed": 16,
+    "totalWarnings": 0,
+    "successRate": 47,
+    "api": {
+      "total": 11,
+      "passed": 0,
+      "failed": 11,
+      "warnings": 0
+    },
+    "ui": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "warnings": 0
+    },
+    "e2e": {
+      "total": 5,
+      "passed": 0,
+      "failed": 5,
+      "warnings": 0
+    }
+  },
+  "environment": {
+    "apiServer": "http://localhost:8000",
+    "clientUrl": "http://localhost:8000",
+    "timeouts": {
+      "apiResponse": 5000,
+      "pageLoad": 10000,
+      "elementAppear": 5000
+    },
+    "browserVersion": "Mock Browser"
+  },
+  "results": {
+    "api": {
+      "passed": [],
+      "failed": [
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-19T02:58:02.523Z",
+          "details": {
+            "endpoint": "/"
+          },
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Authentication Flow",
+          "timestamp": "2025-03-19T02:58:02.530Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Product Endpoints",
+          "timestamp": "2025-03-19T02:58:02.544Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Payment Endpoints",
+          "timestamp": "2025-03-19T02:58:02.550Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "CORS Headers",
+          "timestamp": "2025-03-19T02:58:02.565Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/auth/login": {
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/products": {
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/payments/create-payment-intent": {
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              }
+            }
+          },
+          "error": "Missing CORS headers"
+        },
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-19T02:58:02.571Z",
+          "details": {
+            "endpoint": "/"
+          },
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Response Time - /api/auth/login",
+          "timestamp": "2025-03-19T02:58:02.590Z",
+          "details": {
+            "endpoint": "/api/auth/login"
+          },
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Response Time - /api/auth/register",
+          "timestamp": "2025-03-19T02:58:02.614Z",
+          "details": {
+            "endpoint": "/api/auth/register"
+          },
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Response Time - /api/products",
+          "timestamp": "2025-03-19T02:58:02.616Z",
+          "details": {
+            "endpoint": "/api/products"
+          },
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "API Response Times",
+          "timestamp": "2025-03-19T02:58:02.616Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "passed": false,
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/auth/login": {
+                "passed": false,
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/auth/register": {
+                "passed": false,
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              },
+              "/api/products": {
+                "passed": false,
+                "error": "connect ECONNREFUSED 127.0.0.1:8000"
+              }
+            }
+          },
+          "error": "Some endpoints have slow response times"
+        },
+        {
+          "name": "Error Handling",
+          "timestamp": "2025-03-19T02:58:02.628Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        }
+      ],
+      "warnings": []
+    },
+    "ui": {
+      "passed": [
+        {
+          "name": "Page Rendering - Home Page",
+          "timestamp": "2025-03-19T02:58:02.638Z",
+          "details": {
+            "url": "http://localhost:8000/",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              "header": true,
+              "main": true,
+              "footer": true
+            }
+          }
+        },
+        {
+          "name": "Page Rendering - Products Page",
+          "timestamp": "2025-03-19T02:58:02.640Z",
+          "details": {
+            "url": "http://localhost:8000/products",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              ".product-list": true,
+              ".product-item": true
+            }
+          }
+        },
+        {
+          "name": "Registration Form Input",
+          "timestamp": "2025-03-19T02:58:02.648Z",
+          "details": {
+            "email": "test_user_1742353082641@example.com",
+            "name": "Test User 1742353082641",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "User Registration",
+          "timestamp": "2025-03-19T02:58:02.648Z",
+          "details": {
+            "email": "test_user_1742353082641@example.com",
+            "name": "Test User 1742353082641",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Login Form Input",
+          "timestamp": "2025-03-19T02:58:02.648Z",
+          "details": {
+            "email": "test_user_1742353082641@example.com",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "User Login",
+          "timestamp": "2025-03-19T02:58:02.649Z",
+          "details": {
+            "email": "test_user_1742353082641@example.com",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Auth Storage",
+          "timestamp": "2025-03-19T02:58:02.649Z",
+          "details": {
+            "hasToken": true,
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Product Listing",
+          "timestamp": "2025-03-19T02:58:02.657Z",
+          "details": {
+            "productCount": true
+          }
+        },
+        {
+          "name": "Product Details Page",
+          "timestamp": "2025-03-19T02:58:02.660Z",
+          "details": {
+            "url": "http://localhost:8000/products",
+            "screenshot": "testing/screenshots/product-details.png"
+          }
+        },
+        {
+          "name": "Add to Cart",
+          "timestamp": "2025-03-19T02:58:02.662Z",
+          "details": {}
+        },
+        {
+          "name": "Payment Process",
+          "timestamp": "2025-03-19T02:58:02.679Z",
+          "details": {
+            "mock": true,
+            "warning": "Mock confirmation message"
+          }
+        },
+        {
+          "name": "Responsive Design",
+          "timestamp": "2025-03-19T02:58:02.699Z",
+          "details": {
+            "viewports": {
+              "Desktop": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "1920x1080"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "1920x1080"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "1920x1080"
+                }
+              },
+              "Laptop": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "1280x800"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "1280x800"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "1280x800"
+                }
+              },
+              "Tablet": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "768x1024"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "768x1024"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "768x1024"
+                }
+              },
+              "Mobile": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "375x667"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "375x667"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "375x667"
+                }
+              }
+            },
+            "issues": {
+              "Desktop": {},
+              "Laptop": {},
+              "Tablet": {},
+              "Mobile": {}
+            }
+          }
+        },
+        {
+          "name": "Admin Currency Formatting",
+          "timestamp": "2025-03-19T02:58:02.727Z",
+          "details": {
+            "mockMode": true,
+            "simulated": true
+          }
+        },
+        {
+          "name": "Japanese Yen Formatting",
+          "timestamp": "2025-03-19T02:58:02.727Z",
+          "details": {
+            "mockMode": true
+          }
+        }
+      ],
+      "failed": [],
+      "warnings": []
+    },
+    "e2e": {
+      "passed": [],
+      "failed": [
+        {
+          "name": "Vendor Flow",
+          "timestamp": "2025-03-19T02:58:02.732Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Customer Flow",
+          "timestamp": "2025-03-19T02:58:02.740Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Full Purchase Flow",
+          "timestamp": "2025-03-19T02:58:02.745Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Admin Flow",
+          "timestamp": "2025-03-19T02:58:02.753Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        },
+        {
+          "name": "Customer Edge Cases",
+          "timestamp": "2025-03-19T02:58:02.756Z",
+          "details": {},
+          "error": "connect ECONNREFUSED 127.0.0.1:8000"
+        }
+      ],
+      "warnings": []
+    }
+  }
+}
