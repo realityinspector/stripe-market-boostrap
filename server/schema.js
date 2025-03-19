@@ -103,6 +103,89 @@ const updateTableSchemas = async () => {
       console.log('Refunds table created successfully');
     }
     
+    // Check if webhook_endpoints table exists
+    const checkWebhookEndpointsTable = await db.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_name = 'webhook_endpoints'
+    `);
+    
+    // Create webhook_endpoints table if it doesn't exist
+    if (checkWebhookEndpointsTable.rows.length === 0) {
+      console.log('Creating webhook_endpoints table...');
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS webhook_endpoints (
+          id SERIAL PRIMARY KEY,
+          stripe_webhook_id VARCHAR(255) UNIQUE NOT NULL,
+          url VARCHAR(255) NOT NULL,
+          mode VARCHAR(20) NOT NULL CHECK (mode IN ('test', 'live')),
+          secret VARCHAR(255) NOT NULL,
+          status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'disabled')), 
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log('Webhook endpoints table created successfully');
+    } else {
+      // Check if status column exists in webhook_endpoints table
+      const checkStatusColumn = await db.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'webhook_endpoints' AND column_name = 'status'
+      `);
+      
+      // Add status column if it doesn't exist
+      if (checkStatusColumn.rows.length === 0) {
+        console.log('Adding status column to webhook_endpoints table...');
+        await db.query(`
+          ALTER TABLE webhook_endpoints 
+          ADD COLUMN status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'disabled'))
+        `);
+        console.log('Status column added successfully to webhook_endpoints');
+      }
+    }
+    
+    // Check if stripe_authorized column exists in vendors table
+    const checkStripeAuthorizedColumn = await db.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'vendors' AND column_name = 'stripe_authorized'
+    `);
+    
+    // Add stripe_authorized column if it doesn't exist
+    if (checkStripeAuthorizedColumn.rows.length === 0) {
+      console.log('Adding stripe_authorized column to vendors table...');
+      await db.query(`
+        ALTER TABLE vendors 
+        ADD COLUMN stripe_authorized BOOLEAN DEFAULT FALSE
+      `);
+      console.log('Stripe authorized column added successfully to vendors');
+    }
+    
+    // Check if transfers table exists
+    const checkTransfersTable = await db.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_name = 'transfers'
+    `);
+    
+    // Create transfers table if it doesn't exist
+    if (checkTransfersTable.rows.length === 0) {
+      console.log('Creating transfers table...');
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS transfers (
+          id SERIAL PRIMARY KEY,
+          stripe_transfer_id VARCHAR(255) UNIQUE NOT NULL,
+          stripe_account_id VARCHAR(255) NOT NULL,
+          amount DECIMAL(10,2) NOT NULL,
+          currency VARCHAR(3) NOT NULL DEFAULT 'usd',
+          status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'succeeded', 'failed')),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log('Transfers table created successfully');
+    }
+    
     console.log('Database schema updates completed');
   } catch (err) {
     console.error('Error updating database schemas:', err);
@@ -214,6 +297,20 @@ const createTables = async () => {
         id SERIAL PRIMARY KEY,
         key VARCHAR(100) UNIQUE NOT NULL,
         value TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create webhook_endpoints table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS webhook_endpoints (
+        id SERIAL PRIMARY KEY,
+        stripe_webhook_id VARCHAR(255) UNIQUE NOT NULL,
+        url VARCHAR(255) NOT NULL,
+        mode VARCHAR(20) NOT NULL CHECK (mode IN ('test', 'live')),
+        secret VARCHAR(255) NOT NULL,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'disabled')), 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )

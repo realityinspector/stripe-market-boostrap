@@ -44,7 +44,14 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+// Special handling for Stripe webhook routes that need the raw body
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/webhooks/stripe') {
+    next();
+  } else {
+    bodyParser.json()(req, res, next);
+  }
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Log all requests
