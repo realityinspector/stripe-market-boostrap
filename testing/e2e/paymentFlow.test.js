@@ -102,7 +102,7 @@ exports.testPaymentFlow = async () => {
     
     // Step 7: Verify order details
     const orderDetailsResponse = await axios.get(
-      `${BASE_URL}/api/orders/${orderId}`,
+      `${BASE_URL}/api/payments/orders/${orderId}`,
       {
         headers: {
           'Authorization': `Bearer ${customerData.token}`
@@ -185,7 +185,7 @@ exports.testOrderHistory = async () => {
     
     // Step 5: Get order history
     const orderHistoryResponse = await axios.get(
-      `${BASE_URL}/api/orders`,
+      `${BASE_URL}/api/payments/orders`,
       {
         headers: {
           'Authorization': `Bearer ${customerData.token}`
@@ -247,7 +247,7 @@ exports.testVendorOrders = async () => {
     
     // Step 5: Get vendor orders
     const vendorOrdersResponse = await axios.get(
-      `${BASE_URL}/api/vendor/orders`,
+      `${BASE_URL}/api/payments/vendor/orders`,
       {
         headers: {
           'Authorization': `Bearer ${vendorData.token}`
