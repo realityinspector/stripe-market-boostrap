@@ -82,10 +82,14 @@ async function loadAnalytics() {
       document.getElementById('vendorCount').textContent = data.analytics.users.vendors || 0;
       document.getElementById('totalProducts').textContent = data.analytics.products || 0;
       document.getElementById('totalOrders').textContent = data.analytics.orders || 0;
-      document.getElementById('totalRevenue').textContent = formatCurrency(data.analytics.revenue || 0);
+      
+      // Format revenue with currency information
+      const displayCurrency = data.analytics.default_currency || 'usd';
+      document.getElementById('totalRevenue').innerHTML = 
+        `${formatCurrency(data.analytics.revenue || 0, displayCurrency)} <span class="currency-code">${displayCurrency.toUpperCase()}</span>`;
       
       // Calculate platform fee based on commission rate
-      await loadCommissionRate(data.analytics.revenue);
+      await loadCommissionRate(data.analytics.revenue, displayCurrency);
     }
   } catch (error) {
     console.error('Error loading analytics:', error);
@@ -94,7 +98,7 @@ async function loadAnalytics() {
 }
 
 // Load commission rate and calculate platform fee
-async function loadCommissionRate(totalRevenue) {
+async function loadCommissionRate(totalRevenue, currency = 'usd') {
   try {
     const response = await fetch('/api/admin/commission', {
       headers: {
@@ -111,7 +115,10 @@ async function loadCommissionRate(totalRevenue) {
     if (data.success && data.commission) {
       const commissionRate = data.commission.rate || 10; // Default to 10% if not set
       const platformFee = (totalRevenue * commissionRate) / 100;
-      document.getElementById('platformFee').textContent = formatCurrency(platformFee);
+      
+      // Format the platform fee display with proper currency
+      document.getElementById('platformFee').innerHTML = 
+        `${formatCurrency(platformFee, currency)} <span class="currency-code">${currency.toUpperCase()}</span>`;
     }
   } catch (error) {
     console.error('Error loading commission rate:', error);
@@ -354,12 +361,14 @@ function openVendorModal(vendorId, vendors) {
   // Format sales with proper currency handling
   const currencies = vendor.currencies || ['usd'];
   if (currencies.length === 1) {
-    // Single currency case
-    document.getElementById('modalSales').textContent = formatCurrency(vendor.total_sales || 0, currencies[0]);
+    // Single currency case - show with currency code
+    const currency = currencies[0].toLowerCase();
+    document.getElementById('modalSales').innerHTML = 
+      `${formatCurrency(vendor.total_sales || 0, currency)} <span class="currency-code">${currency.toUpperCase()}</span>`;
   } else {
     // Multi-currency case - show USD equivalent with a note
-    document.getElementById('modalSales').textContent = 
-      formatCurrency(vendor.total_sales || 0, 'usd') + ' (equivalent in USD)';
+    document.getElementById('modalSales').innerHTML = 
+      `${formatCurrency(vendor.total_sales || 0, 'usd')} <span class="currency-code">USD</span> <em>(equivalent)</em>`;
   }
   
   // Set current status in select dropdown
