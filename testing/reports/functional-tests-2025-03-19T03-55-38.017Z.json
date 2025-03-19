@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-03-19T03:55:38.017Z",
+  "totalDuration": 1.652,
+  "tests": [
+    {
+      "name": "Stripe Integration",
+      "success": true,
+      "duration": 1.651,
+      "result": {
+        "success": false,
+        "results": {
+          "elements": true,
+          "payment": true,
+          "connect": false,
+          "webhooks": true,
+          "payouts": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
+}

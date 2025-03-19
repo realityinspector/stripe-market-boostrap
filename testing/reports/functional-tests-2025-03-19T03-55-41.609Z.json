@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-03-19T03:55:41.608Z",
+  "totalDuration": 0.597,
+  "tests": [
+    {
+      "name": "Stripe Connect",
+      "success": true,
+      "duration": 0.597,
+      "result": {
+        "success": false,
+        "results": {
+          "onboarding": false,
+          "payouts": true
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
+}
