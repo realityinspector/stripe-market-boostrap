@@ -628,17 +628,12 @@ async function initializeCheckout() {
     return;
   }
   
-  // Render checkout summary
-  renderCheckoutSummary();
-  
-  // Set up currency change event handler
+  // Get the currency selector
   const currencySelect = document.getElementById('currency');
-  if (currencySelect) {
-    currencySelect.addEventListener('change', (e) => {
-      // Update the displayed prices based on the selected currency
-      renderCheckoutSummary(e.target.value);
-    });
-  }
+  const selectedCurrency = currencySelect ? currencySelect.value : 'usd';
+  
+  // Render checkout summary with the current currency
+  renderCheckoutSummary(selectedCurrency);
   
   // Add event listener for checkout form
   const checkoutForm = document.getElementById('checkout-form');
@@ -738,6 +733,10 @@ async function handleCheckoutSubmit(e) {
   submitButton.disabled = true;
   submitButton.textContent = 'Processing...';
   
+  // Get selected currency
+  const currencySelect = document.getElementById('currency');
+  const selectedCurrency = currencySelect ? currencySelect.value : 'usd';
+  
   try {
     // Create payment intent
     const response = await fetch(`${API_BASE_URL}/payments/create-payment-intent`, {
@@ -748,6 +747,7 @@ async function handleCheckoutSubmit(e) {
       },
       body: JSON.stringify({
         items: state.cart,
+        currency: selectedCurrency.toLowerCase(),
         shippingAddress: {
           name: form.name.value,
           address: form.address.value,
@@ -768,6 +768,7 @@ async function handleCheckoutSubmit(e) {
           <h2>Order Placed Successfully!</h2>
           <p>Thank you for your order. Your payment was successful.</p>
           <p>Order confirmation and details have been sent to your email.</p>
+          <p>Payment currency: ${selectedCurrency.toUpperCase()}</p>
           <a href="/" class="btn primary">Return to Home</a>
         </div>
       `;
@@ -803,6 +804,22 @@ function setupEventListeners() {
 }
 
 // Utility function to format price
-function formatPrice(price) {
-  return `$${(price / 100).toFixed(2)}`;
+function formatPrice(price, currency = 'usd') {
+  const currencySymbols = {
+    usd: '$',
+    eur: '€',
+    gbp: '£',
+    cad: 'C$',
+    aud: 'A$',
+    jpy: '¥'
+  };
+  
+  const symbol = currencySymbols[currency.toLowerCase()] || '$';
+  
+  // Japanese Yen doesn't use decimal places
+  if (currency.toLowerCase() === 'jpy') {
+    return `${symbol}${Math.round(price / 100)}`;
+  }
+  
+  return `${symbol}${(price / 100).toFixed(2)}`;
 }

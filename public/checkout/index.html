@@ -113,6 +113,15 @@
       // Initialize checkout
       initializeCheckout();
       
+      // Add event listener for currency select
+      const currencySelect = document.getElementById('currency');
+      if (currencySelect) {
+        currencySelect.addEventListener('change', () => {
+          // Update the order summary with the selected currency
+          renderCheckoutSummary(currencySelect.value);
+        });
+      }
+      
       // Initialize Stripe Elements
       const stripe = Stripe(process.env.VITE_STRIPE_PUBLIC_KEY);
       const elements = stripe.elements();
