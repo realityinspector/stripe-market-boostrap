@@ -1,0 +1,200 @@
+{
+  "timestamp": "2025-03-19T01:03:24.980Z",
+  "summary": {
+    "total": 30,
+    "passed": 27,
+    "failed": 3,
+    "successRate": 90
+  },
+  "results": {
+    "api": [
+      {
+        "name": "adminEndpoints.test.js - testAdminAuthRequirements",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminAnalytics",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminVendorsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminProductsManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminCommissionManagement",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminEndpoints.test.js - testAdminTransactionsViewing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testVendorRegistration",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testUserLogin",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "authEndpoints.test.js - testAuthMiddleware",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductCreation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductRetrieval",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductUpdate",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testProductDeactivation",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "productEndpoints.test.js - testVendorProductListing",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "e2e": [
+      {
+        "name": "adminJourney.test.js - testAdminJourney",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "adminJourney.test.js - testAdminAuthorization",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testPaymentFlow",
+        "passed": false,
+        "error": "Request failed with status code 404",
+        "stack": "AxiosError: Request failed with status code 404\n    at settle (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:2031:12)\n    at IncomingMessage.handleStreamEnd (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3148:11)\n    at IncomingMessage.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testPaymentFlow (/home/runner/workspace/testing/e2e/paymentFlow.test.js:78:27)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testOrderHistory",
+        "passed": false,
+        "error": "Request failed with status code 404",
+        "stack": "AxiosError: Request failed with status code 404\n    at settle (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:2031:12)\n    at IncomingMessage.handleStreamEnd (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3148:11)\n    at IncomingMessage.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testOrderHistory (/home/runner/workspace/testing/e2e/paymentFlow.test.js:187:34)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "paymentFlow.test.js - testVendorOrders",
+        "passed": false,
+        "error": "Request failed with status code 404",
+        "stack": "AxiosError: Request failed with status code 404\n    at settle (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:2031:12)\n    at IncomingMessage.handleStreamEnd (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:3148:11)\n    at IncomingMessage.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/home/runner/workspace/node_modules/axios/dist/node/axios.cjs:4258:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async exports.testVendorOrders (/home/runner/workspace/testing/e2e/paymentFlow.test.js:249:34)\n    at async runTest (/home/runner/workspace/testing/utils/testRunner.js:21:5)\n    at async runTestsInDirectory (/home/runner/workspace/testing/utils/testRunner.js:72:22)\n    at async runAllTests (/home/runner/workspace/testing/utils/testRunner.js:148:23)\n    at async runTests (/home/runner/workspace/testing/runTests.js:160:25)",
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testHomePageRendering",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testLoginFlow",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testProductDetailsPage",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "uiTesting.test.js - testCheckoutProcess",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ],
+    "frontend": [
+      {
+        "name": "pageRendering.test.js - testApiRootEndpoint",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiResponseTimes",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiCorsHeaders",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiContentTypes",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      },
+      {
+        "name": "pageRendering.test.js - testApiErrorHandling",
+        "passed": true,
+        "error": null,
+        "duration": 0
+      }
+    ]
+  }
+}

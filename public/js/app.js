@@ -631,6 +631,15 @@ async function initializeCheckout() {
   // Render checkout summary
   renderCheckoutSummary();
   
+  // Set up currency change event handler
+  const currencySelect = document.getElementById('currency');
+  if (currencySelect) {
+    currencySelect.addEventListener('change', (e) => {
+      // Update the displayed prices based on the selected currency
+      renderCheckoutSummary(e.target.value);
+    });
+  }
+  
   // Add event listener for checkout form
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
@@ -639,9 +648,30 @@ async function initializeCheckout() {
 }
 
 // Render checkout summary
-function renderCheckoutSummary() {
+function renderCheckoutSummary(currency = 'usd') {
   const checkoutSummary = document.querySelector('.checkout-summary');
   if (!checkoutSummary) return;
+  
+  // Get exchange rates (simplified for demo, in a real app these would come from an API)
+  const exchangeRates = {
+    usd: 1.0,      // Base currency
+    eur: 0.85,     // USD to EUR
+    gbp: 0.75,     // USD to GBP
+    cad: 1.25,     // USD to CAD
+    aud: 1.35,     // USD to AUD
+    jpy: 110.0     // USD to JPY
+  };
+  
+  const rate = exchangeRates[currency.toLowerCase()] || 1.0;
+  const currencySymbols = {
+    usd: '$',
+    eur: '€',
+    gbp: '£',
+    cad: 'C$',
+    aud: 'A$',
+    jpy: '¥'
+  };
+  const symbol = currencySymbols[currency.toLowerCase()] || '$';
   
   let summaryHtml = `<h3>Order Summary</h3>`;
   
@@ -651,10 +681,16 @@ function renderCheckoutSummary() {
     const itemTotal = item.price * item.quantity;
     subtotal += itemTotal;
     
+    // Convert to selected currency and format
+    const convertedPrice = (itemTotal / 100) * rate;
+    const formattedPrice = currency.toLowerCase() === 'jpy' 
+      ? `${symbol}${Math.round(convertedPrice)}` 
+      : `${symbol}${convertedPrice.toFixed(2)}`;
+    
     summaryHtml += `
       <div class="checkout-item">
         <div>${item.name} x ${item.quantity}</div>
-        <div>$${(itemTotal / 100).toFixed(2)}</div>
+        <div data-usd-price="${(itemTotal / 100).toFixed(2)}">${formattedPrice}</div>
       </div>
     `;
   });
@@ -662,18 +698,31 @@ function renderCheckoutSummary() {
   const tax = subtotal * 0.05; // 5% tax
   const total = subtotal + tax;
   
+  // Convert to selected currency and format
+  const convertedSubtotal = (subtotal / 100) * rate;
+  const convertedTax = (tax / 100) * rate;
+  const convertedTotal = (total / 100) * rate;
+  
+  // Format prices based on currency
+  const formatPrice = (price) => {
+    if (currency.toLowerCase() === 'jpy') {
+      return `${symbol}${Math.round(price)}`;
+    }
+    return `${symbol}${price.toFixed(2)}`;
+  };
+  
   summaryHtml += `
     <div class="checkout-item">
       <div>Subtotal</div>
-      <div>$${(subtotal / 100).toFixed(2)}</div>
+      <div data-usd-price="${(subtotal / 100).toFixed(2)}">${formatPrice(convertedSubtotal)}</div>
     </div>
     <div class="checkout-item">
       <div>Tax (5%)</div>
-      <div>$${(tax / 100).toFixed(2)}</div>
+      <div data-usd-price="${(tax / 100).toFixed(2)}">${formatPrice(convertedTax)}</div>
     </div>
     <div class="checkout-item">
       <div><strong>Total</strong></div>
-      <div><strong>$${(total / 100).toFixed(2)}</strong></div>
+      <div data-usd-price="${(total / 100).toFixed(2)}"><strong>${formatPrice(convertedTotal)}</strong></div>
     </div>
   `;
   
