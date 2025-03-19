@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { authenticateToken, authorizeAdmin } = require('../middleware/auth');
+const stripeService = require('../services/stripe');
 
 const router = express.Router();
 
@@ -315,6 +316,135 @@ router.patch('/products/:id/feature', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to update product featured status',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Get Stripe Connect configuration
+ */
+router.get('/stripe-connect', async (req, res) => {
+  try {
+    // Get Stripe Connect settings from database
+    const connectTypeResult = await db.query(
+      'SELECT value FROM platform_settings WHERE key = $1',
+      ['stripe_connect_type']
+    );
+    
+    const stripeModeResult = await db.query(
+      'SELECT value FROM platform_settings WHERE key = $1',
+      ['stripe_mode']
+    );
+    
+    const currencyResult = await db.query(
+      'SELECT value FROM platform_settings WHERE key = $1',
+      ['platform_currency']
+    );
+    
+    // Default values
+    let connectType = 'express';
+    let stripeMode = await stripeService.getStripeMode();
+    let currency = 'usd';
+    
+    // Use values from database if available
+    if (connectTypeResult.rows.length > 0) {
+      connectType = connectTypeResult.rows[0].value;
+    }
+    
+    if (stripeModeResult.rows.length > 0) {
+      stripeMode = stripeModeResult.rows[0].value;
+    }
+    
+    if (currencyResult.rows.length > 0) {
+      currency = currencyResult.rows[0].value;
+    }
+    
+    res.status(200).json({
+      success: true,
+      stripeConnect: {
+        connectType,
+        mode: stripeMode,
+        currency
+      }
+    });
+  } catch (err) {
+    console.error('Get Stripe Connect config error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to get Stripe Connect configuration',
+      error: err.message
+    });
+  }
+});
+
+/**
+ * Update Stripe Connect configuration
+ */
+router.post('/stripe-connect', async (req, res) => {
+  try {
+    const { connectType, mode, currency } = req.body;
+    
+    // Validate connectType
+    if (connectType && !['express', 'standard', 'custom'].includes(connectType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Connect type must be express, standard, or custom'
+      });
+    }
+    
+    // Validate mode
+    if (mode && !['test', 'live'].includes(mode)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mode must be test or live'
+      });
+    }
+    
+    // Validate currency
+    if (currency && typeof currency !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Currency must be a valid ISO currency code'
+      });
+    }
+    
+    // Update settings in database
+    if (connectType) {
+      await db.query(
+        'INSERT INTO platform_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2',
+        ['stripe_connect_type', connectType]
+      );
+    }
+    
+    if (mode) {
+      await db.query(
+        'INSERT INTO platform_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2',
+        ['stripe_mode', mode]
+      );
+    }
+    
+    if (currency) {
+      await db.query(
+        'INSERT INTO platform_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2',
+        ['platform_currency', currency.toLowerCase()]
+      );
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Stripe Connect configuration updated successfully',
+      stripeConnect: {
+        connectType: connectType || 'express',
+        mode: mode || 'test',
+        currency: currency || 'usd'
+      }
+    });
+  } catch (err) {
+    console.error('Update Stripe Connect config error:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update Stripe Connect configuration',
       error: err.message
     });
   }

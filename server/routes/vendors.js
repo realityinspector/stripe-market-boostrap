@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
-const { createStripeAccount, getAccountLink, getStripeAccountStatus } = require('../services/stripe');
+const stripeService = require('../services/stripe');
 
 const router = express.Router();
 
@@ -98,32 +98,44 @@ router.post('/onboarding', authenticateToken, authorizeRole(['vendor']), async (
     
     const userEmail = userResult.rows[0].email;
     
-    // Check if using Stripe test or live keys
-    const isTestMode = process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
-    console.log(`Creating Stripe account in ${isTestMode ? 'TEST' : 'LIVE'} mode for ${vendor.business_name}`);
+    // Get Stripe mode from platform settings
+    const stripeMode = await stripeService.getStripeMode();
+    console.log(`Creating Stripe Connect account in ${stripeMode.toUpperCase()} mode for ${vendor.business_name}`);
+    
+    // Get Stripe Connect type from platform settings
+    const connectTypeResult = await db.query(
+      'SELECT value FROM platform_settings WHERE key = $1',
+      ['stripe_connect_type']
+    );
+    
+    const connectType = connectTypeResult.rows.length > 0 
+      ? connectTypeResult.rows[0].value 
+      : 'express';
     
     // Create or retrieve Stripe account
     let stripeAccountId = vendor.stripe_account_id;
     
     if (!stripeAccountId) {
       // Create new Stripe account
-      const account = await createStripeAccount(vendor.business_name, userEmail);
+      const account = await stripeService.createStripeAccount(vendor.business_name, userEmail);
       stripeAccountId = account.id;
       
       // Save the Stripe account ID to the database
       await db.query(
-        'UPDATE vendors SET stripe_account_id = $1 WHERE id = $2',
-        [stripeAccountId, vendor.id]
+        'UPDATE vendors SET stripe_account_id = $1, status = $2 WHERE id = $3',
+        [stripeAccountId, 'pending', vendor.id]
       );
     }
     
     // Generate account link for onboarding
-    const accountLinkUrl = await getAccountLink(stripeAccountId);
+    const accountLinkUrl = await stripeService.getAccountLink(stripeAccountId);
     
     res.status(200).json({
       success: true,
       accountLinkUrl,
-      stripeAccountId
+      stripeAccountId,
+      connectType,
+      mode: stripeMode
     });
   } catch (err) {
     console.error('Stripe onboarding error:', err);
@@ -163,14 +175,17 @@ router.get('/stripe-status', authenticateToken, authorizeRole(['vendor']), async
       });
     }
     
+    // Get Stripe mode
+    const stripeMode = await stripeService.getStripeMode();
+    
     // Check Stripe account status
-    const accountStatus = await getStripeAccountStatus(vendor.stripe_account_id);
+    const accountStatus = await stripeService.getStripeAccountStatus(vendor.stripe_account_id);
     
     // Update onboarding status if needed
     if (accountStatus.charges_enabled && !vendor.stripe_onboarding_complete) {
       await db.query(
-        'UPDATE vendors SET stripe_onboarding_complete = TRUE WHERE id = $1',
-        [vendor.id]
+        'UPDATE vendors SET stripe_onboarding_complete = TRUE, status = $1 WHERE id = $2',
+        ['active', vendor.id]
       );
     }
     
@@ -179,7 +194,9 @@ router.get('/stripe-status', authenticateToken, authorizeRole(['vendor']), async
       stripeAccountId: vendor.stripe_account_id,
       onboardingComplete: accountStatus.charges_enabled,
       detailsSubmitted: accountStatus.details_submitted,
-      payoutsEnabled: accountStatus.payouts_enabled
+      payoutsEnabled: accountStatus.payouts_enabled,
+      mode: stripeMode,
+      status: vendor.status || 'pending'
     });
   } catch (err) {
     console.error('Check Stripe status error:', err);
