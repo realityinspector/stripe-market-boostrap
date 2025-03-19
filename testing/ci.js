@@ -107,6 +107,11 @@ function outputCISummary(results) {
   console.log(colors.bold.blue('  CI/CD Pipeline Summary'));
   console.log(colors.bold.blue('==============================================='));
   
+  // Ensure results is an object
+  if (!results) {
+    results = {};
+  }
+  
   console.log(colors.blue(`Test Run: ${new Date(results.timestamp || Date.now()).toLocaleString()}`));
   
   // Check if stats exist before trying to access them
@@ -124,7 +129,7 @@ function outputCISummary(results) {
     console.log(colors.blue(`JSON Report: ${results.reportPaths?.json || 'Not generated'}`));
     console.log(colors.blue(`Text Report: ${results.reportPaths?.text || 'Not generated'}`));
   } else {
-    console.log(colors.bold.red('\n❌ No test results available'));
+    console.log(colors.bold.red('\n❌ No test statistics available'));
     console.log(colors.red('Run tests with: node testing/runTests.js [category]'));
   }
   

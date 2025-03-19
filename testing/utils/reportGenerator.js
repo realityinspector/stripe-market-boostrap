@@ -13,6 +13,9 @@ const path = require('path');
  * @param {string} outputPath - Path to write report to
  */
 function generateJsonReport(results, outputPath) {
+  // Ensure results is an object
+  results = results || {};
+  
   const report = {
     timestamp: new Date().toISOString(),
     summary: {
@@ -28,12 +31,14 @@ function generateJsonReport(results, outputPath) {
   const totalTests = 
     (results.api ? results.api.length : 0) + 
     (results.e2e ? results.e2e.length : 0) + 
-    (results.frontend ? results.frontend.length : 0);
+    (results.frontend ? results.frontend.length : 0) +
+    (results.ui ? results.ui.length : 0);
     
   const passedTests = 
     (results.api ? results.api.filter(t => t.passed).length : 0) + 
     (results.e2e ? results.e2e.filter(t => t.passed).length : 0) + 
-    (results.frontend ? results.frontend.filter(t => t.passed).length : 0);
+    (results.frontend ? results.frontend.filter(t => t.passed).length : 0) +
+    (results.ui ? results.ui.filter(t => t.passed).length : 0);
     
   report.summary.total = totalTests;
   report.summary.passed = passedTests;
