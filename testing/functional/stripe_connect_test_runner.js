@@ -84,7 +84,7 @@ function generateReport(results) {
   const reportFile = path.join(reportsDir, `stripe-connect-tests-${timestamp}.json`);
   
   fs.writeFileSync(reportFile, JSON.stringify(results, null, 2));
-  console.log(chalk.blue(`Report saved to: ${reportFile}`));
+  console.log(colorize.blue(`Report saved to: ${reportFile}`));
   
   return reportFile;
 }
@@ -108,7 +108,7 @@ async function main() {
   }
   
   // Log the Stripe Connect SDK version
-  console.log(chalk.green('===== STRIPE CONNECT TEST SUITE ====='));
+  console.log(colorize.green('===== STRIPE CONNECT TEST SUITE ====='));
   console.log(`Running tests at: ${new Date().toISOString()}`);
   
   let results = {};
@@ -136,10 +136,10 @@ async function main() {
   if (results.vendors && !results.vendors.success) succeeded = false;
   if (results.transactions && !results.transactions.success) succeeded = false;
   
-  console.log(chalk.green('\n===== TEST RUN COMPLETE ====='));
+  console.log(colorize.green('\n===== TEST RUN COMPLETE ====='));
   console.log(succeeded ? 
-    chalk.green('✅ All tests passed!') : 
-    chalk.red('❌ Some tests failed. See report for details.')
+    colorize.green('✅ All tests passed!') : 
+    colorize.red('❌ Some tests failed. See report for details.')
   );
   
   process.exit(succeeded ? 0 : 1);
@@ -148,7 +148,7 @@ async function main() {
 // Run the main function
 if (require.main === module) {
   main().catch(err => {
-    console.error(chalk.red('Unhandled error in test runner:'), err);
+    console.error(colorize.red('Unhandled error in test runner:'), err);
     process.exit(1);
   });
 }

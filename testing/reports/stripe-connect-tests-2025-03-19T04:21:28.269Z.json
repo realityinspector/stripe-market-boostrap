@@ -1,0 +1,70 @@
+{
+  "buyers": {
+    "success": false,
+    "tests": {
+      "registration": {
+        "passed": true,
+        "buyer": {
+          "user": {
+            "id": 3892,
+            "email": "test_1742358083988_4475@example.com",
+            "name": "Test User 5986",
+            "role": "customer",
+            "isAdmin": false
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mzg5MiwiZW1haWwiOiJ0ZXN0XzE3NDIzNTgwODM5ODhfNDQ3NUBleGFtcGxlLmNvbSIsInJvbGUiOiJjdXN0b21lciIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NDIzNTgwODYsImV4cCI6MTc0MjQ0NDQ4Nn0.8VyAYfutM-IX_kgitsatuuYH6luP-jV895gnffTFkS8",
+          "password": "password322"
+        }
+      },
+      "paymentFlow": {
+        "passed": true,
+        "buyer": {
+          "id": 3893,
+          "email": "test_1742358086467_5604@example.com",
+          "name": "Test User 6009",
+          "role": "customer",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 613,
+          "customer_id": 3893,
+          "vendor_id": 2093,
+          "total_amount": "2500.00",
+          "commission_amount": "250.00",
+          "status": "paid",
+          "stripe_payment_intent_id": null,
+          "created_at": "2025-03-19T04:21:26.968Z",
+          "currency": "usd"
+        },
+        "product": {
+          "id": 2363,
+          "vendor_id": 2093,
+          "name": "Test Product 1742358086778",
+          "description": "Test product for Stripe Connect payment flow",
+          "price": 2500,
+          "image_url": "https://example.com/image.jpg",
+          "active": true,
+          "created_at": "2025-03-19T04:21:26.821Z",
+          "featured": false,
+          "vendorId": 3894
+        }
+      },
+      "multiplePayments": {
+        "passed": true,
+        "buyer": {
+          "id": 3895,
+          "email": "test_1742358087101_1872@example.com",
+          "name": "Test User 5761",
+          "role": "customer",
+          "isAdmin": false
+        }
+      },
+      "receipt": {
+        "passed": false,
+        "error": "Order is missing required field for receipt: stripe_payment_intent_id"
+      }
+    },
+    "passed": 3,
+    "total": 4
+  }
+}
