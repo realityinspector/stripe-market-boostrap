@@ -55,7 +55,12 @@ router.post('/register', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { 
+        id: user.id, 
+        email: user.email, 
+        role: user.role,
+        isAdmin: user.role === 'admin' 
+      },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -68,7 +73,8 @@ router.post('/register', async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        isAdmin: user.role === 'admin'
       }
     });
   } catch (err) {
@@ -112,7 +118,12 @@ router.post('/login', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { 
+        id: user.id, 
+        email: user.email, 
+        role: user.role,
+        isAdmin: user.role === 'admin' 
+      },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -138,6 +149,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         name: user.name,
         role: user.role,
+        isAdmin: user.role === 'admin',
         vendor: vendorInfo
       }
     });
@@ -187,6 +199,7 @@ router.get('/me', authenticateToken, async (req, res) => {
       success: true,
       user: {
         ...user,
+        isAdmin: user.role === 'admin',
         vendor: vendorInfo
       }
     });
