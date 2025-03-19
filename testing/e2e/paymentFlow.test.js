@@ -76,7 +76,7 @@ exports.testPaymentFlow = async () => {
     
     // Step 6: Create order
     const orderResponse = await axios.post(
-      `${BASE_URL}/api/orders`,
+      `${BASE_URL}/api/payments/orders`,
       {
         productId: product.id,
         paymentIntentId: clientSecret.split('_secret_')[0], // Extract payment intent ID
