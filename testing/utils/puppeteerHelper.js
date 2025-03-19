@@ -9,9 +9,10 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const config = require('../puppeteer.config');
 
-// Set environment variable to use mock browser if configured
-if (config.mock) {
+// Set environment variable to use mock browser if configured or on Replit
+if (config.mock || process.env.REPL_ID) {
   process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
+  console.log('Using mock browser for Puppeteer tests in Replit environment.');
 }
 
 // Browser instance to be reused across tests

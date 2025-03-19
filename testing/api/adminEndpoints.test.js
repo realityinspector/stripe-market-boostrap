@@ -50,9 +50,14 @@ async function testAdminAuthRequirements() {
     }
     
     // Create a vendor user for testing role-based access control
-    const registerResponse = await axios.post(`${baseURL}/auth/register`, vendorUser);
+    const registerResponse = await axios.post(`${baseURL}/auth/register`, vendorUser, {
+      validateStatus: () => true // Don't throw on error status
+    });
     
-    if (!registerResponse.data.success) {
+    // If registration fails with 409, the user already exists which is fine
+    if (registerResponse.status === 409) {
+      console.log('Test vendor user already exists, proceeding with login.');
+    } else if (!registerResponse.data.success) {
       console.error('Failed to register vendor user:', registerResponse.data.message);
       return { passed: false, error: 'Failed to register vendor user' };
     }
