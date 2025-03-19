@@ -762,13 +762,43 @@ async function handleCheckoutSubmit(e) {
     if (response.ok) {
       const { clientSecret } = await response.json();
       
+      // Get order summary information
+      let totalAmount = 0;
+      let itemCount = 0;
+      
+      state.cart.forEach(item => {
+        totalAmount += item.price * item.quantity;
+        itemCount += item.quantity;
+      });
+      
+      // Get currency symbol
+      const currencySymbols = {
+        usd: '$',
+        eur: '€',
+        gbp: '£',
+        cad: 'C$',
+        aud: 'A$',
+        jpy: '¥'
+      };
+      const symbol = currencySymbols[selectedCurrency.toLowerCase()] || '$';
+      
+      // Format total amount according to currency
+      const formattedAmount = selectedCurrency.toLowerCase() === 'jpy'
+        ? `${symbol}${Math.round(totalAmount / 100)}`
+        : `${symbol}${(totalAmount / 100).toFixed(2)}`;
+      
       // Show success message
       form.innerHTML = `
         <div class="payment-confirmation">
+          <div class="success-icon"><i class="fas fa-check-circle"></i></div>
           <h2>Order Placed Successfully!</h2>
+          <div class="order-summary">
+            <p class="summary-detail"><strong>Items:</strong> ${itemCount}</p>
+            <p class="summary-detail"><strong>Total:</strong> ${formattedAmount}</p>
+            <p class="summary-detail"><strong>Currency:</strong> ${selectedCurrency.toUpperCase()}</p>
+          </div>
           <p>Thank you for your order. Your payment was successful.</p>
           <p>Order confirmation and details have been sent to your email.</p>
-          <p>Payment currency: ${selectedCurrency.toUpperCase()}</p>
           <a href="/" class="btn primary">Return to Home</a>
         </div>
       `;
