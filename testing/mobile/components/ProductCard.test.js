@@ -157,6 +157,32 @@ describe('ProductCard', () => {
     const price = getByText('$50.00');
     expect(price).toBeDefined();
   });
+  
+  test('formats price with different currencies', () => {
+    const currencies = [
+      { code: 'usd', symbol: '$', expected: '$49.99' },
+      { code: 'eur', symbol: '€', expected: '€49.99' },
+      { code: 'gbp', symbol: '£', expected: '£49.99' },
+      { code: 'jpy', symbol: '¥', expected: '¥50' }, // JPY rounds to whole numbers
+    ];
+    
+    currencies.forEach(currency => {
+      const { getByText, unmount } = render(
+        React.createElement(ProductCard, {
+          product: mockProduct,
+          onPress: mockOnPress,
+          currency: currency.code,
+          testID: "product-card"
+        })
+      );
+      
+      // Verify price is formatted with the correct currency symbol
+      const price = getByText(currency.expected);
+      expect(price).toBeDefined();
+      
+      unmount();
+    });
+  });
 
   test('applies custom styles when style prop is provided', () => {
     const customStyle = { backgroundColor: 'lightblue', borderRadius: 20 };

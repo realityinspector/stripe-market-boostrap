@@ -5,6 +5,16 @@ import Colors from '../constants/Colors';
 
 const DEFAULT_IMAGE = 'https://via.placeholder.com/150?text=No+Image';
 
+// Currency symbols for supported currencies
+const CURRENCY_SYMBOLS = {
+  usd: '$',
+  eur: '€',
+  gbp: '£',
+  cad: 'C$',
+  aud: 'A$',
+  jpy: '¥'
+};
+
 /**
  * ProductCard Component
  * 
@@ -13,9 +23,21 @@ const DEFAULT_IMAGE = 'https://via.placeholder.com/150?text=No+Image';
  * @param {Object} product - The product data to display
  * @param {Function} onPress - Function to call when card is pressed
  * @param {Object} style - Optional custom styles
+ * @param {String} currency - Optional currency code (defaults to "usd")
  * @param {String} testID - Optional testID for testing (defaults to "product-card")
  */
-export default function ProductCard({ product, onPress, style, testID = "product-card" }) {
+export default function ProductCard({ product, onPress, style, currency = "usd", testID = "product-card" }) {
+  // Format price according to currency
+  const formatPrice = (price, currencyCode) => {
+    const symbol = CURRENCY_SYMBOLS[currencyCode.toLowerCase()] || '$';
+    
+    // Japanese Yen doesn't use decimal places
+    if (currencyCode.toLowerCase() === 'jpy') {
+      return `${symbol}${Math.round(parseFloat(price))}`;
+    }
+    
+    return `${symbol}${parseFloat(price).toFixed(2)}`;
+  };
   return (
     <TouchableOpacity 
       style={[styles.container, style]} 
@@ -43,7 +65,7 @@ export default function ProductCard({ product, onPress, style, testID = "product
         </View>
         <View style={styles.footer} testID={`${testID}-footer`}>
           <Text style={styles.price} testID={`${testID}-price`}>
-            ${parseFloat(product.price).toFixed(2)}
+            {formatPrice(product.price, currency)}
           </Text>
         </View>
       </View>

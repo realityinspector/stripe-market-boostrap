@@ -258,7 +258,7 @@ router.post('/webhook', express.raw({type: 'application/json'}), async (req, res
 // Create an order
 router.post('/orders', authenticateToken, async (req, res) => {
   try {
-    const { productId, paymentIntentId, quantity = 1 } = req.body;
+    const { productId, paymentIntentId, quantity = 1, currency = 'usd' } = req.body;
     const userId = req.user.id;
     
     // Ensure productId is an integer
@@ -312,7 +312,7 @@ router.post('/orders', authenticateToken, async (req, res) => {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
-    `, [userId, product.vendor_id, orderAmount, commissionAmount, 'paid', paymentIntentId, 'usd']);
+    `, [userId, product.vendor_id, orderAmount, commissionAmount, 'paid', paymentIntentId, currency.toLowerCase()]);
     
     const order = orderResult.rows[0];
     
