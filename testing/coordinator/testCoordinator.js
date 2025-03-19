@@ -85,11 +85,11 @@ async function runTestSuite(options = {}) {
     
     // Generate JSON report
     const jsonReportPath = path.join(REPORTS_DIR, `test-report-${timestamp}.json`);
-    generateJsonReport(testResults, jsonReportPath);
+    const jsonReport = generateJsonReport(testResults, jsonReportPath);
     
     // Generate human-readable text report
     const textReportPath = path.join(REPORTS_DIR, `test-report-${timestamp}.txt`);
-    generateTextReport(testResults, textReportPath);
+    generateTextReport(jsonReport, textReportPath);
     
     // Calculate overall statistics
     const stats = calculateStats(testResults);
@@ -136,6 +136,8 @@ async function runTestSuite(options = {}) {
  * @returns {Object} Aggregated statistics
  */
 function calculateStats(results) {
+  // Ensure results is an object
+  results = results || {};
   const categories = Object.keys(results);
   let totalTests = 0;
   let passedTests = 0;

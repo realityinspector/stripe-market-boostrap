@@ -26,14 +26,14 @@ function generateJsonReport(results, outputPath) {
   
   // Calculate summary statistics
   const totalTests = 
-    results.api.length + 
-    results.e2e.length + 
-    results.frontend.length;
+    (results.api ? results.api.length : 0) + 
+    (results.e2e ? results.e2e.length : 0) + 
+    (results.frontend ? results.frontend.length : 0);
     
   const passedTests = 
-    results.api.filter(t => t.passed).length + 
-    results.e2e.filter(t => t.passed).length + 
-    results.frontend.filter(t => t.passed).length;
+    (results.api ? results.api.filter(t => t.passed).length : 0) + 
+    (results.e2e ? results.e2e.filter(t => t.passed).length : 0) + 
+    (results.frontend ? results.frontend.filter(t => t.passed).length : 0);
     
   report.summary.total = totalTests;
   report.summary.passed = passedTests;
@@ -82,7 +82,7 @@ function generateTextReport(report, outputPath) {
   // Add API test results
   lines.push('API TESTS');
   lines.push('--------');
-  if (report.results.api.length === 0) {
+  if (!report.results.api || report.results.api.length === 0) {
     lines.push('No API tests run');
   } else {
     report.results.api.forEach(test => {
@@ -97,7 +97,7 @@ function generateTextReport(report, outputPath) {
   // Add E2E test results
   lines.push('E2E TESTS');
   lines.push('--------');
-  if (report.results.e2e.length === 0) {
+  if (!report.results.e2e || report.results.e2e.length === 0) {
     lines.push('No E2E tests run');
   } else {
     report.results.e2e.forEach(test => {
@@ -112,7 +112,7 @@ function generateTextReport(report, outputPath) {
   // Add Frontend test results
   lines.push('FRONTEND TESTS');
   lines.push('--------------');
-  if (report.results.frontend.length === 0) {
+  if (!report.results.frontend || report.results.frontend.length === 0) {
     lines.push('No Frontend tests run');
   } else {
     report.results.frontend.forEach(test => {
@@ -129,9 +129,9 @@ function generateTextReport(report, outputPath) {
     lines.push('CONCLUSION: Some tests are failing. Please check the failures above.');
     
     // Group failures by category
-    const apiFailures = report.results.api.filter(t => !t.passed);
-    const e2eFailures = report.results.e2e.filter(t => !t.passed);
-    const frontendFailures = report.results.frontend.filter(t => !t.passed);
+    const apiFailures = report.results.api ? report.results.api.filter(t => !t.passed) : [];
+    const e2eFailures = report.results.e2e ? report.results.e2e.filter(t => !t.passed) : [];
+    const frontendFailures = report.results.frontend ? report.results.frontend.filter(t => !t.passed) : [];
     
     lines.push('');
     lines.push('FAILURE SUMMARY:');
