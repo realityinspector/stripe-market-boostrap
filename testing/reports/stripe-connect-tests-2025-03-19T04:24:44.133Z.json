@@ -1,0 +1,188 @@
+{
+  "transactions": {
+    "success": true,
+    "buyerTests": {
+      "success": true,
+      "tests": {
+        "registration": {
+          "passed": true,
+          "buyer": {
+            "user": {
+              "id": 3984,
+              "email": "test_1742358279752_5725@example.com",
+              "name": "Test User 7285",
+              "role": "customer",
+              "isAdmin": false
+            },
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mzk4NCwiZW1haWwiOiJ0ZXN0XzE3NDIzNTgyNzk3NTJfNTcyNUBleGFtcGxlLmNvbSIsInJvbGUiOiJjdXN0b21lciIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NDIzNTgyNzksImV4cCI6MTc0MjQ0NDY3OX0.L13apoo4SKaV7eNcPfFOaDwfWZQ-7KScI60AZxwU5iw",
+            "password": "password1088"
+          }
+        },
+        "paymentFlow": {
+          "passed": true,
+          "buyer": {
+            "id": 3985,
+            "email": "test_1742358280035_5969@example.com",
+            "name": "Test User 9606",
+            "role": "customer",
+            "isAdmin": false
+          },
+          "order": {
+            "id": 653,
+            "customer_id": 3985,
+            "vendor_id": 2141,
+            "total_amount": "2500.00",
+            "commission_amount": "250.00",
+            "status": "paid",
+            "stripe_payment_intent_id": "pi_mock_c68g2z6hjnn",
+            "created_at": "2025-03-19T04:24:40.589Z",
+            "currency": "usd"
+          },
+          "product": {
+            "id": 2417,
+            "vendor_id": 2141,
+            "name": "Test Product 1742358280396",
+            "description": "Test product for Stripe Connect payment flow",
+            "price": 2500,
+            "image_url": "https://example.com/image.jpg",
+            "active": true,
+            "created_at": "2025-03-19T04:24:40.439Z",
+            "featured": false,
+            "vendorId": 3986
+          }
+        },
+        "multiplePayments": {
+          "passed": true,
+          "buyer": {
+            "id": 3987,
+            "email": "test_1742358280724_4725@example.com",
+            "name": "Test User 8977",
+            "role": "customer",
+            "isAdmin": false
+          }
+        },
+        "receipt": {
+          "passed": true,
+          "order": {
+            "id": 656,
+            "customer_id": 3989,
+            "vendor_id": 2143,
+            "total_amount": "2500.00",
+            "commission_amount": "250.00",
+            "status": "paid",
+            "stripe_payment_intent_id": "pi_mock_bl2351i368",
+            "created_at": "2025-03-19T04:24:41.689Z",
+            "currency": "usd",
+            "customer_name": "Test User 5499",
+            "vendor_name": "Test User 6770's Shop",
+            "items": [
+              {
+                "id": 650,
+                "order_id": 656,
+                "product_id": 2419,
+                "quantity": 1,
+                "price": "2500.00",
+                "created_at": "2025-03-19T04:24:41.717Z",
+                "product_name": "Test Product 1742358281502",
+                "image_url": "https://example.com/image.jpg"
+              }
+            ],
+            "paymentStatus": "succeeded"
+          }
+        }
+      },
+      "passed": 4,
+      "total": 4
+    },
+    "vendorTests": {
+      "success": true,
+      "tests": {
+        "onboarding": {
+          "passed": true,
+          "vendor": {
+            "user": {
+              "id": 3991,
+              "email": "test_1742358281878_3508@example.com",
+              "name": "Test User 7278",
+              "role": "vendor",
+              "isAdmin": false
+            },
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mzk5MSwiZW1haWwiOiJ0ZXN0XzE3NDIzNTgyODE4NzhfMzUwOEBleGFtcGxlLmNvbSIsInJvbGUiOiJ2ZW5kb3IiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzQyMzU4MjgyLCJleHAiOjE3NDI0NDQ2ODJ9.CgdkmrY7FdQvXFavCX7dOS9vQH5A7fHTeu-JUYZFCSw",
+            "password": "password8485"
+          }
+        },
+        "paymentReceipt": {
+          "passed": true,
+          "vendor": {
+            "id": 3992,
+            "email": "test_1742358282057_3549@example.com",
+            "name": "Test User 3262",
+            "role": "vendor",
+            "isAdmin": false
+          },
+          "order": {
+            "id": 658,
+            "customer_id": 3993,
+            "vendor_id": 2145,
+            "total_amount": "178.00",
+            "commission_amount": "17.80",
+            "status": "paid",
+            "stripe_payment_intent_id": "pi_mock_k8fimz05ron",
+            "created_at": "2025-03-19T04:24:42.566Z",
+            "currency": "usd",
+            "customer_name": "Test User 159"
+          },
+          "product": {
+            "id": 2420,
+            "vendor_id": 2145,
+            "name": "Test Product 8893",
+            "description": "This is a test product description 9654",
+            "price": 178,
+            "image_url": null,
+            "active": true,
+            "created_at": "2025-03-19T04:24:42.272Z",
+            "featured": false,
+            "vendorId": 3992
+          }
+        },
+        "balance": {
+          "passed": true,
+          "vendor": {
+            "id": 3994,
+            "email": "test_1742358282667_6790@example.com",
+            "name": "Test User 7489",
+            "role": "vendor",
+            "isAdmin": false
+          },
+          "order": {
+            "id": 660,
+            "customer_id": 3995,
+            "vendor_id": 2146,
+            "total_amount": "119.00",
+            "commission_amount": "11.90",
+            "status": "paid",
+            "stripe_payment_intent_id": "pi_mock_73l145xaxrj",
+            "created_at": "2025-03-19T04:24:43.177Z",
+            "currency": "usd",
+            "customer_name": "Test User 2838"
+          }
+        },
+        "analytics": {
+          "passed": true,
+          "vendor": {
+            "id": 3996,
+            "email": "test_1742358283282_1164@example.com",
+            "name": "Test User 9968",
+            "role": "vendor",
+            "isAdmin": false
+          },
+          "orderCount": 4
+        }
+      },
+      "passed": 4,
+      "total": 4
+    },
+    "total": 8,
+    "passed": 8
+  }
+}

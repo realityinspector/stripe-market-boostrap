@@ -1,0 +1,90 @@
+{
+  "vendors": {
+    "success": true,
+    "tests": {
+      "onboarding": {
+        "passed": true,
+        "vendor": {
+          "user": {
+            "id": 3977,
+            "email": "test_1742358272166_2077@example.com",
+            "name": "Test User 4145",
+            "role": "vendor",
+            "isAdmin": false
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mzk3NywiZW1haWwiOiJ0ZXN0XzE3NDIzNTgyNzIxNjZfMjA3N0BleGFtcGxlLmNvbSIsInJvbGUiOiJ2ZW5kb3IiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzQyMzU4MjcyLCJleHAiOjE3NDI0NDQ2NzJ9.eNAVHiLl0O0c6r1ufLNm7YQ1dm_mcF2bydGh7yFINp8",
+          "password": "password3781"
+        }
+      },
+      "paymentReceipt": {
+        "passed": true,
+        "vendor": {
+          "id": 3978,
+          "email": "test_1742358272540_4988@example.com",
+          "name": "Test User 2372",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 645,
+          "customer_id": 3979,
+          "vendor_id": 2138,
+          "total_amount": "19.00",
+          "commission_amount": "1.90",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_8599gq78to",
+          "created_at": "2025-03-19T04:24:33.148Z",
+          "currency": "usd",
+          "customer_name": "Test User 4894"
+        },
+        "product": {
+          "id": 2413,
+          "vendor_id": 2138,
+          "name": "Test Product 4175",
+          "description": "This is a test product description 9422",
+          "price": 19,
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-19T04:24:32.770Z",
+          "featured": false,
+          "vendorId": 3978
+        }
+      },
+      "balance": {
+        "passed": true,
+        "vendor": {
+          "id": 3980,
+          "email": "test_1742358273255_9233@example.com",
+          "name": "Test User 4721",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 647,
+          "customer_id": 3981,
+          "vendor_id": 2139,
+          "total_amount": "930.00",
+          "commission_amount": "93.00",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_qokocividx8",
+          "created_at": "2025-03-19T04:24:33.818Z",
+          "currency": "usd",
+          "customer_name": "Test User 274"
+        }
+      },
+      "analytics": {
+        "passed": true,
+        "vendor": {
+          "id": 3982,
+          "email": "test_1742358273928_4558@example.com",
+          "name": "Test User 5444",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "orderCount": 4
+      }
+    },
+    "passed": 4,
+    "total": 4
+  }
+}
