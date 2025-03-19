@@ -7,6 +7,7 @@ const vendorRoutes = require('./routes/vendors');
 const productRoutes = require('./routes/products');
 const paymentRoutes = require('./routes/payments');
 const adminRoutes = require('./routes/admin');
+const webhookRoutes = require('./routes/webhooks');
 
 // Validate required environment variables
 const requiredEnvVars = ['DATABASE_URL', 'STRIPE_SECRET_KEY', 'VITE_STRIPE_PUBLIC_KEY'];
@@ -90,6 +91,7 @@ app.use('/api/vendors', vendorRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../public')));
