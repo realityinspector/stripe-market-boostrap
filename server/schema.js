@@ -54,7 +54,9 @@ const createTables = async () => {
         vendor_id INTEGER REFERENCES vendors(id),
         total_amount DECIMAL(10,2) NOT NULL,
         commission_amount DECIMAL(10,2) NOT NULL,
-        status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'completed', 'cancelled')),
+        status VARCHAR(25) NOT NULL DEFAULT 'pending' 
+          CHECK (status IN ('pending', 'paid', 'completed', 'cancelled', 'refunded', 'partially_refunded', 'failed')),
+        currency VARCHAR(3) NOT NULL DEFAULT 'usd',
         stripe_payment_intent_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -80,6 +82,20 @@ const createTables = async () => {
         amount DECIMAL(10,2) NOT NULL,
         status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'failed')),
         stripe_payout_id VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create refunds table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS refunds (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+        amount DECIMAL(10,2) NOT NULL,
+        reason TEXT,
+        stripe_refund_id VARCHAR(255),
+        initiated_by VARCHAR(20) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed')),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
