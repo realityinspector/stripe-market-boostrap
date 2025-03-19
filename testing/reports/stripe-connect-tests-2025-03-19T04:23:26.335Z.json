@@ -1,0 +1,80 @@
+{
+  "vendors": {
+    "success": false,
+    "tests": {
+      "onboarding": {
+        "passed": false,
+        "error": "Vendor profile not created"
+      },
+      "paymentReceipt": {
+        "passed": true,
+        "vendor": {
+          "id": 3939,
+          "email": "test_1742358204237_1643@example.com",
+          "name": "Test User 2695",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 630,
+          "customer_id": 3940,
+          "vendor_id": 2117,
+          "total_amount": "983.00",
+          "commission_amount": "98.30",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_u2v9faa9cn",
+          "created_at": "2025-03-19T04:23:24.749Z",
+          "currency": "usd",
+          "customer_name": "Test User 7335"
+        },
+        "product": {
+          "id": 2389,
+          "vendor_id": 2117,
+          "name": "Test Product 691",
+          "description": "This is a test product description 9314",
+          "price": 983,
+          "image_url": null,
+          "active": true,
+          "created_at": "2025-03-19T04:23:24.454Z",
+          "featured": false,
+          "vendorId": 3939
+        }
+      },
+      "balance": {
+        "passed": true,
+        "vendor": {
+          "id": 3941,
+          "email": "test_1742358204852_4154@example.com",
+          "name": "Test User 9088",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 632,
+          "customer_id": 3942,
+          "vendor_id": 2118,
+          "total_amount": "584.00",
+          "commission_amount": "58.40",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_mev21trou6j",
+          "created_at": "2025-03-19T04:23:25.390Z",
+          "currency": "usd",
+          "customer_name": "Test User 8441"
+        }
+      },
+      "analytics": {
+        "passed": true,
+        "vendor": {
+          "id": 3943,
+          "email": "test_1742358205499_1717@example.com",
+          "name": "Test User 8803",
+          "role": "vendor",
+          "isAdmin": false
+        },
+        "orderCount": 4
+      }
+    },
+    "passed": 3,
+    "total": 4
+  }
+}

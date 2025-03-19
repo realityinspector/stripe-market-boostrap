@@ -1,0 +1,95 @@
+{
+  "buyers": {
+    "success": true,
+    "tests": {
+      "registration": {
+        "passed": true,
+        "buyer": {
+          "user": {
+            "id": 3931,
+            "email": "test_1742358171461_3471@example.com",
+            "name": "Test User 1481",
+            "role": "customer",
+            "isAdmin": false
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzkzMSwiZW1haWwiOiJ0ZXN0XzE3NDIzNTgxNzE0NjFfMzQ3MUBleGFtcGxlLmNvbSIsInJvbGUiOiJjdXN0b21lciIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NDIzNTgxNzEsImV4cCI6MTc0MjQ0NDU3MX0.zJMeWT7NbNrhG97COsgYfINe86Ms_KhTehdQZ4hIL78",
+          "password": "password2317"
+        }
+      },
+      "paymentFlow": {
+        "passed": true,
+        "buyer": {
+          "id": 3932,
+          "email": "test_1742358171945_5768@example.com",
+          "name": "Test User 6180",
+          "role": "customer",
+          "isAdmin": false
+        },
+        "order": {
+          "id": 625,
+          "customer_id": 3932,
+          "vendor_id": 2113,
+          "total_amount": "2500.00",
+          "commission_amount": "250.00",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_herer9a59pv",
+          "created_at": "2025-03-19T04:22:52.467Z",
+          "currency": "usd"
+        },
+        "product": {
+          "id": 2386,
+          "vendor_id": 2113,
+          "name": "Test Product 1742358172267",
+          "description": "Test product for Stripe Connect payment flow",
+          "price": 2500,
+          "image_url": "https://example.com/image.jpg",
+          "active": true,
+          "created_at": "2025-03-19T04:22:52.311Z",
+          "featured": false,
+          "vendorId": 3933
+        }
+      },
+      "multiplePayments": {
+        "passed": true,
+        "buyer": {
+          "id": 3934,
+          "email": "test_1742358172604_7735@example.com",
+          "name": "Test User 9374",
+          "role": "customer",
+          "isAdmin": false
+        }
+      },
+      "receipt": {
+        "passed": true,
+        "order": {
+          "id": 628,
+          "customer_id": 3936,
+          "vendor_id": 2115,
+          "total_amount": "2500.00",
+          "commission_amount": "250.00",
+          "status": "paid",
+          "stripe_payment_intent_id": "pi_mock_mwbeekwjpgq",
+          "created_at": "2025-03-19T04:22:53.574Z",
+          "currency": "usd",
+          "customer_name": "Test User 212",
+          "vendor_name": "Test User 5820's Shop",
+          "items": [
+            {
+              "id": 622,
+              "order_id": 628,
+              "product_id": 2388,
+              "quantity": 1,
+              "price": "2500.00",
+              "created_at": "2025-03-19T04:22:53.603Z",
+              "product_name": "Test Product 1742358173382",
+              "image_url": "https://example.com/image.jpg"
+            }
+          ],
+          "paymentStatus": "succeeded"
+        }
+      }
+    },
+    "passed": 4,
+    "total": 4
+  }
+}
