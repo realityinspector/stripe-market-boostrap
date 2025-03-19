@@ -67,7 +67,7 @@ async function testBuyerRegistration() {
       buyer: buyerData
     };
   } catch (error) {
-    console.error(chalk.red('❌ Buyer registration test failed:'), error.message);
+    console.error(colorize.red('❌ Buyer registration test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -82,7 +82,7 @@ async function testBuyerRegistration() {
  * including payment intent creation and verification of funds distribution
  */
 async function testBuyerPaymentFlow() {
-  console.log(chalk.blue('Testing Stripe Connect payment flow for buyers...'));
+  console.log(colorize.blue('Testing Stripe Connect payment flow for buyers...'));
   
   try {
     // 1. Create a test buyer
@@ -192,7 +192,7 @@ async function testBuyerPaymentFlow() {
       product: product
     };
   } catch (error) {
-    console.error(chalk.red('❌ Buyer payment flow test failed:'), error.message);
+    console.error(colorize.red('❌ Buyer payment flow test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -204,7 +204,7 @@ async function testBuyerPaymentFlow() {
  * Test multiple payment methods for a buyer
  */
 async function testMultiplePaymentMethods() {
-  console.log(chalk.blue('Testing multiple payment methods for buyer...'));
+  console.log(colorize.blue('Testing multiple payment methods for buyer...'));
   
   try {
     // This would normally test different payment methods like:
@@ -267,7 +267,7 @@ async function testMultiplePaymentMethods() {
       buyer: buyerData.user
     };
   } catch (error) {
-    console.error(chalk.red('❌ Multiple payment methods test failed:'), error.message);
+    console.error(colorize.red('❌ Multiple payment methods test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -279,7 +279,7 @@ async function testMultiplePaymentMethods() {
  * Test order receipt and invoice generation for buyers
  */
 async function testOrderReceipt() {
-  console.log(chalk.blue('Testing order receipt and invoice for buyer...'));
+  console.log(colorize.blue('Testing order receipt and invoice for buyer...'));
   
   try {
     // Create test users and complete a purchase
@@ -327,7 +327,7 @@ async function testOrderReceipt() {
       order: orderDetails
     };
   } catch (error) {
-    console.error(chalk.red('❌ Order receipt test failed:'), error.message);
+    console.error(colorize.red('❌ Order receipt test failed:'), error.message);
     return {
       passed: false,
       error: error.message
@@ -340,7 +340,7 @@ async function testOrderReceipt() {
  */
 async function runBuyerTests() {
   try {
-    console.log(chalk.green('\n===== STRIPE CONNECT BUYER TESTS ====='));
+    console.log(colorize.green('\n===== STRIPE CONNECT BUYER TESTS ====='));
     
     const registrationResult = await testBuyerRegistration();
     const paymentFlowResult = await testBuyerPaymentFlow();
@@ -358,7 +358,7 @@ async function runBuyerTests() {
     const passedTests = allTests.filter(test => test.passed).length;
     const totalTests = allTests.length;
     
-    console.log(chalk.green(`\n===== BUYER TESTS SUMMARY =====`));
+    console.log(colorize.green(`\n===== BUYER TESTS SUMMARY =====`));
     console.log(`Tests passed: ${passedTests}/${totalTests}`);
     console.log(`Success rate: ${Math.round((passedTests / totalTests) * 100)}%`);
     
@@ -374,7 +374,7 @@ async function runBuyerTests() {
       total: totalTests
     };
   } catch (error) {
-    console.error(chalk.red('Error running buyer tests:'), error);
+    console.error(colorize.red('Error running buyer tests:'), error);
     return {
       success: false,
       error: error.message
