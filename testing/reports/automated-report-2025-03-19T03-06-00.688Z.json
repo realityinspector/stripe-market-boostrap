@@ -1,0 +1,546 @@
+{
+  "timestamp": "2025-03-19T03:06:00.688Z",
+  "summary": {
+    "totalTests": 48,
+    "totalPassed": 48,
+    "totalFailed": 0,
+    "totalWarnings": 0,
+    "successRate": 100,
+    "api": {
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "warnings": 0
+    },
+    "ui": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "warnings": 0
+    },
+    "e2e": {
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "warnings": 0
+    }
+  },
+  "environment": {
+    "apiServer": "http://localhost:8000",
+    "clientUrl": "http://localhost:8000",
+    "timeouts": {
+      "apiResponse": 5000,
+      "pageLoad": 10000,
+      "elementAppear": 5000
+    },
+    "browserVersion": "Mock Browser"
+  },
+  "results": {
+    "api": {
+      "passed": [
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-19T03:05:51.513Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "44ms"
+          }
+        },
+        {
+          "name": "User Registration",
+          "timestamp": "2025-03-19T03:05:51.992Z",
+          "details": {
+            "status": 201,
+            "success": true,
+            "userId": 3545
+          }
+        },
+        {
+          "name": "User Login",
+          "timestamp": "2025-03-19T03:05:52.180Z",
+          "details": {
+            "status": 200,
+            "success": true,
+            "hasToken": true
+          }
+        },
+        {
+          "name": "Authenticated Route",
+          "timestamp": "2025-03-19T03:05:52.212Z",
+          "details": {
+            "status": 200,
+            "hasUser": true
+          }
+        },
+        {
+          "name": "Product Creation",
+          "timestamp": "2025-03-19T03:05:52.979Z",
+          "details": {
+            "status": 201,
+            "success": true,
+            "productId": 2150
+          }
+        },
+        {
+          "name": "Product Listing",
+          "timestamp": "2025-03-19T03:05:53.253Z",
+          "details": {
+            "status": 200,
+            "count": 1922
+          }
+        },
+        {
+          "name": "Product Retrieval",
+          "timestamp": "2025-03-19T03:05:53.389Z",
+          "details": {
+            "status": 200,
+            "found": true
+          }
+        },
+        {
+          "name": "Product Update",
+          "timestamp": "2025-03-19T03:05:53.559Z",
+          "details": {
+            "status": 200,
+            "success": true
+          }
+        },
+        {
+          "name": "Vendor Products",
+          "timestamp": "2025-03-19T03:05:53.717Z",
+          "details": {
+            "status": 200,
+            "count": 1
+          }
+        },
+        {
+          "name": "Create Payment Intent",
+          "timestamp": "2025-03-19T03:05:54.176Z",
+          "details": {
+            "status": 200,
+            "success": true
+          }
+        },
+        {
+          "name": "CORS Headers",
+          "timestamp": "2025-03-19T03:05:54.183Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/auth/login": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/products": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              },
+              "/api/payments/create-payment-intent": {
+                "status": 204,
+                "headers": {
+                  "access-control-allow-origin": true,
+                  "access-control-allow-methods": true,
+                  "access-control-allow-headers": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Response Time - /",
+          "timestamp": "2025-03-19T03:05:54.185Z",
+          "details": {
+            "endpoint": "/",
+            "status": 200,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/login",
+          "timestamp": "2025-03-19T03:05:54.188Z",
+          "details": {
+            "endpoint": "/api/auth/login",
+            "status": 404,
+            "time": "3ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/auth/register",
+          "timestamp": "2025-03-19T03:05:54.190Z",
+          "details": {
+            "endpoint": "/api/auth/register",
+            "status": 404,
+            "time": "2ms"
+          }
+        },
+        {
+          "name": "Response Time - /api/products",
+          "timestamp": "2025-03-19T03:05:54.266Z",
+          "details": {
+            "endpoint": "/api/products",
+            "status": 200,
+            "time": "76ms"
+          }
+        },
+        {
+          "name": "API Response Times",
+          "timestamp": "2025-03-19T03:05:54.266Z",
+          "details": {
+            "endpoints": {
+              "/": {
+                "passed": true,
+                "time": 2,
+                "status": 200
+              },
+              "/api/auth/login": {
+                "passed": true,
+                "time": 3,
+                "status": 404
+              },
+              "/api/auth/register": {
+                "passed": true,
+                "time": 2,
+                "status": 404
+              },
+              "/api/products": {
+                "passed": true,
+                "time": 76,
+                "status": 200
+              }
+            }
+          }
+        },
+        {
+          "name": "404 Error Handling",
+          "timestamp": "2025-03-19T03:05:54.271Z",
+          "details": {
+            "status": 404,
+            "data": {
+              "success": false,
+              "message": "API endpoint not found"
+            }
+          }
+        }
+      ],
+      "failed": [],
+      "warnings": []
+    },
+    "ui": {
+      "passed": [
+        {
+          "name": "Page Rendering - Home Page",
+          "timestamp": "2025-03-19T03:05:54.281Z",
+          "details": {
+            "url": "http://localhost:8000/",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              "header": true,
+              "main": true,
+              "footer": true
+            }
+          }
+        },
+        {
+          "name": "Page Rendering - Products Page",
+          "timestamp": "2025-03-19T03:05:54.282Z",
+          "details": {
+            "url": "http://localhost:8000/products",
+            "title": "Mock Page Title",
+            "contentLength": "Mock Text Content",
+            "selectors": {
+              ".product-list": true,
+              ".product-item": true
+            }
+          }
+        },
+        {
+          "name": "Registration Form Input",
+          "timestamp": "2025-03-19T03:05:54.283Z",
+          "details": {
+            "email": "test_user_1742353554283@example.com",
+            "name": "Test User 1742353554283",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "User Registration",
+          "timestamp": "2025-03-19T03:05:54.284Z",
+          "details": {
+            "email": "test_user_1742353554283@example.com",
+            "name": "Test User 1742353554283",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Login Form Input",
+          "timestamp": "2025-03-19T03:05:54.284Z",
+          "details": {
+            "email": "test_user_1742353554283@example.com",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "User Login",
+          "timestamp": "2025-03-19T03:05:54.284Z",
+          "details": {
+            "email": "test_user_1742353554283@example.com",
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Auth Storage",
+          "timestamp": "2025-03-19T03:05:54.284Z",
+          "details": {
+            "hasToken": true,
+            "mockBrowser": true
+          }
+        },
+        {
+          "name": "Product Listing",
+          "timestamp": "2025-03-19T03:05:54.285Z",
+          "details": {
+            "productCount": true
+          }
+        },
+        {
+          "name": "Product Details Page",
+          "timestamp": "2025-03-19T03:05:54.285Z",
+          "details": {
+            "url": "http://localhost:8000/products",
+            "screenshot": "testing/screenshots/product-details.png"
+          }
+        },
+        {
+          "name": "Add to Cart",
+          "timestamp": "2025-03-19T03:05:54.285Z",
+          "details": {}
+        },
+        {
+          "name": "Payment Process",
+          "timestamp": "2025-03-19T03:05:54.287Z",
+          "details": {
+            "mock": true,
+            "warning": "Mock confirmation message"
+          }
+        },
+        {
+          "name": "Responsive Design",
+          "timestamp": "2025-03-19T03:05:54.291Z",
+          "details": {
+            "viewports": {
+              "Desktop": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "1920x1080"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "1920x1080"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "1920x1080"
+                }
+              },
+              "Laptop": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "1280x800"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "1280x800"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "1280x800"
+                }
+              },
+              "Tablet": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "768x1024"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "768x1024"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "768x1024"
+                }
+              },
+              "Mobile": {
+                "/": {
+                  "url": "http://localhost:8000/",
+                  "viewport": "375x667"
+                },
+                "/products": {
+                  "url": "http://localhost:8000/products",
+                  "viewport": "375x667"
+                },
+                "/login": {
+                  "url": "http://localhost:8000/login",
+                  "viewport": "375x667"
+                }
+              }
+            },
+            "issues": {
+              "Desktop": {},
+              "Laptop": {},
+              "Tablet": {},
+              "Mobile": {}
+            }
+          }
+        },
+        {
+          "name": "Admin Currency Formatting",
+          "timestamp": "2025-03-19T03:05:54.297Z",
+          "details": {
+            "mockMode": true,
+            "simulated": true
+          }
+        },
+        {
+          "name": "Japanese Yen Formatting",
+          "timestamp": "2025-03-19T03:05:54.297Z",
+          "details": {
+            "mockMode": true
+          }
+        }
+      ],
+      "failed": [],
+      "warnings": []
+    },
+    "e2e": {
+      "passed": [
+        {
+          "name": "Vendor Registration & Login",
+          "timestamp": "2025-03-19T03:05:54.746Z",
+          "details": {
+            "vendorId": 3554
+          }
+        },
+        {
+          "name": "Vendor Product Creation",
+          "timestamp": "2025-03-19T03:05:54.809Z",
+          "details": {
+            "productId": 2153,
+            "productName": "E2E Test Product 1742353554746"
+          }
+        },
+        {
+          "name": "Vendor Product Update",
+          "timestamp": "2025-03-19T03:05:54.974Z",
+          "details": {
+            "productId": 2153
+          }
+        },
+        {
+          "name": "Vendor Products Listing",
+          "timestamp": "2025-03-19T03:05:55.039Z",
+          "details": {
+            "productCount": 1
+          }
+        },
+        {
+          "name": "Product Deactivation",
+          "timestamp": "2025-03-19T03:05:55.128Z",
+          "details": {}
+        },
+        {
+          "name": "Customer Registration & Login",
+          "timestamp": "2025-03-19T03:05:55.514Z",
+          "details": {
+            "customerId": 3557
+          }
+        },
+        {
+          "name": "Customer Product Browsing",
+          "timestamp": "2025-03-19T03:05:56.255Z",
+          "details": {
+            "productCount": 1927
+          }
+        },
+        {
+          "name": "Product Details View",
+          "timestamp": "2025-03-19T03:05:56.290Z",
+          "details": {
+            "productId": 2157
+          }
+        },
+        {
+          "name": "Payment Initiation",
+          "timestamp": "2025-03-19T03:05:56.402Z",
+          "details": {
+            "productId": 2157
+          }
+        },
+        {
+          "name": "Full Purchase Flow",
+          "timestamp": "2025-03-19T03:05:57.806Z",
+          "details": {
+            "vendorId": 3561,
+            "customerId": 3562,
+            "productId": 2161,
+            "paymentInitiated": true
+          }
+        },
+        {
+          "name": "Admin Products Access",
+          "timestamp": "2025-03-19T03:05:58.263Z",
+          "details": {}
+        },
+        {
+          "name": "Admin Product Details Access",
+          "timestamp": "2025-03-19T03:05:59.218Z",
+          "details": {}
+        },
+        {
+          "name": "Admin Auth Verification",
+          "timestamp": "2025-03-19T03:05:59.261Z",
+          "details": {}
+        },
+        {
+          "name": "Invalid Login Handling",
+          "timestamp": "2025-03-19T03:05:59.293Z",
+          "details": {}
+        },
+        {
+          "name": "Registration Email Validation",
+          "timestamp": "2025-03-19T03:05:59.710Z",
+          "details": {}
+        },
+        {
+          "name": "Registration Password Validation",
+          "timestamp": "2025-03-19T03:05:59.945Z",
+          "details": {}
+        },
+        {
+          "name": "Payment With Invalid Product",
+          "timestamp": "2025-03-19T03:06:00.688Z",
+          "details": {}
+        }
+      ],
+      "failed": [],
+      "warnings": []
+    }
+  }
+}

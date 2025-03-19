@@ -93,18 +93,14 @@ async function testConnectPaymentFlow() {
     
     // Create the product in our database
     const productResult = await db.query(
-      `INSERT INTO products (name, description, price, vendor_id, status, created_at) 
+      `INSERT INTO products (name, description, price, vendor_id, active, created_at) 
        VALUES ($1, $2, $3, $4, $5, NOW()) 
        RETURNING *`,
-      [productData.name, productData.description, productData.price, productData.vendor_id, 'active']
+      [productData.name, productData.description, productData.price, productData.vendor_id, true]
     );
     
     const product = productResult.rows[0];
     console.log(`✅ Created product in database: ${product.name} (ID: ${product.id}, Price: $${product.price/100})`);
-    
-    // Calculate platform fee
-    const platformFee = Math.round(productData.price * (PLATFORM_FEE_PERCENT / 100));
-    console.log(`Platform fee (${PLATFORM_FEE_PERCENT}%): $${platformFee/100}`);
     
     // Create an order
     console.log('\n4. Creating order...');
@@ -116,23 +112,27 @@ async function testConnectPaymentFlow() {
       status: 'pending'
     };
     
+    // Calculate platform fee
+    const platformFee = Math.round(productData.price * (PLATFORM_FEE_PERCENT / 100));
+    console.log(`Platform fee (${PLATFORM_FEE_PERCENT}%): $${platformFee/100}`);
+    
     // Create the order in our database
     const orderResult = await db.query(
-      `INSERT INTO orders (customer_id, product_id, vendor_id, quantity, total, status, created_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
+      `INSERT INTO orders (customer_id, vendor_id, total_amount, commission_amount, status, created_at, currency) 
+       VALUES ($1, $2, $3, $4, $5, NOW(), $6) 
        RETURNING *`,
       [
-        orderData.customer_id, 
-        orderData.product_id, 
-        vendor.id, 
-        orderData.quantity, 
-        orderData.total, 
-        orderData.status
+        orderData.customer_id,
+        vendor.id,
+        orderData.total,
+        platformFee,
+        orderData.status,
+        'usd'
       ]
     );
     
     const order = orderResult.rows[0];
-    console.log(`✅ Created order in database: Order #${order.id} for $${order.total/100}`);
+    console.log(`✅ Created order in database: Order #${order.id} for $${order.total_amount/100}`);
     
     // Create a payment intent with Connect account
     console.log('\n5. Creating payment intent...');
@@ -164,7 +164,7 @@ async function testConnectPaymentFlow() {
     
     // Update order with payment intent ID
     await db.query(
-      `UPDATE orders SET payment_id = $1 WHERE id = $2`,
+      `UPDATE orders SET stripe_payment_intent_id = $1 WHERE id = $2`,
       [paymentIntent.id, order.id]
     );
     
